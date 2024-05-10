@@ -9,10 +9,8 @@ from invenio_communities.members.records.api import Member
 from invenio_oauthclient.ext import InvenioOAuthClient
 from invenio_search.engine import dsl
 
-from oidc_einfra.communities import (
-    account_info_link_perun_groups,
-    get_mapped_communities,
-)
+from oidc_einfra.communities import account_info_link_perun_groups, \
+    get_mapped_communities
 
 # userinfo url 'https://login.cesnet.cz/oidc/'
 

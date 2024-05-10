@@ -8,7 +8,7 @@
 
 """CESNET OIDC Auth backend for OARepo"""
 
-from .version import __version__
 from .remote import EINFRA_LOGIN_APP
+from .version import __version__
 
 __all__ = ("__version__", "EINFRA_LOGIN_APP")

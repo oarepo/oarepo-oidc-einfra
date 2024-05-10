@@ -36,12 +36,12 @@ def member_service(community_service):
 def app_config(app_config):
     # Custom fields
     app_config["JSONSCHEMAS_HOST"] = "localhost"
-    app_config[
-        "RECORDS_REFRESOLVER_CLS"
-    ] = "invenio_records.resolver.InvenioRefResolver"
-    app_config[
-        "RECORDS_REFRESOLVER_STORE"
-    ] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config["RECORDS_REFRESOLVER_CLS"] = (
+        "invenio_records.resolver.InvenioRefResolver"
+    )
+    app_config["RECORDS_REFRESOLVER_STORE"] = (
+        "invenio_jsonschemas.proxies.current_refresolver_store"
+    )
 
     app_config["COMMUNITIES_CUSTOM_FIELDS"] = [
         AAIMappingCF("aai_mapping"),

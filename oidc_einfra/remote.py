@@ -96,7 +96,7 @@ def account_info_serializer(remote, resp):
         options={"verify_signature": True},
         key=remote.rsa_key,
         audience=remote.consumer_key,
-        algorithms=["RS256"]
+        algorithms=["RS256"],
     )
 
     return {
@@ -180,7 +180,7 @@ def autocreate_user(remote, token=None, response=None, account_info=None):
 
     user_identity = UserIdentity.query.filter_by(id=id, method=method).one_or_none()
     if not user_identity:
-        user = User.query.filter(User.email==email.lower()).one_or_none()
+        user = User.query.filter(User.email == email.lower()).one_or_none()
         if not user:
             user = User(email=email, active=True, user_profile=user_profile)
 

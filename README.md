@@ -22,6 +22,16 @@ When registering the application ensure that the *Redirect URI* points to:
 ```url
 https://<my_invenio_site>:5000/oauth/authorized/e-infra/
 ```
+
+![General parameters](docs/settings1.png)
+
+
+![OIDC parameters](docs/settings2.png)
+
+
+![Perun-specific parameters](docs/settings3.png)
+
+
 2. Grab the *Client ID* and *Client Secret* after registering the application
    and add them to your ENVIRONMENT variables:
 ```python

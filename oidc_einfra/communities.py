@@ -53,6 +53,7 @@ def get_mapped_communities(perun_groups):
             ret[community["id"]] = aai_mapping
     return ret
 
+
 def remove_user_community_membership(community_id, user):
     data = {"members": [{"type": "user", "id": str(user.id)}]}
     current_communities.service.members.delete(system_identity, community_id, data)
