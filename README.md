@@ -14,14 +14,14 @@ dependencies = [
     "oidc-einfra>=1.0.0",
     # ...
 ]
+```
 
 ## Configuration
 
-1. Register a new application with e-infra OIDC Provider at https://spadmin.e-infra.cz/.
-When registering the application ensure that the *Redirect URI* points to:
-```url
-https://<my_invenio_site>:5000/oauth/authorized/e-infra/
-```
+1. Register a new application with e-infra OIDC Provider at
+   https://spadmin.e-infra.cz/. When registering the application
+   ensure that the *Redirect URI* points to `https://<my_invenio_site>:5000/oauth/authorized/e-infra/`
+
 
 ![General parameters](docs/settings1.png)
 
