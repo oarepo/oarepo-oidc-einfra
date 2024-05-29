@@ -10,7 +10,7 @@ from invenio_oauthclient.ext import InvenioOAuthClient
 from invenio_search.engine import dsl
 
 from oidc_einfra.communities import account_info_link_perun_groups, \
-    get_mapped_communities
+    get_user_aai_communities
 
 # userinfo url 'https://login.cesnet.cz/oidc/'
 
@@ -170,7 +170,7 @@ def test_aai_mapping_group_facet(
     db, community_with_aai_mapping_cf, community2_with_aai_mapping_cf, search_clear
 ):
     # todo doesn't seem to work correctly for now, returns communities without queried roles too
-    mapped_communities = get_mapped_communities(
+    mapped_communities = get_user_aai_communities(
         {
             "alt_test_community:curator",
         }

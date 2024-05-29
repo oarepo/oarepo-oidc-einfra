@@ -14,9 +14,11 @@ from invenio_db import db
 from invenio_oauthclient import current_oauthclient
 from invenio_oauthclient.contrib.settings import OAuthSettingsHelper
 from invenio_oauthclient.signals import account_info_received
+from psycopg2 import IntegrityError
 
-from oidc_einfra.communities import account_info_link_perun_groups, \
-    link_perun_groups
+from oidc_einfra.communities import account_info_link_perun_groups
+
+from invenio_accounts.errors import AlreadyLinkedError
 
 
 class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
@@ -32,7 +34,10 @@ class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
             "https://login.e-infra.cz/oidc/",
             "EINFRA",
             request_token_params={
-                "scope": "openid profile email eduperson_entitlement isCesnetEligibleLastSeen"
+                "scope": ' '.join([
+                    "openid", "profile", "email", "eduperson_entitlement", "isCesnetEligibleLastSeen",
+                    "organization", "offline_access", "perun_api", "voperson_external_id", "voperson_external_affiliation",
+                    "krb_ticket"])
             },
             access_token_url=access_token_url,
             authorize_url=authorize_url,
@@ -163,7 +168,7 @@ def account_setup(remote, token, resp):
         # Create user <-> external id link.
         UserIdentity.create(user, "perun", decoded_token["sub"])
 
-    link_perun_groups(remote, user)
+    # TODO: call link perun groups in here or is account_info_link_perun_groups enough?
 
 
 # During overlay initialization.
@@ -207,7 +212,7 @@ def autocreate_user(remote, token=None, response=None, account_info=None):
             raise AlreadyLinkedError(
                 # dict used for backward compatibility (came from oauthclient)
                 user,
-                {"id": external_id, "method": method},
+                {"id": account_info["external_id"], "method": method},
             )
 
     else:
