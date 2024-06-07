@@ -1,7 +1,7 @@
 import copy
 import functools
-from functools import cached_property, partial
-from typing import Any, TYPE_CHECKING, Dict, Union, List, Callable
+from functools import cached_property
+from typing import Any, Callable, List, Union
 
 
 class AAIObjectCache:
@@ -39,16 +39,18 @@ class AAIObjectCache:
         self.uuid_cache = {}
         self.id_cache = {}
 
+
 def aai_cached_get(f):
     @functools.wraps(f)
     def wrapper(self, id=None, uuid=None, **kwargs):
-        cache = self._get('_cache')
+        cache = self._get("_cache")
         if id or uuid:
             try:
                 return cache.get(id=id, uuid=uuid)
             except KeyError:
                 pass
         return f(self, id=id, uuid=uuid, **kwargs)
+
     return wrapper
 
 
@@ -64,11 +66,18 @@ class AAIBase:
             return self.parent._get(attr)
         raise AttributeError(f"Attribute {attr} not found on {self} or parents")
 
-    def _req(self, manager: str, method: str, http_method: str="GET",
-             extra_kwargs=None, result_class=None, result_kwargs=None,
-             result_transformer=None):
+    def _req(
+        self,
+        manager: str,
+        method: str,
+        http_method: str = "GET",
+        extra_kwargs=None,
+        result_class=None,
+        result_kwargs=None,
+        result_transformer=None,
+    ):
         connection = self._get("_connection")
-        if http_method == 'get':
+        if http_method == "get":
             call = connection.get
         else:
             call = connection.post
@@ -88,14 +97,20 @@ class AAIBase:
         if not result_class:
             return None
         ret = result_class(parent=self, metadata=metadata, **(result_kwargs or {}))
-        return self._get('_cache').get_or_put(ret)
+        return self._get("_cache").get_or_put(ret)
 
 
 class AAIObject(AAIBase):
     """Representation of AAI object, having both internal id and global uuid"""
-    def __init__(self, parent: "AAIBase",
-                 metadata: Any, id_param="id", uuid_param="uuid",
-                 connection=None):
+
+    def __init__(
+        self,
+        parent: "AAIBase",
+        metadata: Any,
+        id_param="id",
+        uuid_param="uuid",
+        connection=None,
+    ):
         """
         Constructor of AAI object
 
@@ -117,8 +132,8 @@ class AAIObject(AAIBase):
             self.connection = connection
 
     def __str__(self):
-        ret = f'{self.__class__.__name__} id={self.id} uuid={self.uuid}'
-        if 'name' in self.metadata:
+        ret = f"{self.__class__.__name__} id={self.id} uuid={self.uuid}"
+        if "name" in self.metadata:
             ret += f' name={self.metadata["name"]}'
         return ret
 
@@ -127,9 +142,7 @@ class AAIObject(AAIBase):
 
 
 class AAIContainer(AAIBase):
-    def __init__(self,
-                 parent: AAIBase,
-                 items: List | Callable):
+    def __init__(self, parent: AAIBase, items: List | Callable):
         super().__init__(parent)
         self._items = items
 
@@ -137,9 +150,7 @@ class AAIContainer(AAIBase):
     def _cached_items(self):
         if isinstance(self._items, dict):
             return self._items
-        return {
-            x.uuid: x for x in self._items()
-        }
+        return {x.uuid: x for x in self._items()}
 
     def values(self):
         return self._cached_items.values()

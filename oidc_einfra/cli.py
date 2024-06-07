@@ -1,7 +1,7 @@
 import click
-from oarepo_runtime.cli import oarepo
 from flask.cli import with_appcontext
 from invenio_accounts.models import User
+from oarepo_runtime.cli import oarepo
 
 from oidc_einfra.proxies import current_einfra_oidc
 from oidc_einfra.utils import get_authenticated_identity
@@ -10,11 +10,10 @@ from oidc_einfra.utils import get_authenticated_identity
 @oarepo.group()
 def perun():
     """OIDC eInfra commands."""
-    pass
 
 
-@perun.command(name='groups')
-@click.argument('user')
+@perun.command(name="groups")
+@click.argument("user")
 @with_appcontext
 def list_groups(user):
     """List groups."""
@@ -24,15 +23,18 @@ def list_groups(user):
     for vo in aai_api.list_vos():
         print(vo)
         for grp in vo.list_groups():
-            print(f'  {grp}')
+            print(f"  {grp}")
+
 
 @perun.group("communities")
 def communities():
     pass
 
+
 @communities.command("list")
 def list_communities():
     pass
+
 
 @communities.command("create")
 @click.argument("community_id")
@@ -69,4 +71,3 @@ def create_community(user):
     identity = get_authenticated_identity(user.id)
     communities_aai_api = current_einfra_oidc.communities_aai_api(identity)
     communities_aai_api.synchronize_communities()
-

@@ -1,11 +1,19 @@
 from .api import PerunAPI
 from .conn import PerunConnection
-from .objects.base import AAIObject, AAIContainer
-from .objects.vo import AAIVO
-from .objects.user import AAIUser
+from .objects.base import AAIContainer, AAIObject
 from .objects.group import AAIGroup
+from .objects.user import AAIUser
+from .objects.vo import AAIVO
 
-__all__ = ['PerunAPI', 'PerunConnection', 'AAIObject', 'AAIContainer', 'AAIVO', 'AAIUser', 'AAIGroup']
+__all__ = [
+    "PerunAPI",
+    "PerunConnection",
+    "AAIObject",
+    "AAIContainer",
+    "AAIVO",
+    "AAIUser",
+    "AAIGroup",
+]
 
 
 #

@@ -7,22 +7,17 @@
 
 """Create oidc-einfra branch."""
 
-from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
-revision = 'cae29cd0782e'
+revision = "cae29cd0782e"
 down_revision = None
-branch_labels = ('oidc_einfra',)
-depends_on = '72b37bb4119c'
+branch_labels = ("oidc_einfra",)
+depends_on = "72b37bb4119c"
 
 
 def upgrade():
     """Upgrade database."""
-    pass
 
 
 def downgrade():
     """Downgrade database."""
-    pass

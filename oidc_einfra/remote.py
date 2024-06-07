@@ -9,6 +9,7 @@
 import datetime
 
 import jwt
+from invenio_accounts.errors import AlreadyLinkedError
 from invenio_accounts.models import User, UserIdentity
 from invenio_db import db
 from invenio_oauthclient import current_oauthclient
@@ -17,8 +18,6 @@ from invenio_oauthclient.signals import account_info_received
 from psycopg2 import IntegrityError
 
 from oidc_einfra.communities import account_info_link_perun_groups
-
-from invenio_accounts.errors import AlreadyLinkedError
 
 
 class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
@@ -34,10 +33,21 @@ class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
             "https://login.e-infra.cz/oidc/",
             "EINFRA",
             request_token_params={
-                "scope": ' '.join([
-                    "openid", "profile", "email", "eduperson_entitlement", "isCesnetEligibleLastSeen",
-                    "organization", "offline_access", "perun_api", "voperson_external_id", "voperson_external_affiliation",
-                    "krb_ticket"])
+                "scope": " ".join(
+                    [
+                        "openid",
+                        "profile",
+                        "email",
+                        "eduperson_entitlement",
+                        "isCesnetEligibleLastSeen",
+                        "organization",
+                        "offline_access",
+                        "perun_api",
+                        "voperson_external_id",
+                        "voperson_external_affiliation",
+                        "krb_ticket",
+                    ]
+                )
             },
             access_token_url=access_token_url,
             authorize_url=authorize_url,

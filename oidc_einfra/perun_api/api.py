@@ -1,8 +1,8 @@
 from functools import cached_property
 
 from .objects.base import AAIBase, AAIObjectCache
-from .objects.user import AAIUserContainer, AAIUser
-from .objects.vo import AAIVOList, AAIVO
+from .objects.user import AAIUser, AAIUserContainer
+from .objects.vo import AAIVO, AAIVOList
 
 
 class PerunAPI(AAIBase):
@@ -13,15 +13,18 @@ class PerunAPI(AAIBase):
 
     @cached_property
     def vos(self):
-        return AAIVOList(self,
-                         lambda: self._req(manager="vosManager",
-                                        method="getVos",
-                                        result_class=AAIVO))
+        return AAIVOList(
+            self,
+            lambda: self._req(
+                manager="vosManager", method="getVos", result_class=AAIVO
+            ),
+        )
 
     @cached_property
     def users(self):
-        return AAIUserContainer(self,
-                                lambda: self._req(manager="usersManager",
-                                             method="getUsers",
-                                             result_class=AAIUser
-                                             ))
+        return AAIUserContainer(
+            self,
+            lambda: self._req(
+                manager="usersManager", method="getUsers", result_class=AAIUser
+            ),
+        )

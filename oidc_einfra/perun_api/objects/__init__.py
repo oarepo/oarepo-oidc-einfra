@@ -1,6 +1,3 @@
-from .base import AAIObject, AAIContainer
+from .base import AAIContainer, AAIObject
 
-__all__ = [
-    'AAIObject',
-    'AAIContainer'
-]
+__all__ = ["AAIObject", "AAIContainer"]

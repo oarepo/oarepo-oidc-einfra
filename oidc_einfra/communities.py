@@ -1,15 +1,14 @@
-from marshmallow import ValidationError
 from collections import namedtuple
 from typing import Set
 
+from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
-from invenio_oauthclient.handlers.token import token_getter
-from invenio_oauthclient.oauth import oauth_get_user
-
-from flask import current_app
 from invenio_communities.members.records.models import MemberModel
 from invenio_db import db
+from invenio_oauthclient.handlers.token import token_getter
+from invenio_oauthclient.oauth import oauth_get_user
+from marshmallow import ValidationError
 from sqlalchemy import select
 
 from oidc_einfra.models import CommunityAAIMapping
@@ -38,7 +37,9 @@ def account_info_link_perun_groups(remote, *, account_info, **kwargs):
             remove_user_community_membership(community_id, role, user)
         except ValidationError as e:
             # This is a case when the user is the last member of a community - in this case he can not be removed
-            current_app.logger.error(f"Failed to remove user {user.id} from community {community_id}: {e}")
+            current_app.logger.error(
+                f"Failed to remove user {user.id} from community {community_id}: {e}"
+            )
 
 
 CommunityRole = namedtuple("CommunityRole", ["community_id", "role"])
@@ -46,17 +47,21 @@ CommunityRole = namedtuple("CommunityRole", ["community_id", "role"])
 
 def get_user_repository_communities(user) -> Set[CommunityRole]:
     ret = set()
-    for row in db.session.execute(select([MemberModel.community_id, MemberModel.role]).where(MemberModel.user_id == user.id)):
+    for row in db.session.execute(
+        select([MemberModel.community_id, MemberModel.role]).where(
+            MemberModel.user_id == user.id
+        )
+    ):
         ret.add(CommunityRole(row.community_id, row.role))
     return ret
 
 
 def get_user_aai_communities(einfra_id, access_token) -> Set[CommunityRole]:
     aai_groups = get_user_aai_groups(einfra_id, access_token)
-    mappings = CommunityAAIMapping.query.filter(CommunityAAIMapping.aai_group_uuid.in_(aai_groups)).all()
-    return {
-        CommunityRole(mapping.community_id, mapping.role) for mapping in mappings
-    }
+    mappings = CommunityAAIMapping.query.filter(
+        CommunityAAIMapping.aai_group_uuid.in_(aai_groups)
+    ).all()
+    return {CommunityRole(mapping.community_id, mapping.role) for mapping in mappings}
 
 
 def get_user_aai_groups(einfra_id, access_token):
