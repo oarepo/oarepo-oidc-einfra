@@ -110,6 +110,7 @@ class AAIObject(AAIBase):
         super().__init__(parent)
         self.parent = parent
         self.metadata = metadata
+        print("Metadata", metadata)
         self.id = metadata[id_param]
         self.uuid = metadata[uuid_param]
         if connection:

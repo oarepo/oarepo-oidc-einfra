@@ -62,3 +62,5 @@ target/
 .*.sw?
 .venv/
 .env
+
+.DS_Store

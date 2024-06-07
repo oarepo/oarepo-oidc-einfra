@@ -13,6 +13,7 @@ from invenio_db import db
 from sqlalchemy import select
 
 from oidc_einfra.models import CommunityAAIMapping
+from oidc_einfra.proxies import current_einfra_oidc
 
 
 def account_info_link_perun_groups(remote, *, account_info, **kwargs):
@@ -59,9 +60,9 @@ def get_user_aai_communities(einfra_id, access_token) -> Set[CommunityRole]:
 
 
 def get_user_aai_groups(einfra_id, access_token):
-    aai = AAIApi(current_app.config["EINFRA_API_URL"], access_token)
+    aai = current_einfra_oidc.aai_api(access_token=access_token)
     vo = aai.vos[current_app.config["EINFRA_REPOSITORY_VO"]]
-    einfra_user = aai.users.by_einfra_id(einfra_id)
+    einfra_user = aai.users.get(einfra_id=einfra_id)
     user_groups = vo.user_groups(einfra_user)
     return set(x.uuid for x in user_groups.values())
 

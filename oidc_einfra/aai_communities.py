@@ -245,7 +245,7 @@ class CommunityAAIComponent(ServiceComponent):
         communities_aai_api = current_einfra_oidc.communities_aai_api(identity)
         communities_aai_api.update_community_aai_groups(
             record.id, data['metadata']['title'],
-            data['metadata']['description'],
+            data['metadata'].get('description', ""),
             uow=self.uow)
 
     def update(self, identity, record=None, data=None, **kwargs):
@@ -253,7 +253,7 @@ class CommunityAAIComponent(ServiceComponent):
         communities_aai_api = current_einfra_oidc.communities_aai_api(identity)
         communities_aai_api.update_community_aai_groups(
             record.id, data['metadata']['title'],
-            data['metadata']['description'],
+            data['metadata'].get('description', ""),
             uow=self.uow)
 
     def delete(self, identity, record=None, **kwargs):

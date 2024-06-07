@@ -1,5 +1,5 @@
 from .aai_communities import AAICommunities, CommunityAAIComponent
-from .cli import perun as perun_cmd     # noqa
+from .cli import perun as perun_cmd  # noqa
 
 from invenio_oauthclient.models import RemoteToken
 
@@ -8,6 +8,9 @@ from .perun_api.conn import PerunConnection, PerunOIDCAuth
 from .utils import get_identity_user
 
 from invenio_records_resources.services.errors import PermissionDeniedError
+
+from invenio_communities.communities.services.components import DefaultCommunityComponents
+
 
 class EInfraOIDCApp:
     def __init__(self, app=None):
@@ -20,20 +23,22 @@ class EInfraOIDCApp:
         self.app.extensions['einfra-oidc'] = self
         self.init_config(app)
 
-    def aai_api(self, identity):
-        # get the user from identity
-        user = get_identity_user(identity)
-        remote_token = RemoteToken.get(
-            user_id=user.id,
-            client_id=self.app.config['EINFRA_CONSUMER_KEY'])
-        if not remote_token:
-            raise PermissionDeniedError()
-        if remote_token.is_expired:
-            remote_token.refresh_access_token()
+    def aai_api(self, identity=None, access_token=None):
+        if identity:
+            # get the user from identity
+            user = get_identity_user(identity)
+            remote_token = RemoteToken.get(
+                user_id=user.id,
+                client_id=self.app.config['EINFRA_CONSUMER_KEY'])
+            if not remote_token:
+                raise PermissionDeniedError()
+            if remote_token.is_expired:
+                remote_token.refresh_access_token()
+            access_token = remote_token.access_token
 
         connection = PerunConnection(
             self.app.config['EINFRA_API_URL'],
-            PerunOIDCAuth(remote_token.access_token))
+            PerunOIDCAuth(access_token))
 
         if not self.initial_api_cache:
             # pre-cache the API
@@ -44,7 +49,8 @@ class EInfraOIDCApp:
             self.initial_api_cache = api._cache
 
         api = PerunAPI(connection)
-        api._cache = self.initial_api_cache.clone()
+        # do not cache for now - there might be some issues related to this related to vos groups after community is created
+        # api._cache = self.initial_api_cache.clone()
         return api
 
     def communities_aai_api(self, identity):
@@ -62,5 +68,7 @@ class EInfraOIDCApp:
                 CommunityAAIComponent
             )
         elif not communities_components:
-            app.config["COMMUNITIES_SERVICE_COMPONENTS"] = [CommunityAAIComponent]
-
+            app.config["COMMUNITIES_SERVICE_COMPONENTS"] = [
+                CommunityAAIComponent,
+                *DefaultCommunityComponents
+            ]
