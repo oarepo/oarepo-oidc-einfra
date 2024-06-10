@@ -13,6 +13,7 @@ from sqlalchemy import select
 
 from oidc_einfra.models import CommunityAAIMapping
 from oidc_einfra.proxies import current_einfra_oidc
+from urnparse import URN8141
 
 
 def account_info_link_perun_groups(remote, *, account_info, **kwargs):
@@ -27,7 +28,7 @@ def account_info_link_perun_groups(remote, *, account_info, **kwargs):
         return
 
     user_community_roles = get_user_repository_communities(user)
-    aai_community_roles = get_user_aai_communities(external_id, token_getter(remote)[0])
+    aai_community_roles = get_user_aai_communities(remote)
 
     for community_id, role in aai_community_roles - user_community_roles:
         add_user_community_membership(community_id, role, user)
@@ -56,8 +57,19 @@ def get_user_repository_communities(user) -> Set[CommunityRole]:
     return ret
 
 
-def get_user_aai_communities(einfra_id, access_token) -> Set[CommunityRole]:
-    aai_groups = get_user_aai_groups(einfra_id, access_token)
+def get_user_aai_communities(remote) -> Set[CommunityRole]:
+    userinfo = remote.get(remote.base_url + "userinfo").data
+    extended_entitlements = userinfo.get("eduperson_entitlement_extended", [])
+    aai_groups = []
+    for entitlement in extended_entitlements:
+        urn = URN8141.from_string(entitlement)
+        if urn.namespace_id.value not in current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]:
+            continue
+        for group_parts in current_app.config["EINFRA_ENTITLEMENT_GROUP_PARTS"]:
+            if urn.specific_string.parts[:len(group_parts)] == group_parts and len(urn.specific_string.parts) > len(group_parts):
+                aai_groups.append(urn.specific_string.parts[len(group_parts)])
+        # specific_string.parts: ['cesnet.cz', 'group', '74319f37-4f11-4897-b9df-5458c956309b']
+
     mappings = CommunityAAIMapping.query.filter(
         CommunityAAIMapping.aai_group_uuid.in_(aai_groups)
     ).all()

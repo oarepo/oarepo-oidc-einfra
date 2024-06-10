@@ -39,6 +39,7 @@ class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
                         "profile",
                         "email",
                         "eduperson_entitlement",
+                        "eduperson_entitlement_extended",
                         "isCesnetEligibleLastSeen",
                         "organization",
                         "offline_access",
