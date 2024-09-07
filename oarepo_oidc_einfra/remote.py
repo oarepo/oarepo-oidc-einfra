@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2023 CESNET.
+# Copyright (C) 2024 CESNET z.s.p.o.
 #
-# CESNET-OpenID-Remote is free software; you can redistribute it and/or
+# oarepo-oidc-einfra  is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
+#
 
 import datetime
 
@@ -13,40 +14,74 @@ from invenio_accounts.models import User, UserIdentity
 from invenio_db import db
 from invenio_oauthclient import current_oauthclient
 from invenio_oauthclient.contrib.settings import OAuthSettingsHelper
+from invenio_oauthclient.handlers.token import token_getter
+from invenio_oauthclient.oauth import oauth_get_user
 from invenio_oauthclient.signals import account_info_received
 
-from oidc_einfra.communities import account_info_link_perun_groups, \
-    link_perun_groups
 
+class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
+    """E-Infra OIDC Remote Auth backend for NRP."""
 
-class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
-    """CESNET OIDC Remote Auth backend for OARepo."""
+    def __init__(
+        self,
+        *,
+        title="E-Infra AAI",
+        description="E-Infra authentication and authorization service.",
+        base_url="https://login.e-infra.cz/oidc/",
+        app_key="EINFRA",
+        icon=None,
+        access_token_url=None,
+        authorize_url=None,
+        access_token_method="POST",
+        request_token_params=None,
+        request_token_url=None,
+        precedence_mask=None,
+        signup_options=None,
+        logout_url=None,
+        **kwargs,
+    ):
 
-    def __init__(self):
-        access_token_url = "https://login.e-infra.cz/oidc/token"
-        authorize_url = "https://login.e-infra.cz/oidc/authorize"
+        request_token_params = request_token_params or {
+            "scope": " ".join(
+                [
+                    "openid",
+                    "profile",
+                    "email",
+                    "eduperson_entitlement",
+                    "isCesnetEligibleLastSeen",
+                    "organization",
+                ]
+            )
+        }
+
+        access_token_url = access_token_url or f"{base_url}token"
+        authorize_url = authorize_url or f"{base_url}authorize"
+        content_type = "application/json"
 
         super().__init__(
-            "E-Infra AAI",
-            "E-Infra authentication and authorization service.",
-            "https://login.e-infra.cz/oidc/",
-            "EINFRA",
-            request_token_params={
-                "scope": "openid profile email eduperson_entitlement isCesnetEligibleLastSeen"
-            },
+            title=title,
+            description=description,
+            base_url=base_url,
+            app_key=app_key,
+            icon=icon,
             access_token_url=access_token_url,
             authorize_url=authorize_url,
-            content_type="application/json",
-            precedence_mask=None,
-            signup_options=None,
+            access_token_method=access_token_method,
+            request_token_params=request_token_params,
+            request_token_url=request_token_url,
+            precedence_mask=precedence_mask,
+            signup_options=signup_options,
+            logout_url=logout_url,
+            content_type=content_type,
+            **kwargs,
         )
 
         self._handlers = dict(
             authorized_handler="invenio_oauthclient.handlers:authorized_signup_handler",
             signup_handler=dict(
-                info="oidc_einfra.remote:account_info",
-                info_serializer="oidc_einfra.remote:account_info_serializer",
-                setup="oidc_einfra.remote:account_setup",
+                info="oarepo_oidc_einfra.remote:account_info",
+                info_serializer="oarepo_oidc_einfra.remote:account_info_serializer",
+                setup="oarepo_oidc_einfra.remote:account_setup",
                 view="invenio_oauthclient.handlers:signup_handler",
             ),
         )
@@ -54,9 +89,9 @@ class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
         self._rest_handlers = dict(
             authorized_handler="invenio_oauthclient.handlers.rest:authorized_signup_handler",
             signup_handler=dict(
-                info="oidc_einfra.remote:account_info",
-                info_serializer="oidc_einfra.remote:account_info_serializer",
-                setup="oidc_einfra.remote:account_setup",
+                info="oarepo_oidc_einfra.remote:account_info",
+                info_serializer="oarepo_oidc_einfra.remote:account_info_serializer",
+                setup="oarepo_oidc_einfra.remote:account_setup",
                 view="invenio_oauthclient.handlers.rest:signup_handler",
             ),
             response_handler="invenio_oauthclient.handlers.rest:default_remote_response_handler",
@@ -74,7 +109,7 @@ class CesnetOAuthSettingsHelper(OAuthSettingsHelper):
         return self._rest_handlers
 
 
-_cesnet_app = CesnetOAuthSettingsHelper()
+_cesnet_app = EInfraOAuthSettingsHelper()
 
 """
 CESNET OpenID remote app.
@@ -96,7 +131,7 @@ def account_info_serializer(remote, resp):
         options={"verify_signature": True},
         key=remote.rsa_key,
         audience=remote.consumer_key,
-        algorithms=["RS256"]
+        algorithms=["RS256"],
     )
 
     return {
@@ -161,9 +196,13 @@ def account_setup(remote, token, resp):
         user = token.remote_account.user
 
         # Create user <-> external id link.
-        UserIdentity.create(user, "perun", decoded_token["sub"])
 
-    link_perun_groups(remote, user)
+        # If there is no user identity for this user and group, create it
+        ui = UserIdentity.query.filter_by(
+            user=user, method="e-infra", id=decoded_token["sub"]
+        ).one_or_none()
+        if not ui:
+            UserIdentity.create(user, "e-infra", decoded_token["sub"])
 
 
 # During overlay initialization.
@@ -171,7 +210,7 @@ def account_setup(remote, token, resp):
 def autocreate_user(remote, token=None, response=None, account_info=None):
     assert account_info is not None
 
-    email = account_info["user"]["email"]
+    email = account_info["user"]["email"].lower()
     id, method = account_info["external_id"], account_info["external_method"]
     user_profile = {
         "affiliations": "",
@@ -180,7 +219,7 @@ def autocreate_user(remote, token=None, response=None, account_info=None):
 
     user_identity = UserIdentity.query.filter_by(id=id, method=method).one_or_none()
     if not user_identity:
-        user = User.query.filter(User.email==email.lower()).one_or_none()
+        user = User.query.filter(User.email == email).one_or_none()
         if not user:
             user = User(email=email, active=True, user_profile=user_profile)
 
@@ -198,17 +237,9 @@ def autocreate_user(remote, token=None, response=None, account_info=None):
                 db.session.add(user)
                 db.session.commit()
 
-        try:
-            with db.session.begin_nested():
-                user_identity = UserIdentity(id=id, method=method, id_user=user.id)
-                db.session.add(user_identity)
-                db.session.commit()
-        except IntegrityError:
-            raise AlreadyLinkedError(
-                # dict used for backward compatibility (came from oauthclient)
-                user,
-                {"id": external_id, "method": method},
-            )
+        with db.session.begin_nested():
+            UserIdentity.create(user=user, method=method, external_id=id)
+            db.session.commit()
 
     else:
         assert user_identity.user is not None
@@ -219,6 +250,26 @@ def autocreate_user(remote, token=None, response=None, account_info=None):
         with db.session.begin_nested():
             db.session.add(user_identity.user)
             db.session.commit()
+
+
+def account_info_link_perun_groups(remote, *, account_info, **kwargs):
+    # make the import local to avoud circular imports
+    from oarepo_oidc_einfra.communities import CommunitySupport
+    from oarepo_oidc_einfra.perun import get_communities_from_userinfo_token
+
+    user = oauth_get_user(
+        remote.consumer_key,
+        account_info=account_info,
+        access_token=token_getter(remote)[0],
+    )
+
+    if user is None:
+        return
+
+    userinfo_token = remote.get(remote.base_url + "userinfo").data
+    aai_community_roles = get_communities_from_userinfo_token(userinfo_token)
+
+    CommunitySupport.set_user_community_membership(user, aai_community_roles)
 
 
 account_info_received.connect(account_info_link_perun_groups)

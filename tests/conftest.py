@@ -1,238 +1,224 @@
-import copy
+#
+# Copyright (C) 2024 CESNET z.s.p.o.
+#
+# oarepo-oidc-einfra  is free software; you can redistribute it and/or
+# modify it under the terms of the MIT License; see LICENSE file for more
+# details.
+#
+import contextlib
+import json
+import logging
 import os
-from unittest.mock import Mock
+import shutil
+import sys
+from pathlib import Path
 
 import pytest
-from invenio_access.permissions import system_identity
-from invenio_app.factory import create_api
-from invenio_communities.cli import create_communities_custom_field
-from invenio_communities.communities.records.api import Community
-from invenio_communities.proxies import current_communities
-from oarepo_communities.cf.aai import AAIMappingCF
+import yaml
 
-from oidc_einfra import remote
+from oarepo_oidc_einfra.perun import PerunLowLevelAPI
+
+logging.basicConfig(level=logging.INFO)
+opensearch_logger = logging.getLogger("opensearch")
+opensearch_logger.setLevel(logging.ERROR)
 
 
 @pytest.fixture(scope="module")
 def create_app(instance_path, entry_points):
     """Application factory fixture."""
+    from invenio_app.factory import create_app
 
-    return create_api
-
-
-@pytest.fixture(scope="module")
-def community_service(app):
-    """Community service."""
-    return current_communities.service
-
-
-@pytest.fixture(scope="module")
-def member_service(community_service):
-    """Members subservice."""
-    return community_service.members
+    return create_app
 
 
 @pytest.fixture(scope="module")
 def app_config(app_config):
-    # Custom fields
-    app_config["JSONSCHEMAS_HOST"] = "localhost"
-    app_config[
-        "RECORDS_REFRESOLVER_CLS"
-    ] = "invenio_records.resolver.InvenioRefResolver"
-    app_config[
-        "RECORDS_REFRESOLVER_STORE"
-    ] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config["CELERY_TASK_ALWAYS_EAGER"] = True
+    app_config["CELERY_TASK_EAGER_PROPAGATES"] = True
 
-    app_config["COMMUNITIES_CUSTOM_FIELDS"] = [
-        AAIMappingCF("aai_mapping"),
+    # do not automatically run community synchronization in tests
+    app_config["EINFRA_COMMUNITY_SYNCHRONIZATION"] = False
+    app_config["EINFRA_API_URL"] = "https://perun-api.e-infra.cz"
+    app_config["COMMUNITIES_ROLES"] = [
+        dict(
+            name="curator",
+            title="Curator",
+            description="Can curate records.",
+            can_manage=True,
+            is_owner=True,
+            can_manage_roles=["member"],
+        ),
+        dict(
+            name="member",
+            title="Member",
+            description="Community member with read permissions.",
+        ),
     ]
+
+    password_path = Path(__file__).parent.parent / ".perun_passwd"
+    if password_path.exists():
+        app_config["EINFRA_SERVICE_PASSWORD"] = password_path.read_text().strip()
+    else:
+        app_config["EINFRA_SERVICE_PASSWORD"] = "dummy"
+
+    app_config["EINFRA_SERVICE_ID"] = 144994
+    app_config["EINFRA_SERVICE_USERNAME"] = "nrp-fa-devrepo"
+    app_config["EINFRA_COMMUNITIES_GROUP_ID"] = 15393
+    app_config["EINFRA_REPOSITORY_VO_ID"] = 4003
+    app_config["EINFRA_REPOSITORY_FACILITY_ID"] = 4662
+    app_config["EINFRA_CAPABILITIES_ATTRIBUTE_ID"] = 3585
+    app_config["EINFRA_SYNC_SERVICE_ID"] = 1023
+    app_config["EINFRA_RSA_KEY"] = (
+        b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3\nPHloIk/Ljs2vZl/RAaitkXDx6aqpl1kGpS44eYJOaer4oWc6/QNaMtynvlSlnkuW\nrG765adNKT9sgAWSrPb81xkojsQabrSNv4nIOWUQi0Tjh0WxXQmbV+bMxkVaElhd\nHNFzUfHv+XqI8Hkc82mIGtyeMQn+VAuZbYkVXnjyCwwa9RmPOSH+O4N4epDXKk1V\nK9dUxf/rEYbjMNZGDva30do0mrBkU8W3O1mDVJSSgHn4ejKdGNYMm0JKPAgCWyPW\nJDoL092ctPCFlUMBBZ/OP3omvgnw0GaWZXxqSqaSvxFJkqCHqLMwpxmWTTAgEvAb\nnwIDAQAB\n-----END PUBLIC KEY-----\n"
+    )
+    app_config["EINFRA_DUMP_DATA_URL"] = "/tmp"
+
+    from oarepo_oidc_einfra import EINFRA_LOGIN_APP
+
+    app_config["OAUTHCLIENT_REMOTE_APPS"] = {"e-infra": EINFRA_LOGIN_APP}
+
+    app_config["JSONSCHEMAS_HOST"] = "localhost"
+    app_config["RECORDS_REFRESOLVER_CLS"] = (
+        "invenio_records.resolver.InvenioRefResolver"
+    )
+    app_config["RECORDS_REFRESOLVER_STORE"] = (
+        "invenio_jsonschemas.proxies.current_refresolver_store"
+    )
+    app_config["RATELIMIT_AUTHENTICATED_USER"] = "200 per second"
     app_config["SEARCH_HOSTS"] = [
         {
             "host": os.environ.get("OPENSEARCH_HOST", "localhost"),
             "port": os.environ.get("OPENSEARCH_PORT", "9200"),
         }
     ]
-
+    # disable redis cache
     app_config["CACHE_TYPE"] = "SimpleCache"  # Flask-Caching related configs
     app_config["CACHE_DEFAULT_TIMEOUT"] = 300
+    app_config["FILES_REST_STORAGE_CLASS_LIST"] = {
+        "L": "Local",
+        "F": "Fetch",
+        "R": "Remote",
+    }
+    app_config["FILES_REST_DEFAULT_STORAGE_CLASS"] = "L"
 
-    app_config["OAUTHCLIENT_REMOTE_APPS"] = {"eduid": remote.REMOTE_APP}
-    app_config["PERUN_APP_CREDENTIALS_CONSUMER_KEY"] = "lalala"
+    app_config["APP_THEME"] = ["oarepo", "semantic-ui"]
+
+    app_config["SERVER_NAME"] = "127.0.0.1:5000"
+
+    app_config["EINFRA_CONSUMER_KEY"] = os.environ.get("INVENIO_EINFRA_CONSUMER_KEY")
+    app_config["EINFRA_CONSUMER_SECRET"] = os.environ.get(
+        "INVENIO_EINFRA_CONSUMER_SECRET"
+    )
+
     return app_config
 
 
-@pytest.fixture(scope="function")
-def minimal_community():
-    """Minimal community metadata."""
-    return {
-        "access": {
-            "visibility": "public",
-            "record_policy": "open",
-        },
-        "slug": "public",
-        "metadata": {
-            "title": "My Community",
-        },
-    }
+@pytest.fixture(scope="module", autouse=True)
+def location(location):
+    return location
 
 
-@pytest.fixture(scope="function")
-def minimal_community2(minimal_community):
-    edited = copy.deepcopy(minimal_community)
-    edited["slug"] = "comm2"
-    return edited
+@pytest.fixture()
+def perun_api_url(app):
+    return app.config["EINFRA_API_URL"]
 
 
-@pytest.fixture(scope="module")
-def users(UserFixture, app, database):
-    """Users."""
-    users = {}
-    for r in ["owner", "manager", "curator", "reader"]:
-        u = UserFixture(
-            email=f"{r}@{r}.org",
-            password=r,
-            username=r,
-            user_profile={
-                "full_name": f"{r} {r}",
-                "affiliations": "CERN",
-            },
-            preferences={
-                "visibility": "public",
-                "email_visibility": "restricted",
-            },
-            active=True,
-            confirmed=True,
-        )
-        u.create(app, database)
-        users[r] = u
-    # when using `database` fixture (and not `db`), commit the creation of the
-    # user because its implementation uses a nested session instead
-    database.session.commit()
-    return users
+@pytest.fixture()
+def perun_service_id(app):
+    return app.config["EINFRA_SERVICE_ID"]
 
 
-@pytest.fixture(scope="module")
-def community_factory(community_service):
-    def _community(identity, community_dict):
-        c = community_service.create(identity, community_dict)
-        Community.index.refresh()
-        return c
-
-    return _community
+@pytest.fixture()
+def perun_service_username(app):
+    return app.config["EINFRA_SERVICE_USERNAME"]
 
 
-@pytest.fixture(scope="function")
-def community(community_factory, users, community_service, minimal_community, location):
-    return community_factory(users["owner"].identity, minimal_community)
+@pytest.fixture()
+def perun_service_password(app):
+    return app.config["EINFRA_SERVICE_PASSWORD"]
 
 
-@pytest.fixture(scope="function")
-def community2(
-    community_factory, users, community_service, minimal_community2, location
+@pytest.fixture()
+def perun_sync_service_id(app):
+    return app.config["EINFRA_SYNC_SERVICE_ID"]
+
+
+@pytest.fixture()
+def test_vo_id(app):
+    return app.config["EINFRA_REPOSITORY_VO_ID"]
+
+
+@pytest.fixture()
+def test_facility_id(app):
+    return app.config["EINFRA_REPOSITORY_FACILITY_ID"]
+
+
+@pytest.fixture()
+def test_capabilities_attribute_id(app):
+    return app.config["EINFRA_CAPABILITIES_ATTRIBUTE_ID"]
+
+
+@pytest.fixture()
+def test_repo_communities_id(app):
+    return app.config["EINFRA_COMMUNITIES_GROUP_ID"]
+
+
+@pytest.fixture()
+def low_level_perun_api(
+    perun_api_url, perun_service_id, perun_service_username, perun_service_password
 ):
-    """A community."""
-    return community_factory(users["owner"].identity, minimal_community2)
+    return PerunLowLevelAPI(
+        base_url=perun_api_url,
+        service_id=perun_service_id,
+        service_username=perun_service_username,
+        service_password=perun_service_password,
+    )
+
+
+@pytest.fixture()
+def smart_record(perun_api_url, low_level_perun_api):
+    import responses
+    from responses._recorder import Recorder
+
+    @contextlib.contextmanager
+    def smart_record(fname):
+        file_path = Path(__file__).parent / "request_data" / fname
+        if not file_path.exists():
+            with Recorder() as recorder:
+                yield False
+                recorder.dump_to_file(
+                    file_path=file_path, registered=recorder.get_registry().registered
+                )
+        else:
+            print("Using recorded data")
+            low_level_perun_api._auth = (
+                None  # reset the auth just to make sure we use the recorded data
+            )
+            with responses.RequestsMock() as rsps:
+                rsps._add_from_file(file_path=file_path)
+                yield True
+
+    return smart_record
 
 
 @pytest.fixture(scope="function")
-def init_cf(base_app):
-    result = base_app.test_cli_runner().invoke(
-        create_communities_custom_field, ["-f", "aai_mapping"]
+def test_group_id():
+    with (
+        Path(__file__).parent / "request_data" / "test_create_group.yaml"
+    ).open() as f:
+        data = yaml.safe_load(f)
+        payload = json.loads(data["responses"][1]["response"]["body"])
+        return payload["id"]
+
+
+@pytest.fixture()
+def test_ui_pages(app):
+    python_path = Path(sys.executable)
+    invenio_instance_path = python_path.parent.parent / "var" / "instance"
+    manifest_path = invenio_instance_path / "static" / "dist"
+    manifest_path.mkdir(parents=True, exist_ok=True)
+    shutil.copy(
+        Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
     )
-    assert result.exit_code == 0
-    Community.index.refresh()
 
-
-@pytest.fixture(scope="module")
-def aai_mapping_example_dict():
-    return [{"role": "curator", "aai_group": "test_community:curator"}]
-
-
-@pytest.fixture(scope="function")
-def community_with_aai_mapping_cf(
-    users,
-    community_service,
-    community,
-    minimal_community,
-    aai_mapping_example_dict,
-    init_cf,
-):
-    minimal_community["custom_fields"]["aai_mapping"] = aai_mapping_example_dict
-    community = community_service.update(
-        system_identity, community["id"], minimal_community
-    )
-    Community.index.refresh()
-    return community
-
-
-@pytest.fixture(scope="function")
-def community2_with_aai_mapping_cf(
-    users,
-    community_service,
-    community2,
-    minimal_community2,
-    aai_mapping_example_dict,
-    init_cf,
-):
-    edited = copy.deepcopy(aai_mapping_example_dict)
-    edited.append({"role": "curator", "aai_group": "alt_test_community:curator"})
-    minimal_community2["custom_fields"]["aai_mapping"] = edited
-    community = community_service.update(
-        system_identity, community2["id"], minimal_community2
-    )
-    Community.index.refresh()
-    return community
-
-
-@pytest.fixture
-def return_userinfo_curator():
-    def _return_userinfo(val):
-        if val == "https://login.cesnet.cz/oidc/userinfo":
-            usrinfo_obj = Mock()
-            usrinfo_obj.data = {"eduperson_entitlement": ["test_community:curator"]}
-            return usrinfo_obj
-
-    return _return_userinfo
-
-
-@pytest.fixture
-def return_userinfo_two_communities():
-    def _return_userinfo(val):
-        if val == "https://login.cesnet.cz/oidc/userinfo":
-            usrinfo_obj = Mock()
-            usrinfo_obj.data = {
-                "eduperson_entitlement": [
-                    "test_community:curator",
-                    "alt_test_community:curator",
-                ]
-            }
-            return usrinfo_obj
-
-    return _return_userinfo
-
-
-@pytest.fixture
-def return_userinfo_both():
-    def _return_userinfo(val):
-        if val == "https://login.cesnet.cz/oidc/userinfo":
-            usrinfo_obj = Mock()
-            usrinfo_obj.data = {
-                "eduperson_entitlement": [
-                    "test_community:curator",
-                    "test_community:reader",
-                ]
-            }
-            return usrinfo_obj
-
-    return _return_userinfo
-
-
-@pytest.fixture
-def return_userinfo_noone():
-    def _return_userinfo(val):
-        if val == "https://login.cesnet.cz/oidc/userinfo":
-            usrinfo_obj = Mock()
-            usrinfo_obj.data = {"eduperson_entitlement": []}
-            return usrinfo_obj
-
-    return _return_userinfo
+    app.jinja_loader.searchpath.append(str(Path(__file__).parent / "templates"))

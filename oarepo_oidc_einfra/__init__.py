@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CESNET z.s.p.o.
 #
@@ -5,3 +6,9 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+
+"""E-INFRA OIDC Auth backend for OARepo"""
+
+from .remote import EINFRA_LOGIN_APP
+
+__all__ = ("EINFRA_LOGIN_APP",)

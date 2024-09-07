@@ -1,0 +1,96 @@
+responses:
+- response:
+    auto_calculate_content_length: false
+    body: '{"id":14408,"createdAt":"2024-09-05 12:08:18.589969","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
+      12:08:18.589969","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"facilityId":4662,"voId":4003,"name":"Community:AAA","description":"Resource
+      for community AAA","uuid":"4c09431a-bb4d-4b9d-9abc-224166165d42","beanName":"Resource"}'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
+- response:
+    auto_calculate_content_length: false
+    body: '[{"id":15883,"createdAt":"2024-09-05 08:38:34.31645","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
+      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
+      AAA","uuid":"9e43aeab-1d1d-4aaa-bb36-6aa452269c3b","shortName":"AAA","beanName":"Group"}]'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
+- response:
+    auto_calculate_content_length: false
+    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"445753@muni.cz","modifiedAt":"2019-11-04
+      09:18:27.260377","modifiedBy":"445753@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
+      according to AARC specification. i.e. specification of resource and optional
+      actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":["res:communities:AAA"],"valueCreatedAt":"2024-09-05
+      12:08:19.143935","valueCreatedBy":"nrp-fa-devrepo@META","valueModifiedAt":"2024-09-05
+      12:08:19.143935","valueModifiedBy":"nrp-fa-devrepo@META","entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
+- response:
+    auto_calculate_content_length: false
+    body: '[{"id":1023,"createdAt":"2024-07-24 14:13:56.174237","createdBy":"df6fe45d8bb8eabb942792eacc62f57df2e2a5e1@einfra.cesnet.cz","modifiedAt":"2024-07-24
+      14:13:56.174237","modifiedBy":"df6fe45d8bb8eabb942792eacc62f57df2e2a5e1@einfra.cesnet.cz","createdByUid":59835,"modifiedByUid":59835,"name":"nrp_invenio_export","description":"Propagation
+      of data required for NRP Invenio hosted by CESNET","delay":10,"recurrence":2,"enabled":true,"script":"./generic_json_gen","useExpiredMembers":true,"beanName":"Service"}]'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedServices
