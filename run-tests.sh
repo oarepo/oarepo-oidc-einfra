@@ -17,7 +17,6 @@ source $VENV/bin/activate
 
 pip install -U setuptools pip wheel
 pip install "oarepo[tests]==${OAREPO_VERSION}.*"
-pip install -e .
-pip install pytest-invenio
+pip install -e '.[tests]'
 
 pytest tests
