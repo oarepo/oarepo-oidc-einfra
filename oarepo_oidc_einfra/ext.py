@@ -10,9 +10,11 @@
 from flask import current_app
 from invenio_communities.communities.services.components import \
     DefaultCommunityComponents
+from invenio_communities.members.services.components import DefaultCommunityMemberComponents
 
 from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 from oarepo_oidc_einfra.services.components.aai_communities import CommunityAAIComponent
+from oarepo_oidc_einfra.services.components.aai_invitations import AAIInvitationComponent
 
 
 class EInfraOIDCApp:
@@ -39,10 +41,10 @@ class EInfraOIDCApp:
                 app.config.setdefault(k, getattr(config, k))
 
     def register_sync_component_to_community_service(self, app):
-        """Registers a component to the community service.
-
-        This component is responsible for synchronizing the community to the E-INFRA Perun.
+        """Registers components to the community service.
         """
+
+        # Community -> AAI synchronization service component
         communities_components = app.config.get("COMMUNITIES_SERVICE_COMPONENTS", None)
         if isinstance(communities_components, list):
             communities_components.append(CommunityAAIComponent)
@@ -50,6 +52,16 @@ class EInfraOIDCApp:
             app.config["COMMUNITIES_SERVICE_COMPONENTS"] = [
                 CommunityAAIComponent,
                 *DefaultCommunityComponents,
+            ]
+
+        # Invitation service component
+        communities_members_components = app.config.get("COMMUNITIES_MEMBERS_SERVICE_COMPONENTS", None)
+        if isinstance(communities_members_components, list):
+            communities_members_components.append(AAIInvitationComponent)
+        elif not communities_members_components:
+            app.config["COMMUNITIES_MEMBERS_SERVICE_COMPONENTS"] = [
+                AAIInvitationComponent,
+                *DefaultCommunityMemberComponents
             ]
 
     def perun_api(self):

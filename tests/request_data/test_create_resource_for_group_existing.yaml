@@ -47,8 +47,8 @@ responses:
     url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"445753@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"445753@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
+    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
+      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
       according to AARC specification. i.e. specification of resource and optional
       actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":["res:communities:AAA"],"valueCreatedAt":"2024-09-05
       12:08:19.143935","valueCreatedBy":"nrp-fa-devrepo@META","valueModifiedAt":"2024-09-05
@@ -73,8 +73,8 @@ responses:
     url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
 - response:
     auto_calculate_content_length: false
-    body: '[{"id":1023,"createdAt":"2024-07-24 14:13:56.174237","createdBy":"df6fe45d8bb8eabb942792eacc62f57df2e2a5e1@einfra.cesnet.cz","modifiedAt":"2024-07-24
-      14:13:56.174237","modifiedBy":"df6fe45d8bb8eabb942792eacc62f57df2e2a5e1@einfra.cesnet.cz","createdByUid":59835,"modifiedByUid":59835,"name":"nrp_invenio_export","description":"Propagation
+    body: '[{"id":1023,"createdAt":"2024-07-24 14:13:56.174237","createdBy":"user2@einfra.cesnet.cz","modifiedAt":"2024-07-24
+      14:13:56.174237","modifiedBy":"user2@einfra.cesnet.cz","createdByUid":59835,"modifiedByUid":59835,"name":"nrp_invenio_export","description":"Propagation
       of data required for NRP Invenio hosted by CESNET","delay":10,"recurrence":2,"enabled":true,"script":"./generic_json_gen","useExpiredMembers":true,"beanName":"Service"}]'
     content_type: text/plain
     headers:

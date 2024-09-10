@@ -9,6 +9,10 @@
 EINFRA_COMMUNITY_SYNCHRONIZATION = True
 """Synchronize community to E-Infra Perun when community is created."""
 
+EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION = True
+"""Synchronize community membership invitation to E-Infra Perun
+    (create perun invitation) when user is invited in repository UI."""
+
 EINFRA_ENTITLEMENT_NAMESPACES = ["geant"]
 """URN prefix for capabilities that can represent community roles."""
 

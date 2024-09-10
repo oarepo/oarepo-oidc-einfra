@@ -68,7 +68,7 @@ def test_no_communities_user_linked(app, db, location, search_clear, smart_recor
         identity = UserIdentity.create(
             user=user,
             method="e-infra",
-            external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+            external_id="user1@einfra.cesnet.cz",
         )
         db.session.commit()
 
@@ -98,7 +98,7 @@ def test_with_communities(app, db, location, search_clear, smart_record):
         identity = UserIdentity.create(
             user=user,
             method="e-infra",
-            external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+            external_id="user1@einfra.cesnet.cz",
         )
         db.session.commit()
 
@@ -155,7 +155,7 @@ def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
         identity = UserIdentity.create(
             user=user,
             method="e-infra",
-            external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+            external_id="user1@einfra.cesnet.cz",
         )
         db.session.commit()
 
@@ -163,3 +163,4 @@ def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
 
         # check that the user still exists
         User.query.filter_by(username="asdasdasd").one()
+

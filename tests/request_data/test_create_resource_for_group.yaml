@@ -86,8 +86,8 @@ responses:
     url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"445753@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"445753@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
+    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
+      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
       according to AARC specification. i.e. specification of resource and optional
       actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":null,"valueCreatedAt":null,"valueCreatedBy":null,"valueModifiedAt":null,"valueModifiedBy":null,"entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
     content_type: text/plain

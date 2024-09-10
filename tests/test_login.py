@@ -43,7 +43,7 @@ def test_login(app, db, location, search_clear, client, test_ui_pages):
     identity = UserIdentity.create(
         user=user,
         method="e-infra",
-        external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+        external_id="user1@einfra.cesnet.cz",
     )
     db.session.commit()
 

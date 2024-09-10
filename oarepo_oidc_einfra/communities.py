@@ -19,6 +19,8 @@ from invenio_communities.proxies import current_communities
 from invenio_db import db
 from marshmallow import ValidationError
 from sqlalchemy import select
+from invenio_communities.members.errors import AlreadyMemberError
+
 
 CommunityRole = namedtuple("CommunityRole", ["community_id", "role"])
 """A named tuple representing a community and a role."""
@@ -99,7 +101,8 @@ class CommunitySupport:
         ret = set()
         for row in db.session.execute(
             select([MemberModel.community_id, MemberModel.role]).where(
-                MemberModel.user_id == user.id
+                MemberModel.user_id == user.id,
+                MemberModel.active == True
             )
         ):
             ret.add(CommunityRole(row.community_id, row.role))
@@ -122,9 +125,33 @@ class CommunitySupport:
             "role": community_role,
             "members": [{"type": "user", "id": str(user.id)}],
         }
-        return current_communities.service.members.add(
-            system_identity, community_id, data
-        )
+        try:
+            return current_communities.service.members.add(
+                system_identity, community_id, data
+            )
+        except AlreadyMemberError as e:
+            # We are here because
+            #
+            # * active memberships have not returned this (community, role) for user
+            # * but the new membership could not be created because there already is a one
+            #
+            # This means that there is an invitation request for this user in repository
+            # and the user has already accepted it inside AAI (as the community/role pair arrived from AAI).
+            #
+            # We need to get the associated invitation request and accept it here,
+            # thus the membership will become active.
+            results = current_communities.service.members.search_invitations(
+                system_identity, community_id, params={"user.id": str(user.id)}
+            )
+            hits = list(results.hits)
+            if len(hits) != 1:
+                raise AlreadyMemberError(
+                    f"User {user.id} is already an inactive member of community {community_id} but there is no or multiple invitations. "
+                    f"This should never happen. Invitations: {hits}"
+                )
+            current_communities.service.members.accept_invitation(
+                system_identity, hits[0]["request_id"]
+            )
 
     @classmethod
     def _remove_user_community_membership(cls, community_id, user) -> None:

@@ -4,19 +4,19 @@ responses:
     body: '[{"id":15883,"createdAt":"2024-09-05 08:38:34.31645","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
       08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
       AAA","uuid":"9e43aeab-1d1d-4aaa-bb36-6aa452269c3b","shortName":"AAA","beanName":"Group"},{"id":15516,"createdAt":"2024-06-05
-      09:58:30.7417","createdBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:30.7417","modifiedBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:ABC","description":"","uuid":"06ff5c42-20a4-4c44-9894-dadcfeec99a7","shortName":"ABC","beanName":"Group"},{"id":15518,"createdAt":"2024-06-05
-      09:58:31.153758","createdBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.153758","modifiedBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:curators","description":"Community
+      09:58:30.7417","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:30.7417","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:ABC","description":"","uuid":"06ff5c42-20a4-4c44-9894-dadcfeec99a7","shortName":"ABC","beanName":"Group"},{"id":15518,"createdAt":"2024-06-05
+      09:58:31.153758","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.153758","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:curators","description":"Community
       curators","uuid":"87b677b2-145a-414f-b139-842d521f24a4","shortName":"curators","beanName":"Group"},{"id":15517,"createdAt":"2024-06-05
-      09:58:31.04761","createdBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.04761","modifiedBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:members","description":"Community
+      09:58:31.04761","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.04761","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:members","description":"Community
       members","uuid":"f0a02638-cd54-4924-b1e9-b61f43753ca3","shortName":"members","beanName":"Group"},{"id":15520,"createdAt":"2024-06-05
-      09:58:31.377526","createdBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.377526","modifiedBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:publishers","description":"Community
+      09:58:31.377526","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.377526","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:publishers","description":"Community
       publishers (publishes the record)","uuid":"1a74190e-5634-4624-899e-04da844771f5","shortName":"publishers","beanName":"Group"},{"id":15519,"createdAt":"2024-06-05
-      09:58:31.264524","createdBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.264524","modifiedBy":"12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:reviewers","description":"Community
+      09:58:31.264524","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.264524","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:reviewers","description":"Community
       reviewers (mark records as reviewed)","uuid":"72cc98a0-7ab9-4197-a93d-4f56265b529b","shortName":"reviewers","beanName":"Group"}]'
     content_type: text/plain
     headers:
@@ -189,8 +189,8 @@ responses:
     url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"445753@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"445753@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
+    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
+      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
       according to AARC specification. i.e. specification of resource and optional
       actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":null,"valueCreatedAt":null,"valueCreatedBy":null,"valueModifiedAt":null,"valueModifiedBy":null,"entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
     content_type: text/plain
@@ -449,8 +449,8 @@ responses:
     url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"445753@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"445753@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
+    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
+      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
       according to AARC specification. i.e. specification of resource and optional
       actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":null,"valueCreatedAt":null,"valueCreatedBy":null,"valueModifiedAt":null,"valueModifiedBy":null,"entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
     content_type: text/plain
@@ -713,8 +713,8 @@ responses:
     url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"445753@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"445753@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
+    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
+      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
       according to AARC specification. i.e. specification of resource and optional
       actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":null,"valueCreatedAt":null,"valueCreatedBy":null,"valueModifiedAt":null,"valueModifiedBy":null,"entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
     content_type: text/plain

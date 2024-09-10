@@ -213,3 +213,8 @@ def update_user_metadata(user, full_name, email, organization):
         user.user_profile = {**user_profile}
         db.session.add(user)
         db.session.commit()
+
+
+@shared_task
+def create_aai_invitation(request_id):
+    raise NotImplementedError("This task is not implemented yet, waiting on PERUN API.")
