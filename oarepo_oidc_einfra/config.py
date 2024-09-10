@@ -16,7 +16,7 @@ EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION = True
 EINFRA_ENTITLEMENT_NAMESPACES = ["geant"]
 """URN prefix for capabilities that can represent community roles."""
 
-EINFRA_ENTITLEMENT_COMMUNITIES_GROUP_PARTS = [["cesnet.cz", "res", "communities"]]
+EINFRA_ENTITLEMENT_PREFIX = "cesnet.cz"
 """Parts of the entitlement URN name that represent communities."""
 
 EINFRA_DUMP_DATA_URL = "s3://einfra-dump-bucket"
@@ -56,3 +56,6 @@ EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM
 # EINFRA_SYNC_SERVICE_ID = 0
 # """Internal ID of the service in the E-INFRA Perun that is responsible for synchronization
 # (creating and pushing dumps with resources and users)."""
+
+EINFRA_USER_EINFRAID_ATTRIBUTE = "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
+"""Attribute on user inside perun that represents the E-INFRA ID of the user."""

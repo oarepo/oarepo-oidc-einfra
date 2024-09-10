@@ -338,3 +338,108 @@ class PerunLowLevelAPI:
             )
         except DoesNotExist:
             return None
+
+    def get_resource_by_capability(self, *, vo_id, facility_id, capability):
+        """
+        Get a resource by capability.
+
+        :param vo_id:               id of the virtual organization
+        :param facility_id:         id of the facility where we search for resource
+        :param capability:          capability to search for
+
+        :return:                    resource or None if not found
+        """
+        resources = self._perun_call("searcher",
+                                         "getResources",
+                                         {
+                                             "attributesWithSearchingValues": {
+                                                 "capabilities": capability
+                                             }
+                                         })
+        matching_resources = [
+            resource for resource in resources
+            if resource["voId"] == vo_id and resource["facilityId"] == facility_id
+        ]
+        if not matching_resources:
+            return None
+        if len(matching_resources) > 1:
+            raise ValueError(f"More than one resource found for {capability}: {matching_resources}")
+        return matching_resources[0]
+
+    def get_resource_groups(self, *, resource_id):
+        """
+        Get groups assigned to a resource.
+
+        :param resource_id:         id of the resource
+        :return:                    list of groups
+        """
+        return [
+            x["enrichedGroup"]["group"] for x in
+                self._perun_call(
+                "resourcesManager",
+                "getGroupAssignments",
+                {
+                    "resource": resource_id,
+                })
+        ]
+
+    def get_user_by_attribute(self, *, attribute_name, attribute_value):
+        """
+        Get a user by attribute.
+
+        :param attribute_name:          name of the attribute
+        :param attribute_value:         value of the attribute
+        """
+        users = self._perun_call(
+            "usersManager",
+            "getUsersByAttributeValue",
+            {
+                "attributeName": attribute_name,
+                "attributeValue": attribute_value},
+        )
+        if len(users) > 1:
+            raise ValueError(f"More than one user found for {attribute_name}={attribute_value}: {users}")
+
+        if not users:
+            return None
+        return users[0]
+
+    def remove_user_from_group(self, *, vo_id, user_id, group_id):
+        """
+        Remove a user from a group.
+
+        :param vo_id:           id of the virtual organization
+        :param user_id:           internal perun id of the user
+        :param group_id:            id of the group
+        """
+        member = self._get_or_create_member_in_vo(vo_id, user_id)
+
+        self._perun_call(
+            "groupsManager",
+            "removeMember",
+            {"group": group_id, "member": member["id"]},
+        )
+
+    def add_user_to_group(self, *, vo_id, user_id, group_id):
+        """
+        Add a user to a group.
+
+        :param vo_id:           id of the virtual organization
+        :param user_id:           internal perun id of the user
+        :param group_id:            id of the group
+        """
+        member = self._get_or_create_member_in_vo(vo_id, user_id)
+
+        self._perun_call(
+            "groupsManager",
+            "addMember",
+            {"group": group_id, "member": member["id"]},
+        )
+
+    def _get_or_create_member_in_vo(self, vo_id, user_id):
+        # TODO: create part here (but we might not need it if everything goes through invitations)
+        member = self._perun_call(
+            "membersManager",
+            "getMemberByUser",
+            {"vo": vo_id, "user": user_id})
+        return member

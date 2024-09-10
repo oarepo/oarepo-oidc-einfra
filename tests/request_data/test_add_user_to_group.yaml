@@ -1,0 +1,173 @@
+responses:
+- response:
+    auto_calculate_content_length: false
+    body: '[{"id":15612,"createdAt":"2024-09-10 18:36:44.66361","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-10
+      18:36:44.66361","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
+      AAA","uuid":"4d5019ab-8be6-4e91-b3ce-0daa9fc15627","shortName":"AAA","beanName":"Group"},{"id":15516,"createdAt":"2024-06-05
+      09:58:30.7417","createdBy":"user3@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:30.7417","modifiedBy":"user3@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:ABC","description":"","uuid":"06ff5c42-20a4-4c44-9894-dadcfeec99a7","shortName":"ABC","beanName":"Group"},{"id":15518,"createdAt":"2024-06-05
+      09:58:31.153758","createdBy":"user3@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.153758","modifiedBy":"user3@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:curators","description":"Community
+      curators","uuid":"87b677b2-145a-414f-b139-842d521f24a4","shortName":"curators","beanName":"Group"},{"id":15517,"createdAt":"2024-06-05
+      09:58:31.04761","createdBy":"user3@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.04761","modifiedBy":"user3@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:members","description":"Community
+      members","uuid":"f0a02638-cd54-4924-b1e9-b61f43753ca3","shortName":"members","beanName":"Group"},{"id":15520,"createdAt":"2024-06-05
+      09:58:31.377526","createdBy":"user3@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.377526","modifiedBy":"user3@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:publishers","description":"Community
+      publishers (publishes the record)","uuid":"1a74190e-5634-4624-899e-04da844771f5","shortName":"publishers","beanName":"Group"},{"id":15519,"createdAt":"2024-06-05
+      09:58:31.264524","createdBy":"user3@einfra.cesnet.cz","modifiedAt":"2024-06-05
+      09:58:31.264524","modifiedBy":"user3@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:reviewers","description":"Community
+      reviewers (mark records as reviewed)","uuid":"72cc98a0-7ab9-4197-a93d-4f56265b529b","shortName":"reviewers","beanName":"Group"}]'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=312D9EA4A4B132B5435BB2EC72D5DAD6; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/getAllSubGroups
+- response:
+    auto_calculate_content_length: false
+    body: '[{"id":143975,"createdAt":"2024-09-10 10:08:00.782479","createdBy":"df6fe45d8bb8eabb942792eacc62f57df2e2a5e1@einfra.cesnet.cz","modifiedAt":"2024-09-10
+      10:08:00.782479","modifiedBy":"df6fe45d8bb8eabb942792eacc62f57df2e2a5e1@einfra.cesnet.cz","createdByUid":59835,"modifiedByUid":59835,"firstName":"(Service)","lastName":"nrp-fa-devrepo","middleName":null,"titleBefore":null,"titleAfter":null,"serviceUser":true,"sponsoredUser":false,"uuid":"32db7ec4-f207-479d-a5c9-ef3ecad568a5","majorSpecificType":"SERVICE","specificUser":true,"beanName":"User"}]'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=AE67AF55691B6BA64E3CF9F3D0EB19BC; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/getAdmins
+- response:
+    auto_calculate_content_length: false
+    body: "[{\"id\":131924,\"createdAt\":\"2022-12-29 19:45:03.049051\",\"createdBy\"\
+      :\"perunSynchronizer\",\"modifiedAt\":\"2022-12-29 19:45:03.049051\",\"modifiedBy\"\
+      :\"perunSynchronizer\",\"createdByUid\":-1,\"modifiedByUid\":-1,\"firstName\"\
+      :\"Miroslav\",\"lastName\":\"\u0160imek\",\"middleName\":null,\"titleBefore\"\
+      :null,\"titleAfter\":null,\"serviceUser\":false,\"sponsoredUser\":false,\"uuid\"\
+      :\"20a47687-e2db-4a4e-b98a-1c2b7fd72594\",\"majorSpecificType\":\"NORMAL\",\"\
+      specificUser\":false,\"beanName\":\"User\"}]"
+    content_type: text/plain; charset=utf-8
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=B8F90FCC1C943007C6D99CA15DF53127; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/usersManager/getUsersByAttributeValue
+- response:
+    auto_calculate_content_length: false
+    body: '{"id":170415,"createdAt":"2023-08-02 08:52:21.04689","createdBy":"danecek@cesnet.cz","modifiedAt":"2023-08-02
+      08:52:26.080118","modifiedBy":"danecek@cesnet.cz","createdByUid":54563,"modifiedByUid":54563,"userId":131924,"voId":4003,"status":"VALID","membershipType":"NOT_DEFINED","sourceGroupId":null,"sponsored":false,"groupStatus":"VALID","groupStatuses":{},"beanName":"Member"}'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=DFFBB432F2D49E592E26E2D76AAB7009; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/membersManager/getMemberByUser
+- response:
+    auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=479B1B93A4977E84B5C5758A8AB3D9C0; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/addMember
+- response:
+    auto_calculate_content_length: false
+    body: '{"id":170415,"createdAt":"2023-08-02 08:52:21.04689","createdBy":"danecek@cesnet.cz","modifiedAt":"2023-08-02
+      08:52:26.080118","modifiedBy":"danecek@cesnet.cz","createdByUid":54563,"modifiedByUid":54563,"userId":131924,"voId":4003,"status":"VALID","membershipType":"NOT_DEFINED","sourceGroupId":null,"sponsored":false,"groupStatus":"VALID","groupStatuses":{},"beanName":"Member"}'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=8142300671AF88162687D8E7C6EE767F; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/membersManager/getMemberByUser
+- response:
+    auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Set-Cookie: PERUNSESSION=369FFE01C059F3CB940FAB2C5293BEF5; Path=/; Secure; HttpOnly;
+        SameSite=Strict
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/removeMember

@@ -38,7 +38,9 @@ def app_config(app_config):
 
     # do not automatically run community synchronization in tests
     app_config["EINFRA_COMMUNITY_SYNCHRONIZATION"] = False
-    app_config["EINFRA_API_URL"] = "https://perun-api.e-infra.cz"
+    app_config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"] = False
+
+    app_config["EINFRA_API_URL"] = "https://perun-api.acc.aai.e-infra.cz/"
     app_config["COMMUNITIES_ROLES"] = [
         dict(
             name="curator",
@@ -61,13 +63,13 @@ def app_config(app_config):
     else:
         app_config["EINFRA_SERVICE_PASSWORD"] = "dummy"
 
-    app_config["EINFRA_SERVICE_ID"] = 144994
+    app_config["EINFRA_SERVICE_ID"] = 143975
     app_config["EINFRA_SERVICE_USERNAME"] = "nrp-fa-devrepo"
     app_config["EINFRA_COMMUNITIES_GROUP_ID"] = 15393
     app_config["EINFRA_REPOSITORY_VO_ID"] = 4003
     app_config["EINFRA_REPOSITORY_FACILITY_ID"] = 4662
     app_config["EINFRA_CAPABILITIES_ATTRIBUTE_ID"] = 3585
-    app_config["EINFRA_SYNC_SERVICE_ID"] = 1023
+    app_config["EINFRA_SYNC_SERVICE_ID"] = 1020
     app_config["EINFRA_RSA_KEY"] = (
         b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3\nPHloIk/Ljs2vZl/RAaitkXDx6aqpl1kGpS44eYJOaer4oWc6/QNaMtynvlSlnkuW\nrG765adNKT9sgAWSrPb81xkojsQabrSNv4nIOWUQi0Tjh0WxXQmbV+bMxkVaElhd\nHNFzUfHv+XqI8Hkc82mIGtyeMQn+VAuZbYkVXnjyCwwa9RmPOSH+O4N4epDXKk1V\nK9dUxf/rEYbjMNZGDva30do0mrBkU8W3O1mDVJSSgHn4ejKdGNYMm0JKPAgCWyPW\nJDoL092ctPCFlUMBBZ/OP3omvgnw0GaWZXxqSqaSvxFJkqCHqLMwpxmWTTAgEvAb\nnwIDAQAB\n-----END PUBLIC KEY-----\n"
     )

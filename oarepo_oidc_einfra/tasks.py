@@ -14,7 +14,7 @@ from typing import List, Tuple
 
 from celery import shared_task
 from flask import current_app
-from invenio_accounts.models import User
+from invenio_accounts.models import User, UserIdentity
 from invenio_communities.communities.records.api import Community
 from invenio_db import db
 from invenio_files_rest.storage import PyFSFileStorage
@@ -22,7 +22,8 @@ from invenio_files_rest.storage import PyFSFileStorage
 from oarepo_oidc_einfra.communities import CommunitySupport
 from oarepo_oidc_einfra.mutex import mutex
 from oarepo_oidc_einfra.perun.dump import PerunDumpData
-from oarepo_oidc_einfra.perun.oidc import einfra_to_local_users_map
+from oarepo_oidc_einfra.perun.mapping import get_perun_capability_from_invenio_role, einfra_to_local_users_map, \
+    get_user_einfra_id
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 log = logging.getLogger("PerunSynchronizationTask")
@@ -221,10 +222,51 @@ def create_aai_invitation(request_id):
 
 
 @shared_task
-def change_aai_role(community_slug, user_id, role):
-    raise NotImplementedError("This task is not implemented yet, waiting on PERUN API.")
+def change_aai_role(community_slug, user_id, new_role):
+    remove_aai_user_from_community(community_slug, user_id)
+    add_aai_role(community_slug, user_id, new_role)
 
 
 @shared_task
-def remove_aai_role(community_slug, user_id, role):
-    raise NotImplementedError("This task is not implemented yet, waiting on PERUN API.")
+def remove_aai_user_from_community(community_slug, user_id):
+    for role in CommunitySupport().role_names:
+        aai_group_op("remove_user_from_group", community_slug, user_id, role)
+
+@shared_task
+def add_aai_role(community_slug, user_id, role):
+    aai_group_op("add_user_to_group", community_slug, user_id, role)
+
+def aai_group_op(op, community_slug, user_id, role):
+    """
+    Universal function for adding/removing user from group in AAI
+    """
+    perun_api = current_einfra_oidc.perun_api()
+
+    einfra_id = get_user_einfra_id(user_id)
+    if not einfra_id:
+        # nothing to synchronize as the user has no einfra identity
+        return
+
+    # 1. find resource by capability
+    resource = perun_api.get_resource_by_capability(
+        vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
+        facility_id=current_app.config["EINFRA_REPOSITORY_FACILITY_ID"],
+        capability=get_perun_capability_from_invenio_role(community_slug, role),
+    )
+    if resource is None:
+        log.error(f"Resource for {community_slug} and role {role} not found inside Perun, "
+                  f"so can not remove user from its associated group.")
+        return
+
+    user = perun_api.get_user_by_attribute(
+        attribute_name = current_app.config("EINFRA_USER_EINFRAID_ATTRIBUTE"),
+        attribute_value = einfra_id
+    )
+    if user is None:
+        log.error(f"User with einfra id {einfra_id} not found inside Perun, "
+                  f"so can not remove user from its associated group.")
+        return
+
+    # 2. for each group, perform the operation on it
+    for group in perun_api.get_resource_groups(resource["id"]):
+        getattr(perun_api, "op")(user["id"], group["id"])

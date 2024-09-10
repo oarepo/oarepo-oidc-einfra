@@ -101,7 +101,7 @@ class AAIInvitationComponent(ServiceComponent):
     def members_delete(
         self, identity, *, record: Member, community: Community, **kwargs
     ):
-        from oarepo_oidc_einfra.tasks import remove_aai_role
+        from oarepo_oidc_einfra.tasks import remove_aai_user_from_community
 
         if not record.user_id:
             # not a user => can not update in AAI
@@ -113,7 +113,7 @@ class AAIInvitationComponent(ServiceComponent):
             # a situation where the changes were performed locally but not
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
-            remove_aai_role(community.slug, record.user_id, record.role)
+            remove_aai_user_from_community(community.slug, record.user_id, record.role)
 
     def _add_invitation_message_to_request(self, identity, request_item, message):
         data = {"payload": {"content": message}}
