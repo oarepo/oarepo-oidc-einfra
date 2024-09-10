@@ -223,3 +223,8 @@ def create_aai_invitation(request_id):
 @shared_task
 def change_aai_role(community_slug, user_id, role):
     raise NotImplementedError("This task is not implemented yet, waiting on PERUN API.")
+
+
+@shared_task
+def remove_aai_role(community_slug, user_id, role):
+    raise NotImplementedError("This task is not implemented yet, waiting on PERUN API.")

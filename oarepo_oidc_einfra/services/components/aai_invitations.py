@@ -84,11 +84,11 @@ class AAIInvitationComponent(ServiceComponent):
     def members_update(
         self, identity, *, record: Member, community: Community, **kwargs
     ):
+        from oarepo_oidc_einfra.tasks import change_aai_role
+
         if not record.user_id:
             # not a user => can not update in AAI
             return
-
-        from oarepo_oidc_einfra.tasks import change_aai_role
 
         if current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]:
             # call it immediately. It might take a bit of time but calling
@@ -97,6 +97,23 @@ class AAIInvitationComponent(ServiceComponent):
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
             change_aai_role(community.slug, record.user_id, record.role)
+
+    def members_delete(
+        self, identity, *, record: Member, community: Community, **kwargs
+    ):
+        from oarepo_oidc_einfra.tasks import remove_aai_role
+
+        if not record.user_id:
+            # not a user => can not update in AAI
+            return
+
+        if current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]:
+            # call it immediately. It might take a bit of time but calling
+            # it later (after commit) would mean that we could end up with
+            # a situation where the changes were performed locally but not
+            # propagated to AAI. Then in the next login/sync the changes
+            # would be reverted.
+            remove_aai_role(community.slug, record.user_id, record.role)
 
     def _add_invitation_message_to_request(self, identity, request_item, message):
         data = {"payload": {"content": message}}
