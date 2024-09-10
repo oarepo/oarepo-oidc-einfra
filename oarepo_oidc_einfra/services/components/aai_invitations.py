@@ -8,17 +8,19 @@
 """AAI (perun) membership handling"""
 
 from flask import current_app
+from invenio_access.permissions import system_identity
+from invenio_accounts.models import User
+from invenio_communities.communities.records.api import Community
+from invenio_communities.members.records.api import Member
+from invenio_communities.members.services.service import invite_expires_at
 from invenio_records_resources.services.records.components.base import ServiceComponent
 from invenio_records_resources.services.uow import Operation
-from oarepo_runtime.i18n import lazy_gettext as _
-from invenio_requests.proxies import current_requests_service, current_events_service
-from invenio_communities.members.services.service import invite_expires_at
 from invenio_requests.customizations.event_types import CommentEventType
+from invenio_requests.proxies import current_events_service, current_requests_service
+from invenio_users_resources.proxies import current_users_service
+from oarepo_runtime.i18n import lazy_gettext as _
 
 from oarepo_oidc_einfra.services.requests.invitation import AAICommunityInvitation
-from invenio_accounts.models import User
-from invenio_access.permissions import system_identity
-from invenio_users_resources.proxies import current_users_service
 
 
 class CreateAAIInvitationOp(Operation):
@@ -34,11 +36,12 @@ class CreateAAIInvitationOp(Operation):
             create_aai_invitation.delay(self.membership_request_id)
 
 
-
 class AAIInvitationComponent(ServiceComponent):
     """Community AAI component that creates invitations within Perun AAI."""
 
-    def members_invite(self, identity, *, record, community, errors, role, visible, message, **kwargs):
+    def members_invite(
+        self, identity, *, record, community, errors, role, visible, message, **kwargs
+    ):
         """Handler for member invitation."""
 
         member = record
@@ -51,13 +54,17 @@ class AAIInvitationComponent(ServiceComponent):
             # can not be handled by this component
             return
 
-        user_id = self._get_invitation_user(member_email, member_first_name, member_last_name)
+        user_id = self._get_invitation_user(
+            member_email, member_first_name, member_last_name
+        )
 
-        request_item = self._create_invitation_request(identity, community, user_id, role)
+        request_item = self._create_invitation_request(
+            identity, community, user_id, role
+        )
 
         # message was provided.
         if message:
-            self.add_invitation_message_to_request(identity, request_item, message)
+            self._add_invitation_message_to_request(identity, request_item, message)
 
         # Create an inactive member entry linked to the request.
         self.service._add_factory(
@@ -72,9 +79,26 @@ class AAIInvitationComponent(ServiceComponent):
             request_id=request_item.id,
         )
 
-        self.uow.register(CreateAAIInvitationOp(request_item['id']))
+        self.uow.register(CreateAAIInvitationOp(request_item["id"]))
 
-    def add_invitation_message_to_request(self, identity, request_item, message):
+    def members_update(
+        self, identity, *, record: Member, community: Community, **kwargs
+    ):
+        if not record.user_id:
+            # not a user => can not update in AAI
+            return
+
+        from oarepo_oidc_einfra.tasks import change_aai_role
+
+        if current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]:
+            # call it immediately. It might take a bit of time but calling
+            # it later (after commit) would mean that we could end up with
+            # a situation where the changes were performed locally but not
+            # propagated to AAI. Then in the next login/sync the changes
+            # would be reverted.
+            change_aai_role(community.slug, record.user_id, record.role)
+
+    def _add_invitation_message_to_request(self, identity, request_item, message):
         data = {"payload": {"content": message}}
         current_events_service.create(
             identity,
@@ -92,11 +116,7 @@ class AAIInvitationComponent(ServiceComponent):
         description = _('You will join as "{role}".').format(role=role.title)
         request_item = current_requests_service.create(
             identity,
-            {
-                "title": title,
-                "description": description,
-                "user": user_id
-            },
+            {"title": title, "description": description, "user": user_id},
             AAICommunityInvitation,
             receiver=None,
             creator=community,
@@ -111,10 +131,13 @@ class AAIInvitationComponent(ServiceComponent):
         if u:
             return u.id
 
-        user = current_users_service.create(system_identity, {
-            'email': member_email,
-            'profile': {
-                'full_name': f'{member_first_name} {member_last_name}',
-            }
-        })
-        return user['id']
+        user = current_users_service.create(
+            system_identity,
+            {
+                "email": member_email,
+                "profile": {
+                    "full_name": f"{member_first_name} {member_last_name}",
+                },
+            },
+        )
+        return user["id"]

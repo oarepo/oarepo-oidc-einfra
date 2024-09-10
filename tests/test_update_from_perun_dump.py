@@ -163,4 +163,3 @@ def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
 
         # check that the user still exists
         User.query.filter_by(username="asdasdasd").one()
-

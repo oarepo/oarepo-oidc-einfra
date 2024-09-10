@@ -14,13 +14,12 @@ from flask import current_app
 from invenio_access.permissions import system_identity
 from invenio_accounts.models import User
 from invenio_communities.communities.records.api import Community
+from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.models import MemberModel
 from invenio_communities.proxies import current_communities
 from invenio_db import db
 from marshmallow import ValidationError
 from sqlalchemy import select
-from invenio_communities.members.errors import AlreadyMemberError
-
 
 CommunityRole = namedtuple("CommunityRole", ["community_id", "role"])
 """A named tuple representing a community and a role."""
@@ -101,8 +100,7 @@ class CommunitySupport:
         ret = set()
         for row in db.session.execute(
             select([MemberModel.community_id, MemberModel.role]).where(
-                MemberModel.user_id == user.id,
-                MemberModel.active == True
+                MemberModel.user_id == user.id, MemberModel.active == True
             )
         ):
             ret.add(CommunityRole(row.community_id, row.role))
