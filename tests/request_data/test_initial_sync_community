@@ -2,7 +2,7 @@ responses:
 - response:
     auto_calculate_content_length: false
     body: '[{"id":15883,"createdAt":"2024-09-05 08:38:34.31645","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
+      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
       AAA","uuid":"9e43aeab-1d1d-4aaa-bb36-6aa452269c3b","shortName":"AAA","beanName":"Group"},{"id":15516,"createdAt":"2024-06-05
       09:58:30.7417","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
       09:58:30.7417","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:ABC","description":"","uuid":"06ff5c42-20a4-4c44-9894-dadcfeec99a7","shortName":"ABC","beanName":"Group"},{"id":15518,"createdAt":"2024-06-05
@@ -35,11 +35,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
     body: '{"id":15889,"createdAt":"2024-09-05 13:53:26.67219","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:26.67219","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:Community
+      13:53:26.67219","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:Community
       cuni","description":"Charles university members","uuid":"439f9fe9-0a2e-44e8-bc44-8b0f0f1cbad8","shortName":"Community
       cuni","beanName":"Group"}'
     content_type: text/plain
@@ -59,7 +59,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/createGroup
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -80,7 +80,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -101,7 +101,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
 - response:
     auto_calculate_content_length: false
     body: '{"errorId":"191c2084328","resource":null,"name":"ResourceNotExistsException","message":"Error
@@ -121,11 +121,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 400
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
 - response:
     auto_calculate_content_length: false
     body: '{"id":14412,"createdAt":"2024-09-05 13:53:27.221654","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:27.221654","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"facilityId":4662,"voId":4003,"name":"Community:cuni","description":"Resource
+      13:53:27.221654","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"facilityId":4662,"voId":4003,"name":"Community:cuni","description":"Resource
       for community cuni","uuid":"b5e649a9-913f-49a3-abd5-b31adc85c01d","beanName":"Resource"}'
     content_type: text/plain
     headers:
@@ -144,7 +144,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/createResource
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/createResource
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -165,7 +165,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -186,7 +186,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
     body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
@@ -210,7 +210,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -231,7 +231,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/setAttribute
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/setAttribute
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -252,7 +252,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedServices
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedServices
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -273,7 +273,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignService
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignService
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -294,11 +294,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
     body: '{"id":15890,"createdAt":"2024-09-05 13:53:28.371454","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:28.371454","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
+      13:53:28.371454","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
       cuni:Role curator of cuni","description":"Group for role curator of community
       cuni","uuid":"7a3d2f5b-b8f1-4e11-a9a4-c9d7f30eeea6","shortName":"Role curator
       of cuni","beanName":"Group"}'
@@ -319,7 +319,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/createGroup
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -340,7 +340,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -361,7 +361,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
 - response:
     auto_calculate_content_length: false
     body: '{"errorId":"191c20849f9","resource":null,"name":"ResourceNotExistsException","message":"Error
@@ -381,11 +381,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 400
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
 - response:
     auto_calculate_content_length: false
     body: '{"id":14413,"createdAt":"2024-09-05 13:53:28.957072","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:28.957072","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"facilityId":4662,"voId":4003,"name":"Community:cuni:curator","description":"Resource
+      13:53:28.957072","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"facilityId":4662,"voId":4003,"name":"Community:cuni:curator","description":"Resource
       for community cuni and role curator","uuid":"c3342a80-8c86-420f-948d-f943c1584aa1","beanName":"Resource"}'
     content_type: text/plain
     headers:
@@ -404,7 +404,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/createResource
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/createResource
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -425,7 +425,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -446,7 +446,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
     body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
@@ -470,7 +470,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -491,7 +491,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/setAttribute
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/setAttribute
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -512,7 +512,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedServices
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedServices
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -533,11 +533,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignService
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignService
 - response:
     auto_calculate_content_length: false
     body: '[{"id":15890,"createdAt":"2024-09-05 13:53:28.371454","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:28.371454","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
+      13:53:28.371454","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
       cuni:Role curator of cuni","description":"Group for role curator of community
       cuni","uuid":"7a3d2f5b-b8f1-4e11-a9a4-c9d7f30eeea6","shortName":"Role curator
       of cuni","beanName":"Group"}]'
@@ -558,11 +558,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
     body: '{"id":15891,"createdAt":"2024-09-05 13:53:30.111419","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:30.111419","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
+      13:53:30.111419","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
       cuni:Role member of cuni","description":"Group for role member of community
       cuni","uuid":"350b11fd-ac63-4478-b237-160b5d9e816f","shortName":"Role member
       of cuni","beanName":"Group"}'
@@ -583,7 +583,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/createGroup
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -604,7 +604,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -625,7 +625,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
 - response:
     auto_calculate_content_length: false
     body: '{"errorId":"191c20850bf","resource":null,"name":"ResourceNotExistsException","message":"Error
@@ -645,11 +645,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 400
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
 - response:
     auto_calculate_content_length: false
     body: '{"id":14414,"createdAt":"2024-09-05 13:53:30.702549","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:30.702549","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"facilityId":4662,"voId":4003,"name":"Community:cuni:member","description":"Resource
+      13:53:30.702549","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"facilityId":4662,"voId":4003,"name":"Community:cuni:member","description":"Resource
       for community cuni and role member","uuid":"f7dedca0-1302-401d-8328-cbdee1180202","beanName":"Resource"}'
     content_type: text/plain
     headers:
@@ -668,7 +668,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/createResource
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/createResource
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -689,7 +689,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedGroups
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -710,7 +710,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
     body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
@@ -734,7 +734,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -755,7 +755,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/attributesManager/setAttribute
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/setAttribute
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -776,7 +776,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedServices
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getAssignedServices
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -797,4 +797,4 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/resourcesManager/assignService
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignService

@@ -2,7 +2,7 @@ responses:
 - response:
     auto_calculate_content_length: false
     body: '[{"id":15883,"createdAt":"2024-09-05 08:38:34.31645","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
+      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
       AAA","uuid":"9e43aeab-1d1d-4aaa-bb36-6aa452269c3b","shortName":"AAA","beanName":"Group"},{"id":15516,"createdAt":"2024-06-05
       09:58:30.7417","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
       09:58:30.7417","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:ABC","description":"","uuid":"06ff5c42-20a4-4c44-9894-dadcfeec99a7","shortName":"ABC","beanName":"Group"},{"id":15518,"createdAt":"2024-06-05
@@ -35,10 +35,10 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
-    body: '[{"id":144994,"createdAt":"2024-09-04 16:59:32.270937","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-09-04
+    body: '[{"id":143975,"createdAt":"2024-09-04 16:59:32.270937","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-09-04
       17:01:13.690275","modifiedBy":"perunRegistrar","createdByUid":131924,"modifiedByUid":-1,"firstName":"(Service)","lastName":"nrp-fa-devrepo","middleName":null,"titleBefore":null,"titleAfter":"(Service)
       nrp-fa-devrepo","serviceUser":true,"sponsoredUser":false,"uuid":"3c13d782-5ee6-4c25-81e8-f7cbda41f482","majorSpecificType":"SERVICE","specificUser":true,"beanName":"User"}]'
     content_type: text/plain
@@ -58,4 +58,4 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins

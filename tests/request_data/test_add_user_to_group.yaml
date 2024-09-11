@@ -35,7 +35,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/getAllSubGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
     body: '[{"id":143975,"createdAt":"2024-09-10 10:08:00.782479","createdBy":"df6fe45d8bb8eabb942792eacc62f57df2e2a5e1@einfra.cesnet.cz","modifiedAt":"2024-09-10
@@ -57,7 +57,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/getAdmins
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
 - response:
     auto_calculate_content_length: false
     body: "[{\"id\":131924,\"createdAt\":\"2022-12-29 19:45:03.049051\",\"createdBy\"\
@@ -84,7 +84,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/usersManager/getUsersByAttributeValue
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/usersManager/getUsersByAttributeValue
 - response:
     auto_calculate_content_length: false
     body: '{"id":170415,"createdAt":"2023-08-02 08:52:21.04689","createdBy":"danecek@cesnet.cz","modifiedAt":"2023-08-02
@@ -106,7 +106,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/membersManager/getMemberByUser
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/membersManager/getMemberByUser
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -127,7 +127,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/addMember
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addMember
 - response:
     auto_calculate_content_length: false
     body: '{"id":170415,"createdAt":"2023-08-02 08:52:21.04689","createdBy":"danecek@cesnet.cz","modifiedAt":"2023-08-02
@@ -149,7 +149,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/membersManager/getMemberByUser
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/membersManager/getMemberByUser
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -170,4 +170,4 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.acc.aai.e-infra.cz//krb/rpc/json/groupsManager/removeMember
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/removeMember

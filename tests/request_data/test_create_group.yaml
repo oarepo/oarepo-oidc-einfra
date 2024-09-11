@@ -32,11 +32,11 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
     body: '{"id":15883,"createdAt":"2024-09-05 08:38:34.31645","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":144994,"modifiedByUid":144994,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
+      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
       AAA","uuid":"9e43aeab-1d1d-4aaa-bb36-6aa452269c3b","shortName":"AAA","beanName":"Group"}'
     content_type: text/plain
     headers:
@@ -55,7 +55,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/createGroup
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
 - response:
     auto_calculate_content_length: false
     body: '[]'
@@ -76,7 +76,7 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
 - response:
     auto_calculate_content_length: false
     body: 'null'
@@ -97,4 +97,4 @@ responses:
       X-XSS-Protection: 1; mode=block
     method: POST
     status: 200
-    url: https://perun-api.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin

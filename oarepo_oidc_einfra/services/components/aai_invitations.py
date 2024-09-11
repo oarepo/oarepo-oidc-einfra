@@ -90,7 +90,7 @@ class AAIInvitationComponent(ServiceComponent):
             # not a user => can not update in AAI
             return
 
-        if current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]:
+        if current_app.config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"]:
             # call it immediately. It might take a bit of time but calling
             # it later (after commit) would mean that we could end up with
             # a situation where the changes were performed locally but not
@@ -107,13 +107,13 @@ class AAIInvitationComponent(ServiceComponent):
             # not a user => can not update in AAI
             return
 
-        if current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]:
+        if current_app.config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"]:
             # call it immediately. It might take a bit of time but calling
             # it later (after commit) would mean that we could end up with
             # a situation where the changes were performed locally but not
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
-            remove_aai_user_from_community(community.slug, record.user_id, record.role)
+            remove_aai_user_from_community(community.slug, record.user_id)
 
     def _add_invitation_message_to_request(self, identity, request_item, message):
         data = {"payload": {"content": message}}
