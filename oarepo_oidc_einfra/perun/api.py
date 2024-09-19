@@ -67,7 +67,7 @@ class PerunLowLevelAPI:
             raise Exception(f"Perun call failed: {resp.text}")
         return resp.json()
 
-    def create_group(self, *, name, description, parent_group_id, check_existing=True):
+    def create_group(self, *, name, description, parent_group_id, parent_vo, check_existing=True):
         """
         Create a new group in Perun and set the service as its admin
 
@@ -107,6 +107,14 @@ class PerunLowLevelAPI:
                 parent_group_id,
                 group["id"],
             )
+            print(f"Calling copyForm from vo {parent_vo} to group {group['id']}")
+            self._perun_call(
+                "registrarManager",
+                "copyForm",
+                {
+                    "fromVO": parent_vo, "toGroup": group["id"]
+                }
+            )
 
         # check if the group has the service as an admin and if not, add it
         # if inheritance works, do not duplicate the admin here
@@ -126,6 +134,8 @@ class PerunLowLevelAPI:
                 {"group": group["id"], "user": self._service_id},
             )
             admin_created = True
+
+
 
         return (group, group_created, admin_created)
 

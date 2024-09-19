@@ -61,6 +61,7 @@ def synchronize_community_to_perun(community_id) -> None:
     group, resource = map_community_or_role(
         api,
         parent_id=current_app.config["EINFRA_COMMUNITIES_GROUP_ID"],
+        parent_vo=current_app.config["EINFRA_REPOSITORY_VO_ID"],
         name=f"Community {slug}",
         description=community.metadata["description"] or f"Group for community {slug}",
         resource_name=f"Community:{slug}",
@@ -78,6 +79,7 @@ def synchronize_community_to_perun(community_id) -> None:
             name=f"Role {role_name} of {slug}",
             description=f"Group for role {role_name} of community {slug}",
             parent_id=parent_id,
+            parent_vo=current_app.config["EINFRA_REPOSITORY_VO_ID"],
             resource_name=f"Community:{slug}:{role_name}",
             resource_description=f"Resource for community {slug} and role {role_name}",
             resource_capabilities=[f"res:communities:{slug}:role:{role_name}"],
@@ -88,6 +90,7 @@ def map_community_or_role(
     api,
     *,
     parent_id,
+    parent_vo,
     name,
     description,
     resource_name,
@@ -109,7 +112,8 @@ def map_community_or_role(
     """
     # generate group for community
     group, group_created, admin_added = api.create_group(
-        name=name, description=description, parent_group_id=parent_id
+        name=name, description=description, parent_group_id=parent_id,
+        parent_vo=parent_vo
     )
 
     # add the synchronization resource

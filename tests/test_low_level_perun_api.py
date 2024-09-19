@@ -6,7 +6,7 @@
 # details.
 #
 def test_create_non_existing_group(
-    smart_record, low_level_perun_api, test_repo_communities_id
+    smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
 
     with smart_record("test_create_group.yaml") as recorded:
@@ -14,6 +14,7 @@ def test_create_non_existing_group(
             name="AAA",
             description="Community AAA",
             parent_group_id=test_repo_communities_id,
+            parent_vo=test_vo_id,
         )
         if recorded:
             assert group["id"] == 15883
@@ -25,7 +26,7 @@ def test_create_non_existing_group(
 
 
 def test_create_existing_group(
-    smart_record, low_level_perun_api, test_repo_communities_id
+    smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
 
     with smart_record("test_create_group_existing.yaml"):
@@ -33,6 +34,7 @@ def test_create_existing_group(
             name="AAA",
             description="Community AAA",
             parent_group_id=test_repo_communities_id,
+            parent_vo=test_vo_id,
         )
         assert not group_created
         assert not admin_created
@@ -108,6 +110,7 @@ def test_add_user_to_group(app, smart_record,
             name="AAA",
             description="Community AAA",
             parent_group_id=test_repo_communities_id,
+            parent_vo=test_vo_id
         )
 
         user = low_level_perun_api.get_user_by_attribute(
