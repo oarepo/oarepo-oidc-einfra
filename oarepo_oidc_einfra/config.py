@@ -57,7 +57,9 @@ EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM
 # """Internal ID of the service in the E-INFRA Perun that is responsible for synchronization
 # (creating and pushing dumps with resources and users)."""
 
-EINFRA_USER_EINFRAID_ATTRIBUTE = "urn:perun:user:attribute-def:def:login-namespace:einfraid-persistent-shadow"
+EINFRA_USER_EINFRAID_ATTRIBUTE = (
+    "urn:perun:user:attribute-def:def:login-namespace:einfraid-persistent-shadow"
+)
 """Attribute on user inside perun that represents the E-INFRA ID of the user."""
 
 EINFRA_DEFAULT_INVITATION_LANGUAGE = "en"

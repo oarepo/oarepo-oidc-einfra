@@ -8,6 +8,7 @@
 
 import datetime
 
+
 def test_create_non_existing_group(
     smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
@@ -105,20 +106,22 @@ def test_create_resource_for_group_existing(
 
         assert resource_created == False
 
-def test_add_user_to_group(app, smart_record,
-    low_level_perun_api, test_repo_communities_id, test_vo_id):
+
+def test_add_user_to_group(
+    app, smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
+):
 
     with smart_record("test_add_user_to_group.yaml") as recorded:
         group, group_created, admin_created = low_level_perun_api.create_group(
             name="AAA",
             description="Community AAA",
             parent_group_id=test_repo_communities_id,
-            parent_vo=test_vo_id
+            parent_vo=test_vo_id,
         )
 
         user = low_level_perun_api.get_user_by_attribute(
             attribute_name=app.config["EINFRA_USER_EINFRAID_ATTRIBUTE"],
-            attribute_value="user3@einfra.cesnet.cz"
+            attribute_value="user3@einfra.cesnet.cz",
         )
 
         low_level_perun_api.add_user_to_group(
@@ -129,21 +132,26 @@ def test_add_user_to_group(app, smart_record,
             vo_id=test_vo_id, group_id=group["id"], user_id=user["id"]
         )
 
-def test_send_invitation(app, smart_record,
-    low_level_perun_api, test_repo_communities_id, test_vo_id):
+
+def test_send_invitation(
+    app, smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
+):
     with smart_record("test_invite_user_to_group.yaml") as recorded:
         group, group_created, admin_created = low_level_perun_api.create_group(
             name="AAA",
             description="Community AAA",
             parent_group_id=test_repo_communities_id,
-            parent_vo=test_vo_id
+            parent_vo=test_vo_id,
         )
 
         low_level_perun_api.send_invitation(
-            vo_id = test_vo_id,
-            group_id = group["id"],
-            email = "test@test.com",
-            fullName = "Test Testovic",
-            language = "en",
-            expiration = (datetime.datetime.now() + datetime.timedelta(days=5)).date().isoformat(),
-            redirect_url = "https://example.com/invitation-accepted/123456")
+            vo_id=test_vo_id,
+            group_id=group["id"],
+            email="test@test.com",
+            fullName="Test Testovic",
+            language="en",
+            expiration=(datetime.datetime.now() + datetime.timedelta(days=5))
+            .date()
+            .isoformat(),
+            redirect_url="https://example.com/invitation-accepted/123456",
+        )

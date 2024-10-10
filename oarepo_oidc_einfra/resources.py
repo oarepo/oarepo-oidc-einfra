@@ -7,25 +7,25 @@
 #
 
 """REST resources."""
-from datetime import datetime, UTC
+import logging
+from datetime import UTC, datetime
 
 from flask import current_app, g, request
+from flask_login import login_required
+from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
 from invenio_access import Permission, action_factory
-from invenio_files_rest.storage import PyFSFileStorage
-from flask_principal import PermissionDenied
-
-from oarepo_oidc_einfra.encryption import decrypt
-from oarepo_oidc_einfra.tasks import update_from_perun_dump
-from flask_login import login_required
-from invenio_requests.records.api import Request
-from invenio_requests.proxies import current_requests_service
 from invenio_access.permissions import system_identity
 from invenio_accounts.models import User
 from invenio_db import db
+from invenio_files_rest.storage import PyFSFileStorage
 from invenio_records_resources.resources.errors import PermissionDeniedError
+from invenio_requests.proxies import current_requests_service
+from invenio_requests.records.api import Request
 
-import logging
+from oarepo_oidc_einfra.encryption import decrypt
+from oarepo_oidc_einfra.tasks import update_from_perun_dump
+
 log = logging.getLogger(__name__)
 
 
@@ -134,7 +134,9 @@ class OIDCEInfraResource(Resource):
                     request_user_id,
                     g.identity.id,
                 )
-                raise PermissionDenied("The invitation was intended for a different user")
+                raise PermissionDenied(
+                    "The invitation was intended for a different user"
+                )
 
         # now, change the receiver to the current user
         invitation_request.receiver = {"user": g.identity.id}

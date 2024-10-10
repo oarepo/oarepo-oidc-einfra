@@ -68,7 +68,9 @@ class PerunLowLevelAPI:
             raise Exception(f"Perun call failed: {resp.text}")
         return resp.json()
 
-    def create_group(self, *, name, description, parent_group_id, parent_vo, check_existing=True):
+    def create_group(
+        self, *, name, description, parent_group_id, parent_vo, check_existing=True
+    ):
         """
         Create a new group in Perun and set the service as its admin
 
@@ -114,8 +116,8 @@ class PerunLowLevelAPI:
                 {
                     "fromVO": parent_vo,
                     "fromGroup": parent_group_id,
-                    "toGroup": group["id"]
-                }
+                    "toGroup": group["id"],
+                },
             )
 
         # check if the group has the service as an admin and if not, add it
@@ -136,8 +138,6 @@ class PerunLowLevelAPI:
                 {"group": group["id"], "user": self._service_id},
             )
             admin_created = True
-
-
 
         return (group, group_created, admin_created)
 
@@ -361,21 +361,22 @@ class PerunLowLevelAPI:
 
         :return:                    resource or None if not found
         """
-        resources = self._perun_call("searcher",
-                                         "getResources",
-                                         {
-                                             "attributesWithSearchingValues": {
-                                                 "capabilities": capability
-                                             }
-                                         })
+        resources = self._perun_call(
+            "searcher",
+            "getResources",
+            {"attributesWithSearchingValues": {"capabilities": capability}},
+        )
         matching_resources = [
-            resource for resource in resources
+            resource
+            for resource in resources
             if resource["voId"] == vo_id and resource["facilityId"] == facility_id
         ]
         if not matching_resources:
             return None
         if len(matching_resources) > 1:
-            raise ValueError(f"More than one resource found for {capability}: {matching_resources}")
+            raise ValueError(
+                f"More than one resource found for {capability}: {matching_resources}"
+            )
         return matching_resources[0]
 
     def get_resource_groups(self, *, resource_id):
@@ -386,13 +387,14 @@ class PerunLowLevelAPI:
         :return:                    list of groups
         """
         return [
-            x["enrichedGroup"]["group"] for x in
-                self._perun_call(
+            x["enrichedGroup"]["group"]
+            for x in self._perun_call(
                 "resourcesManager",
                 "getGroupAssignments",
                 {
                     "resource": resource_id,
-                })
+                },
+            )
         ]
 
     def get_user_by_attribute(self, *, attribute_name, attribute_value):
@@ -405,12 +407,12 @@ class PerunLowLevelAPI:
         users = self._perun_call(
             "usersManager",
             "getUsersByAttributeValue",
-            {
-                "attributeName": attribute_name,
-                "attributeValue": attribute_value},
+            {"attributeName": attribute_name, "attributeValue": attribute_value},
         )
         if len(users) > 1:
-            raise ValueError(f"More than one user found for {attribute_name}={attribute_value}: {users}")
+            raise ValueError(
+                f"More than one user found for {attribute_name}={attribute_value}: {users}"
+            )
 
         if not users:
             return None
@@ -451,13 +453,21 @@ class PerunLowLevelAPI:
     def _get_or_create_member_in_vo(self, vo_id, user_id):
         # TODO: create part here (but we might not need it if everything goes through invitations)
         member = self._perun_call(
-            "membersManager",
-            "getMemberByUser",
-            {"vo": vo_id, "user": user_id})
+            "membersManager", "getMemberByUser", {"vo": vo_id, "user": user_id}
+        )
         return member
 
-    def send_invitation(self, *, vo_id: int, group_id: int, email: str, fullName: str,
-                        language: str, expiration: str, redirect_url: str):
+    def send_invitation(
+        self,
+        *,
+        vo_id: int,
+        group_id: int,
+        email: str,
+        fullName: str,
+        language: str,
+        expiration: str,
+        redirect_url: str,
+    ):
         """
         Send an invitation to a user to join a group.
 
@@ -479,6 +489,6 @@ class PerunLowLevelAPI:
                 "receiverEmail": email,
                 "language": language,
                 "expiration": expiration,
-                "redirectUrl": redirect_url
+                "redirectUrl": redirect_url,
             },
         )

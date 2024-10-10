@@ -1,25 +1,30 @@
-from datetime import datetime, UTC
+#
+# Copyright (C) 2024 CESNET z.s.p.o.
+#
+# oarepo-oidc-einfra  is free software; you can redistribute it and/or
+# modify it under the terms of the MIT License; see LICENSE file for more
+# details.
+#
+import json
+from datetime import UTC, datetime
+from io import BytesIO
 
+import boto3
 import click
+from flask import current_app
+from flask.cli import with_appcontext
+from invenio_accounts.models import User, UserIdentity
+from invenio_db import db
+from werkzeug.local import LocalProxy
 
 from oarepo_oidc_einfra.perun.dump import import_dump_file
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
-
-from flask.cli import with_appcontext
-from werkzeug.local import LocalProxy
-from flask import current_app
-from invenio_accounts.models import User, UserIdentity
-import boto3
-from io import BytesIO
-import json
-
-from invenio_db import db
 
 
 @click.group()
 def einfra():
     """EInfra commands."""
-    pass
+
 
 @einfra.command("import_dump")
 @click.argument("dump_file")
@@ -37,17 +42,22 @@ def import_dump(dump_file):
 
     update_from_perun_dump.delay(path)
 
+
 @einfra.command("update_from_dump")
 @click.argument("dump-name")
 @click.option("--on-background/--on-foreground", default=False)
-@click.option('--fix-communities-in-perun/--no-fix-communities-in-perun', default=True)
+@click.option("--fix-communities-in-perun/--no-fix-communities-in-perun", default=True)
 @with_appcontext
 def update_from_dump(dump_name, on_background, fix_communities_in_perun):
     """Update the data from the last imported dump."""
     if on_background:
-        update_from_perun_dump.delay(dump_name, fix_communities_in_perun=fix_communities_in_perun)
+        update_from_perun_dump.delay(
+            dump_name, fix_communities_in_perun=fix_communities_in_perun
+        )
     else:
-        update_from_perun_dump(dump_name, fix_communities_in_perun=fix_communities_in_perun)
+        update_from_perun_dump(
+            dump_name, fix_communities_in_perun=fix_communities_in_perun
+        )
 
 
 @einfra.command("add_einfra_user")
@@ -93,7 +103,7 @@ def _add_einfra_user(email, einfra_id):
 @with_appcontext
 def import_dump_users(dump_path):
     client = boto3.client(
-        's3',
+        "s3",
         aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
         aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
         endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
@@ -103,11 +113,12 @@ def import_dump_users(dump_path):
         client.download_fileobj(
             Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
             Key=dump_path,
-            Fileobj=obj)
+            Fileobj=obj,
+        )
         obj.seek(0)
         data = json.loads(obj.getvalue().decode("utf-8"))
 
-    for user_data in data['users'].values():
+    for user_data in data["users"].values():
         einfra_id = user_data["attributes"].get(
             "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
         )

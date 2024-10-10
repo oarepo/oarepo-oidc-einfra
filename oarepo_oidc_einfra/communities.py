@@ -6,6 +6,7 @@
 # details.
 #
 """Helper functions for working with communities."""
+import logging
 from collections import namedtuple
 from functools import cached_property
 from typing import Dict, Set
@@ -20,7 +21,6 @@ from invenio_communities.proxies import current_communities
 from invenio_db import db
 from marshmallow import ValidationError
 from sqlalchemy import select
-import logging
 
 log = logging.getLogger(__name__)
 

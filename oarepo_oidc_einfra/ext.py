@@ -17,6 +17,7 @@ from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 from oarepo_oidc_einfra.services.components.aai_communities import CommunityAAIComponent
 from oarepo_oidc_einfra.services.components.aai_invitations import \
     AAIInvitationComponent
+
 from .cli import einfra as einfra_cmd
 
 
@@ -31,7 +32,6 @@ class EInfraOIDCApp:
         app.extensions["einfra-oidc"] = self
         self.init_config(app)
         app.cli.add_command(einfra_cmd)
-
 
     def init_config(self, app):
         """Loads the default configuration."""

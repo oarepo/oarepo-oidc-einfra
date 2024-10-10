@@ -6,14 +6,14 @@
 # details.
 #
 """OIDC utilities."""
+import logging
 from typing import Set
 
 from flask import current_app
 from urnparse import URN8141, InvalidURNFormatError
 
-from .mapping import get_invenio_role_from_capability
 from ..communities import CommunityRole, CommunitySupport
-import logging
+from .mapping import get_invenio_role_from_capability
 
 log = logging.getLogger(__name__)
 

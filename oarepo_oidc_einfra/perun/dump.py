@@ -7,14 +7,14 @@
 #
 import logging
 from collections import defaultdict, namedtuple
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from functools import cached_property
 from typing import Any, Dict, Iterable, List, Set
 
-from oarepo_oidc_einfra.communities import CommunityRole
 import boto3
 from flask import current_app
 
+from oarepo_oidc_einfra.communities import CommunityRole
 
 log = logging.getLogger("perun.dump_data")
 
@@ -147,14 +147,16 @@ def import_dump_file(data: bytes):
     Imports a dump file from the input stream into S3 and returns file name
     """
     client = boto3.client(
-        's3',
+        "s3",
         aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
         aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
         endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
     )
     now = datetime.now(UTC).strftime("%Y-%m-%d-%H-%M-%S")
     dump_path = f"{now}.json"
-    client.put_object(Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
-                      Key=dump_path,
-                      Body=data)
+    client.put_object(
+        Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
+        Key=dump_path,
+        Body=data,
+    )
     return dump_path

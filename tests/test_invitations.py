@@ -6,5 +6,6 @@
 # details.
 #
 
+
 def test_invitation(smart_record, low_level_perun_api):
     pass
