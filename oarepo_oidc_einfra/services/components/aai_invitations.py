@@ -107,7 +107,7 @@ class AAIInvitationComponent(ServiceComponent):
             # not a user => can not update in AAI
             return
 
-        if current_app.config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"]:
+        if current_app.config.get("EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"):
             # call it immediately. It might take a bit of time but calling
             # it later (after commit) would mean that we could end up with
             # a situation where the changes were performed locally but not

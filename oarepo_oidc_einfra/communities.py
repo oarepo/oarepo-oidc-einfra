@@ -20,6 +20,10 @@ from invenio_communities.proxies import current_communities
 from invenio_db import db
 from marshmallow import ValidationError
 from sqlalchemy import select
+import logging
+
+log = logging.getLogger(__name__)
+
 
 CommunityRole = namedtuple("CommunityRole", ["community_id", "role"])
 """A named tuple representing a community and a role."""
@@ -78,6 +82,12 @@ class CommunitySupport:
 
         for community_id, role in new_community_roles - current_community_roles:
             cls._add_user_community_membership(community_id, role, user)
+
+        for v in new_community_roles:
+            assert isinstance(v, CommunityRole)
+
+        print("Current community roles ", current_community_roles)
+        print("New community roles ", new_community_roles)
 
         community_ids = {
             r.community_id for r in current_community_roles - new_community_roles
@@ -142,14 +152,10 @@ class CommunitySupport:
                 system_identity, community_id, params={"user.id": str(user.id)}
             )
             hits = list(results.hits)
-            if len(hits) != 1:
-                raise AlreadyMemberError(
-                    f"User {user.id} is already an inactive member of community {community_id} but there is no or multiple invitations. "
-                    f"This should never happen. Invitations: {hits}"
+            if len(hits) == 1:
+                current_communities.service.members.accept_invitation(
+                    system_identity, hits[0]["request_id"]
                 )
-            current_communities.service.members.accept_invitation(
-                system_identity, hits[0]["request_id"]
-            )
 
     @classmethod
     def _remove_user_community_membership(cls, community_id, user) -> None:

@@ -59,3 +59,6 @@ EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM
 
 EINFRA_USER_EINFRAID_ATTRIBUTE = "urn:perun:user:attribute-def:def:login-namespace:einfraid-persistent-shadow"
 """Attribute on user inside perun that represents the E-INFRA ID of the user."""
+
+EINFRA_DEFAULT_INVITATION_LANGUAGE = "en"
+"""Language of the invitation emails that are sent to the users."""

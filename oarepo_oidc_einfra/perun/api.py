@@ -48,6 +48,7 @@ class PerunLowLevelAPI:
         :param method:      the method to call
         :param payload:     the json payload to send
         """
+        print("PerunCall", manager, method, payload)
         resp = requests.post(
             f"{self._base_url}/krb/rpc/json/{manager}/{method}",
             auth=self._auth,
@@ -107,12 +108,13 @@ class PerunLowLevelAPI:
                 parent_group_id,
                 group["id"],
             )
-            print(f"Calling copyForm from vo {parent_vo} to group {group['id']}")
             self._perun_call(
                 "registrarManager",
                 "copyForm",
                 {
-                    "fromVO": parent_vo, "toGroup": group["id"]
+                    "fromVO": parent_vo,
+                    "fromGroup": parent_group_id,
+                    "toGroup": group["id"]
                 }
             )
 
@@ -453,3 +455,30 @@ class PerunLowLevelAPI:
             "getMemberByUser",
             {"vo": vo_id, "user": user_id})
         return member
+
+    def send_invitation(self, *, vo_id: int, group_id: int, email: str, fullName: str,
+                        language: str, expiration: str, redirect_url: str):
+        """
+        Send an invitation to a user to join a group.
+
+        :param vo_id:           id of the virtual organization
+        :param group_id:        id of the group
+        :param email:           email of the user
+        :param fullName:        username
+        :param language:        language of the invitation
+        :param expiration:      expiration date of the invitation, format YYYY-MM-DD
+        :param redirect_url:    URL to redirect to after accepting the invitation
+        """
+        self._perun_call(
+            "invitationsManager",
+            "inviteToGroup",
+            {
+                "vo": vo_id,
+                "group": group_id,
+                "receiverName": fullName,
+                "receiverEmail": email,
+                "language": language,
+                "expiration": expiration,
+                "redirectUrl": redirect_url
+            },
+        )
