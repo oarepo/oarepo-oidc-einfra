@@ -29,9 +29,7 @@ def test_no_communities(app, db, location, search_clear):
 def test_no_communities_user_exists_but_not_linked(
     app, db, location, search_clear, smart_record
 ):
-    with smart_record(
-        "test_no_communities_user_exists_but_not_linked.yaml"
-    ) as recorded:
+    with smart_record("test_no_communities_user_exists_but_not_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
             username="asdasdasd",
@@ -53,7 +51,7 @@ def test_no_communities_user_exists_but_not_linked(
 
 
 def test_no_communities_user_linked(app, db, location, search_clear, smart_record):
-    with smart_record("test_no_communities_user_linked.yaml") as recorded:
+    with smart_record("test_no_communities_user_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
             username="asdasdasd",
@@ -65,7 +63,7 @@ def test_no_communities_user_linked(app, db, location, search_clear, smart_recor
         db.session.add(user)
         db.session.commit()
 
-        identity = UserIdentity.create(
+        UserIdentity.create(
             user=user,
             method="e-infra",
             external_id="user1@einfra.cesnet.cz",
@@ -83,7 +81,7 @@ def test_no_communities_user_linked(app, db, location, search_clear, smart_recor
 
 
 def test_with_communities(app, db, location, search_clear, smart_record):
-    with smart_record("test_with_communities.yaml") as recorded:
+    with smart_record("test_with_communities.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
             username="asdasdasd",
@@ -95,7 +93,7 @@ def test_with_communities(app, db, location, search_clear, smart_record):
         db.session.add(user)
         db.session.commit()
 
-        identity = UserIdentity.create(
+        UserIdentity.create(
             user=user,
             method="e-infra",
             external_id="user1@einfra.cesnet.cz",
@@ -141,7 +139,7 @@ def test_with_communities(app, db, location, search_clear, smart_record):
 
 
 def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
-    with smart_record("test_suspend_user.yaml") as recorded:
+    with smart_record("test_suspend_user.yaml"):
         user = User(
             username="asdasdasd",
             email="ms@cesnet.cz",
@@ -152,7 +150,7 @@ def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
         db.session.add(user)
         db.session.commit()
 
-        identity = UserIdentity.create(
+        UserIdentity.create(
             user=user,
             method="e-infra",
             external_id="user1@einfra.cesnet.cz",

@@ -6,6 +6,7 @@
 # details.
 #
 """OIDC utilities."""
+
 import logging
 from typing import Set
 
@@ -13,14 +14,13 @@ from flask import current_app
 from urnparse import URN8141, InvalidURNFormatError
 
 from ..communities import CommunityRole, CommunitySupport
-from .mapping import get_invenio_role_from_capability
+from .mapping import SlugCommunityRole, get_invenio_role_from_capability
 
 log = logging.getLogger(__name__)
 
 
-def get_communities_from_userinfo_token(userinfo_token) -> Set[CommunityRole]:
-    """
-    Extracts communities and roles from userinfo token.
+def get_communities_from_userinfo_token(userinfo_token: dict) -> Set[CommunityRole]:
+    """Extract communities and roles from userinfo token.
 
     :param userinfo_token:          userinfo token from perun/oidc server
     :return:                        a set of community roles associated with the user
@@ -50,11 +50,13 @@ def get_communities_from_userinfo_token(userinfo_token) -> Set[CommunityRole]:
         if not parts or parts[0] != current_app.config["EINFRA_ENTITLEMENT_PREFIX"]:
             continue
         try:
-            community_slug, role = get_invenio_role_from_capability(parts[1:])
-            if role not in community_roles:
-                log.error(f"Role {role} not found in community roles in urn {urn}")
+            slug_role: SlugCommunityRole = get_invenio_role_from_capability(parts[1:])
+            if slug_role.role not in community_roles:
+                log.error(
+                    f"Role {slug_role.role} not found in community roles in urn {urn}"
+                )
                 continue
-            aai_groups.add((slug_to_id[community_slug], role))
+            aai_groups.add(CommunityRole(slug_to_id[slug_role.slug], slug_role.role))
         except ValueError:
             continue
 

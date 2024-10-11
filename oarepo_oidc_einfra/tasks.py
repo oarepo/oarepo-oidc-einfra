@@ -5,16 +5,16 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
-"""
-Background tasks.
-"""
+"""Background tasks."""
+
+from __future__ import annotations
+
 import json
 import logging
 from io import BytesIO
 from itertools import chain, islice
-from typing import List, Tuple
+from typing import TYPE_CHECKING, Iterable, Literal
 from urllib.parse import urljoin
-from uuid import UUID
 
 import boto3
 from celery import shared_task
@@ -29,18 +29,26 @@ from oarepo_oidc_einfra.communities import CommunityRole, CommunitySupport
 from oarepo_oidc_einfra.encryption import encrypt
 from oarepo_oidc_einfra.mutex import mutex
 from oarepo_oidc_einfra.perun.dump import PerunDumpData
-from oarepo_oidc_einfra.perun.mapping import einfra_to_local_users_map, \
-    get_perun_capability_from_invenio_role, get_user_einfra_id
+from oarepo_oidc_einfra.perun.mapping import (
+    einfra_to_local_users_map,
+    get_perun_capability_from_invenio_role,
+    get_user_einfra_id,
+)
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
+
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 
 log = logging.getLogger("PerunSynchronizationTask")
 
 
 @shared_task
 @mutex("EINFRA_SYNC_MUTEX")
-def synchronize_community_to_perun(community_id) -> None:
-    """
-    Synchronizes community into Perun groups and resources.
+def synchronize_community_to_perun(community_id: str) -> None:
+    """Synchronize community into Perun groups and resources.
+
     The call is idempotent, if the perun mapping already exists,
     it is left untouched.
 
@@ -95,19 +103,19 @@ def synchronize_community_to_perun(community_id) -> None:
 
 
 def map_community_or_role(
-    api,
+    api: PerunLowLevelAPI,
     *,
-    parent_id,
-    parent_vo,
-    name,
-    description,
-    resource_name,
-    resource_description,
-    resource_capabilities,
-):
-    """
-    Map a single community or community role, adds synchronization service so that we get
-    the resource in the dump from perun.
+    parent_id: int,
+    parent_vo: int,
+    name: str,
+    description: str,
+    resource_name: str,
+    resource_description: str,
+    resource_capabilities: list[str],
+) -> tuple[dict, dict]:
+    """Map a single community or community role to perun's groups and resources.
+
+    The call adds synchronization service so that we get the resource in the dump from perun.
 
     :param api:                     perun api
     :param parent_id:               parent group
@@ -141,20 +149,24 @@ def map_community_or_role(
 
 
 @shared_task
-def synchronize_all_communities_to_perun():
-    """
-    Checks and repairs community mapping within perun
-    """
+def synchronize_all_communities_to_perun() -> None:
+    """Check and repair community mapping within perun."""
     for community_model in Community.model_cls.query.all():
         synchronize_community_to_perun(str(community_model.id))
 
 
 @shared_task
 @mutex("EINFRA_SYNC_MUTEX")
-def update_from_perun_dump(dump_path, fix_communities_in_perun=True):
-    """
-    Updates user communities from perun dump and checks for local communities
-    not propagated to perun yet (and propagates them)
+def update_from_perun_dump(
+    dump_path: str, fix_communities_in_perun: bool = True
+) -> None:
+    """Update user communities from perun dump and propagate local communities that are not in perun yet.
+
+    The dump with perun data is downloaded from the S3 storage and the users are synchronized
+    with the database.
+
+    Note: we suppose that the dump is small enough to be processed in a single task and the processing
+    will take less than 1 hour (the default task timeout inside the mutex).
 
     :param dump_path:        url with the dump
     :param fix_communities_in_perun     if some local communities were not propagated to perun, propagate them
@@ -188,38 +200,54 @@ def update_from_perun_dump(dump_path, fix_communities_in_perun=True):
     synchronize_users_from_perun(dump, community_support)
 
 
-def synchronize_communities_to_perun(repository_community_roles, aai_community_roles):
-    resource_community_roles: List[Tuple[str, str]]
+def synchronize_communities_to_perun(
+    repository_community_roles: set[CommunityRole],
+    aai_community_roles: set[CommunityRole],
+) -> None:
+    """Synchronize communities to perun if they do not exist in perun yet.
 
+    :param repository_community_roles:   set of community roles from the repository
+    :param aai_community_roles:          set of community roles from the perun dump
+    """
     if repository_community_roles - aai_community_roles:
         log.info(
             "Some community roles are not mapped "
             f"to any resource: {repository_community_roles - aai_community_roles}"
         )
-        unsynchronized_communities = {
+        communities_not_in_perun = {
             str(cr.community_id)
             for cr in repository_community_roles - aai_community_roles
         }
-        for community_id in unsynchronized_communities:
+        for community_id in communities_not_in_perun:
             synchronize_community_to_perun(community_id)
 
 
+def chunks[T](iterable: Iterable[T], size: int = 10) -> Iterable[chain[T]]:
+    """Split the iterable into chunks of the given size.
 
-
-def chunks(iterable, size=10):
+    :param iterable:    an iterable that will be split to chunks
+    :param size:        size of the chunk
+    """
     iterator = iter(iterable)
     for first in iterator:
         yield chain([first], islice(iterator, size - 1))
 
 
-def synchronize_users_from_perun(dump, community_support):
+def synchronize_users_from_perun(
+    dump: PerunDumpData, community_support: CommunitySupport
+) -> None:
+    """Synchronize users from perun dump to the database.
+
+    :param dump:                 perun dump data
+    :param community_support:    community support object
+    """
     local_users_by_einfra = einfra_to_local_users_map()
     print([aai_user.email for aai_user in dump.users()])
     for aai_user_chunk in chunks(dump.users(), 100):
         aai_user_chunk_by_einfra_id = {u.einfra_id: u for u in aai_user_chunk}
 
         local_user_id_to_einfra_id = {}
-        for einfra_id in aai_user_chunk_by_einfra_id.keys():
+        for einfra_id in aai_user_chunk_by_einfra_id:
             local_user_id = local_users_by_einfra.pop(einfra_id, None)
             if local_user_id:
                 local_user_id_to_einfra_id[local_user_id] = einfra_id
@@ -242,12 +270,15 @@ def synchronize_users_from_perun(dump, community_support):
 
         for user in local_users:
             aai_user = aai_user_chunk_by_einfra_id[local_user_id_to_einfra_id[user.id]]
+            log.info("Setting user %s with roles %s", user, aai_user.roles)
             print("Setting user", user, aai_user.roles)
             update_user_metadata(
                 user, aai_user.full_name, aai_user.email, aai_user.organization
             )
 
-            new_community_roles = filter_community_roles(community_support, aai_user.roles)
+            new_community_roles = filter_community_roles(
+                community_support, aai_user.roles
+            )
 
             community_support.set_user_community_membership(
                 user,
@@ -260,26 +291,43 @@ def synchronize_users_from_perun(dump, community_support):
     # for users that are not in the dump anymore, remove all communities
     for local_user_id in local_users_by_einfra.values():
         user = User.query.filter_by(id=local_user_id).one()
-        print("Removing obsolete user", user)
+        log.info("Removing obsolete user %s", user)
         community_support.set_user_community_membership(user, set())
 
-def filter_community_roles(community_support, aai_roles):
-    new_community_roles = {}
 
-    for community_id, role in aai_roles:
-        community_id = UUID(community_id)
-        if community_id not in new_community_roles or (
-            community_support.role_priority(role)
+def filter_community_roles(
+    community_support: CommunitySupport, aai_roles: Iterable[CommunityRole]
+) -> set[CommunityRole]:
+    """Filter community roles to keep only the most important role for each community.
+
+    :param community_support:    community support object
+    :param aai_roles:            an iterable community roles
+    """
+    new_community_roles: dict[UUID, CommunityRole] = {}
+
+    for community_role in aai_roles:
+        if community_role.community_id not in new_community_roles or (
+            community_support.role_priority(community_role.role)
             > community_support.role_priority(
-            new_community_roles[community_id].role
-        )
-        ):
-            new_community_roles[community_id] = CommunityRole(
-                community_id, role
+                new_community_roles[community_role.community_id].role
             )
+        ):
+            new_community_roles[community_role.community_id] = community_role
     return set(new_community_roles.values())
 
-def update_user_metadata(user, full_name, email, organization):
+
+def update_user_metadata(
+    user: User, full_name: str, email: str, organization: str
+) -> None:
+    """Update user metadata in the database.
+
+    If the data is the same, nothing is updated.
+
+    :param user:        user object
+    :param full_name:   full name
+    :param email:       email
+    :param organization: organization
+    """
     save = False
     user_profile = user.user_profile
     if full_name != user.user_profile.get("full_name"):
@@ -299,7 +347,12 @@ def update_user_metadata(user, full_name, email, organization):
 
 
 @shared_task
-def create_aai_invitation(request_id):
+def create_aai_invitation(request_id: str) -> dict | None:
+    """Create an invitation in AAI for an invenio invitation request.
+
+    :param request_id:  id of the invenio invitation request
+    :return:            invitation data as returned from perun
+    """
     perun_api = current_einfra_oidc.perun_api()
 
     request = Request.get_record(request_id)
@@ -308,13 +361,18 @@ def create_aai_invitation(request_id):
     capability = get_perun_capability_from_invenio_role(
         request.topic.slug, invitation.role
     )
-    group = perun_api.get_resource_by_capability(capability)
+    group = perun_api.get_resource_by_capability(
+        vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
+        facility_id=current_app.config["EINFRA_REPOSITORY_FACILITY_ID"],
+        capability=capability,
+    )
+
     if not group:
         log.error(
             f"Resource for capability {capability} not found inside Perun, "
             f"so can not send invitation to its associated group."
         )
-        return
+        return None
 
     encrypted_request_id = encrypt(request_id)
 
@@ -326,7 +384,7 @@ def create_aai_invitation(request_id):
     )
 
     email = invitation.user.email
-    perun_api.send_invitation(
+    return perun_api.send_invitation(
         vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
         group_id=group["id"],
         email=email,
@@ -338,25 +396,51 @@ def create_aai_invitation(request_id):
 
 
 @shared_task
-def change_aai_role(community_slug, user_id, new_role):
+def change_aai_role(community_slug: str, user_id: int, new_role: str) -> None:
+    """Propagate changed community role to AAI.
+
+    :param community_slug:  community slug
+    :param user_id:         user id     (internal)
+    :param new_role:        new role name
+    """
     remove_aai_user_from_community(community_slug, user_id)
     add_aai_role(community_slug, user_id, new_role)
 
 
 @shared_task
-def remove_aai_user_from_community(community_slug, user_id):
+def remove_aai_user_from_community(community_slug: str, user_id: int) -> None:
+    """Remove user from perun group representing a community.
+
+    :param community_slug:  community slug
+    :param user_id:         user id
+    """
     for role in CommunitySupport().role_names:
         aai_group_op("remove_user_from_group", community_slug, user_id, role)
 
 
 @shared_task
-def add_aai_role(community_slug, user_id, role):
+def add_aai_role(community_slug: str, user_id: int, role: str) -> None:
+    """Add user to perun group representing a community and a role.
+
+    :param community_slug:  community slug
+    :param user_id:         user id
+    :param role:            role name
+    """
     aai_group_op("add_user_to_group", community_slug, user_id, role)
 
 
-def aai_group_op(op, community_slug, user_id, role):
-    """
-    Universal function for adding/removing user from group in AAI
+def aai_group_op(
+    op: Literal["add_user_to_group", "remove_user_from_group"],
+    community_slug: str,
+    user_id: int,
+    role: str,
+) -> None:
+    """Universal function for adding/removing user from group in AAI.
+
+    :param op:              operation to perform (add_user_to_group, remove_user_from_group)
+    :param community_slug:  community slug
+    :param user_id:         user id
+    :param role:            role name
     """
     perun_api = current_einfra_oidc.perun_api()
 
@@ -379,7 +463,7 @@ def aai_group_op(op, community_slug, user_id, role):
         return
 
     user = perun_api.get_user_by_attribute(
-        attribute_name=current_app.config("EINFRA_USER_EINFRAID_ATTRIBUTE"),
+        attribute_name=current_app.config["EINFRA_USER_EINFRAID_ATTRIBUTE"],
         attribute_value=einfra_id,
     )
     if user is None:
@@ -390,5 +474,5 @@ def aai_group_op(op, community_slug, user_id, role):
         return
 
     # 2. for each group, perform the operation on it
-    for group in perun_api.get_resource_groups(resource["id"]):
-        getattr(perun_api, "op")(user["id"], group["id"])
+    for group in perun_api.get_resource_groups(resource_id=resource["id"]):
+        getattr(perun_api, op)(user["id"], group["id"])

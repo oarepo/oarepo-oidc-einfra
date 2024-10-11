@@ -12,7 +12,6 @@ import datetime
 def test_create_non_existing_group(
     smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
-
     with smart_record("test_create_group.yaml") as recorded:
         group, group_created, admin_created = low_level_perun_api.create_group(
             name="AAA",
@@ -25,14 +24,13 @@ def test_create_non_existing_group(
         else:
             print(f"Add the >>> assert group['id'] == {group['id']} here <<<")
 
-        assert group_created == True
-        assert admin_created == True
+        assert group_created is True
+        assert admin_created is True
 
 
 def test_create_existing_group(
     smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
-
     with smart_record("test_create_group_existing.yaml"):
         group, group_created, admin_created = low_level_perun_api.create_group(
             name="AAA",
@@ -54,7 +52,6 @@ def test_create_resource_for_group(
     test_capabilities_attribute_id,
     perun_sync_service_id,
 ):
-
     with smart_record("test_create_resource_for_group.yaml") as recorded:
         resource, resource_created = (
             low_level_perun_api.create_resource_with_group_and_capabilities(
@@ -72,7 +69,7 @@ def test_create_resource_for_group(
             assert resource["id"] == 14408
         else:
             print(f"Add the >>> assert resource['id'] == {resource['id']} here <<<")
-        assert resource_created == True
+        assert resource_created is True
 
 
 def test_create_resource_for_group_existing(
@@ -85,7 +82,6 @@ def test_create_resource_for_group_existing(
     test_capabilities_attribute_id,
     perun_sync_service_id,
 ):
-
     with smart_record("test_create_resource_for_group_existing.yaml") as recorded:
         resource, resource_created = (
             low_level_perun_api.create_resource_with_group_and_capabilities(
@@ -104,14 +100,13 @@ def test_create_resource_for_group_existing(
         else:
             print(f"Add the >>> assert resource['id'] == {resource['id']} here <<<")
 
-        assert resource_created == False
+        assert resource_created is False
 
 
 def test_add_user_to_group(
     app, smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
-
-    with smart_record("test_add_user_to_group.yaml") as recorded:
+    with smart_record("test_add_user_to_group.yaml"):
         group, group_created, admin_created = low_level_perun_api.create_group(
             name="AAA",
             description="Community AAA",
@@ -136,7 +131,7 @@ def test_add_user_to_group(
 def test_send_invitation(
     app, smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
-    with smart_record("test_invite_user_to_group.yaml") as recorded:
+    with smart_record("test_invite_user_to_group.yaml"):
         group, group_created, admin_created = low_level_perun_api.create_group(
             name="AAA",
             description="Community AAA",

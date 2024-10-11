@@ -5,9 +5,12 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""EInfra terminal commands."""
+
 import json
 from datetime import UTC, datetime
 from io import BytesIO
+from typing import TYPE_CHECKING
 
 import boto3
 import click
@@ -21,20 +24,22 @@ from oarepo_oidc_einfra.mutex import CacheMutex
 from oarepo_oidc_einfra.perun.dump import import_dump_file
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
+if TYPE_CHECKING:
+    from flask_security.datastore import UserDatastore
+
 
 @click.group()
-def einfra():
+def einfra() -> None:
     """EInfra commands."""
 
 
 @einfra.command("import_dump")
 @click.argument("dump_file")
 @with_appcontext
-def import_dump(dump_file):
-    """
-    Import a dump file.
+def import_dump(dump_file: str) -> None:
+    """Import a dump file.
 
-    :param dump_file: Path to the dump file to import.
+    :param dump_file: Path to the dump file on the local filesystem to import.
     """
     click.echo(f"Importing dump file {dump_file}")
 
@@ -49,8 +54,15 @@ def import_dump(dump_file):
 @click.option("--on-background/--on-foreground", default=False)
 @click.option("--fix-communities-in-perun/--no-fix-communities-in-perun", default=True)
 @with_appcontext
-def update_from_dump(dump_name, on_background, fix_communities_in_perun):
-    """Update the data from the last imported dump."""
+def update_from_dump(
+    dump_name: str, on_background: bool, fix_communities_in_perun: bool
+) -> None:
+    """Update the data from the last imported dump.
+
+    :param dump_name: Name of the dump to update from.
+    :param on_background: Whether to run the task in the background.
+    :param fix_communities_in_perun: Whether to fix communities in Perun.
+    """
     if on_background:
         update_from_perun_dump.delay(
             dump_name, fix_communities_in_perun=fix_communities_in_perun
@@ -65,18 +77,23 @@ def update_from_dump(dump_name, on_background, fix_communities_in_perun):
 @click.argument("email")
 @click.argument("einfra_id")
 @with_appcontext
-def add_einfra_user(email, einfra_id):
+def add_einfra_user(email: str, einfra_id: str) -> None:
+    """Add a user to the system if it does not exist and link it with the EInfra identity."""
     _add_einfra_user(email, einfra_id)
 
 
 @einfra.command("clear_import_mutex")
 @with_appcontext
-def clear_import_mutex():
+def clear_import_mutex() -> None:
+    """Clear the import mutex - should be used only as a last resort."""
     CacheMutex("EINFRA_SYNC_MUTEX").force_clear()
 
 
-def _add_einfra_user(email, einfra_id):
-    _datastore = LocalProxy(lambda: current_app.extensions["security"].datastore)
+def _add_einfra_user(email: str, einfra_id: str) -> None:
+    """Add a user to the system if it does not exist and link it with the EInfra identity."""
+    _datastore: UserDatastore = LocalProxy(
+        lambda: current_app.extensions["security"].datastore
+    )  # noqa
 
     email = email.lower()
     user = User.query.filter_by(email=email).first()
@@ -87,7 +104,7 @@ def _add_einfra_user(email, einfra_id):
             "active": True,
             "confirmed_at": datetime.now(UTC),
         }
-        created = _datastore.create_user(**kwargs)
+        _datastore.create_user(**kwargs)
         db.session.commit()
 
         user = User.query.filter_by(email=email).first()
@@ -108,7 +125,11 @@ def _add_einfra_user(email, einfra_id):
 @einfra.command("import_dump_users")
 @click.argument("dump_path")
 @with_appcontext
-def import_dump_users(dump_path):
+def import_dump_users(dump_path: str) -> None:
+    """Import users from a dump file.
+
+    :param dump_path: Path to the dump file in the S3 bucket.
+    """
     client = boto3.client(
         "s3",
         aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],

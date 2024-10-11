@@ -5,18 +5,19 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
-"""AAI (perun) membership handling"""
+"""AAI (perun) membership handling."""
 
 from flask import current_app
-from invenio_access.permissions import system_identity
+from invenio_access.permissions import Identity, system_identity
 from invenio_accounts.models import User
 from invenio_communities.communities.records.api import Community
 from invenio_communities.members.records.api import Member
 from invenio_communities.members.services.service import invite_expires_at
 from invenio_records_resources.services.records.components.base import ServiceComponent
-from invenio_records_resources.services.uow import Operation
+from invenio_records_resources.services.uow import Operation, UnitOfWork
 from invenio_requests.customizations.event_types import CommentEventType
 from invenio_requests.proxies import current_events_service, current_requests_service
+from invenio_requests.services.requests.results import RequestItem
 from invenio_users_resources.proxies import current_users_service
 from oarepo_runtime.i18n import lazy_gettext as _
 
@@ -26,10 +27,15 @@ from oarepo_oidc_einfra.services.requests.invitation import AAICommunityInvitati
 class CreateAAIInvitationOp(Operation):
     """Operation to create an invitation within AAI in a background process."""
 
-    def __init__(self, membership_request_id):
+    def __init__(self, membership_request_id: str):
+        """Create a new operation.
+
+        :param membership_request_id:    id of the membership request
+        """
         self.membership_request_id = membership_request_id
 
-    def on_post_commit(self, uow):
+    def on_post_commit(self, uow: UnitOfWork) -> None:
+        """Create an invitation in AAI."""
         from oarepo_oidc_einfra.tasks import create_aai_invitation
 
         if current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]:
@@ -40,10 +46,30 @@ class AAIInvitationComponent(ServiceComponent):
     """Community AAI component that creates invitations within Perun AAI."""
 
     def members_invite(
-        self, identity, *, record, community, errors, role, visible, message, **kwargs
-    ):
-        """Handler for member invitation."""
+        self,
+        identity: Identity,
+        *,
+        record: Member,
+        community: Community,
+        errors: dict,
+        role: str,
+        visible: bool,
+        message: str,
+        **kwargs: dict,
+    ) -> None:
+        """Invite a new member to a community.
 
+        Will create an invitation in AAI as well.
+
+        :param identity:        identity of the user performing the operation
+        :param record:          member record
+        :param community:       community record in which the member is being invited
+        :param errors:          errors that occurred during the pre-invitation operation
+        :param role:            role of the member in the community
+        :param visible:         visibility of the member in the community
+        :param message:         message to be sent to the member
+        :param kwargs:          additional arguments (not used)
+        """
         member = record
 
         member_email = member.get("email")
@@ -82,8 +108,22 @@ class AAIInvitationComponent(ServiceComponent):
         self.uow.register(CreateAAIInvitationOp(request_item["id"]))
 
     def members_update(
-        self, identity, *, record: Member, community: Community, **kwargs
-    ):
+        self,
+        identity: Identity,
+        *,
+        record: Member,
+        community: Community,
+        **kwargs: dict,
+    ) -> None:
+        """Update a member in AAI.
+
+        This callback will, if enabled in the configuration, update the member in the AAI.
+
+        :param identity:        identity of the user performing the operation
+        :param record:          member record
+        :param community:       community record in which the member is being updated
+        :param kwargs:          additional arguments (not used)
+        """
         from oarepo_oidc_einfra.tasks import change_aai_role
 
         if not record.user_id:
@@ -99,8 +139,22 @@ class AAIInvitationComponent(ServiceComponent):
             change_aai_role(community.slug, record.user_id, record.role)
 
     def members_delete(
-        self, identity, *, record: Member, community: Community, **kwargs
-    ):
+        self,
+        identity: Identity,
+        *,
+        record: Member,
+        community: Community,
+        **kwargs: dict,
+    ) -> None:
+        """Remove a member from AAI.
+
+        This callback will, if enabled in the configuration, remove the member from the AAI.
+
+        :param identity:        identity of the user performing the operation
+        :param record:          member record
+        :param community:       community record from which the member is being removed
+        :param kwargs:          additional arguments (not used)
+        """
         from oarepo_oidc_einfra.tasks import remove_aai_user_from_community
 
         if not record.user_id:
@@ -115,7 +169,15 @@ class AAIInvitationComponent(ServiceComponent):
             # would be reverted.
             remove_aai_user_from_community(community.slug, record.user_id)
 
-    def _add_invitation_message_to_request(self, identity, request_item, message):
+    def _add_invitation_message_to_request(
+        self, identity: Identity, request_item: RequestItem, message: str
+    ) -> None:
+        """Add a message to the invitation request.
+
+        :param identity:        identity of the user adding message to the request
+        :param request_item:    request item, result of the _create_invitation_request
+        :param message:         message to be added to the request
+        """
         data = {"payload": {"content": message}}
         current_events_service.create(
             identity,
@@ -126,7 +188,16 @@ class AAIInvitationComponent(ServiceComponent):
             notify=False,
         )
 
-    def _create_invitation_request(self, identity, community, user_id, role):
+    def _create_invitation_request(
+        self, identity: Identity, community: Community, user_id: int, role: str
+    ) -> RequestItem:
+        """Create an invitation request in the repository.
+
+        :param identity:        identity of the user creating the request
+        :param community:       community record
+        :param user_id:         user id
+        :param role:            role of the user in the community
+        """
         title = _('Invitation to join "{community}"').format(
             community=community.metadata["title"],
         )
@@ -143,7 +214,17 @@ class AAIInvitationComponent(ServiceComponent):
         )
         return request_item
 
-    def _get_invitation_user(self, member_email, member_first_name, member_last_name):
+    def _get_invitation_user(
+        self, member_email: str, member_first_name: str, member_last_name: str
+    ) -> User:
+        """Get user id for the invitation.
+
+        If the user with the email already exists, return its id. If not, create a new user.
+
+        :param member_email:        email of the member
+        :param member_first_name:   first name of the member
+        :param member_last_name:    last name of the member
+        """
         u = User.query.filter_by(email=member_email.lower()).one_or_none()
         if u:
             return u.id

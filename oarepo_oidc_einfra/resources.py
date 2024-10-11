@@ -7,10 +7,14 @@
 #
 
 """REST resources."""
+
+from __future__ import annotations
+
 import logging
 from datetime import UTC, datetime
+from typing import TYPE_CHECKING, Optional
 
-from flask import current_app, g, request
+from flask import Blueprint, Flask, current_app, g, redirect, request
 from flask_login import login_required
 from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
@@ -25,6 +29,9 @@ from invenio_requests.records.api import Request
 
 from oarepo_oidc_einfra.encryption import decrypt
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
+
+if TYPE_CHECKING:
+    from werkzeug import Response
 
 log = logging.getLogger(__name__)
 
@@ -51,13 +58,11 @@ class OIDCEInfraResourceConfig(ResourceConfig):
 class OIDCEInfraResource(Resource):
     """REST API for the EInfra OIDC."""
 
-    def __init__(self, config=None):
+    def __init__(self, config: Optional[OIDCEInfraResourceConfig] = None):
         """Initialize the resource."""
-        super(OIDCEInfraResource, self).__init__(
-            config=config or OIDCEInfraResourceConfig()
-        )
+        super().__init__(config=config or OIDCEInfraResourceConfig())
 
-    def create_url_rules(self):
+    def create_url_rules(self) -> list[dict]:
         """Create URL rules for the resource."""
         routes = self.config.routes
         return [
@@ -65,7 +70,7 @@ class OIDCEInfraResource(Resource):
             route("GET", routes["accept-invitation"], self.accept_invitation),
         ]
 
-    def upload_dump(self):
+    def upload_dump(self) -> tuple[dict, int]:
         """Upload a dump of the EInfra data.
 
         The dump will be uploaded to the configured location (EINFRA_DUMP_DATA_URL inside config)
@@ -95,8 +100,10 @@ class OIDCEInfraResource(Resource):
         return {"status": "ok"}, 201
 
     @login_required
-    def accept_invitation(self):
-        """Accept an invitation to join a community. This is an endpoint to which user is directed
+    def accept_invitation(self) -> Response:
+        """Accept an invitation to join a community.
+
+        This is an endpoint to which user is directed
         after clicking the link in the invitation email, accepting the terms and conditions and
         accepting the invitation.
 
@@ -104,14 +111,16 @@ class OIDCEInfraResource(Resource):
         and use it to accept the invitation.
 
         Note:
-
         If user accepts the invitation but this endpoint is not called, the invitation will be forever
         in the submitted state (until expiration). The user will still be able to access the community
         because the AAI will return the correct capabilities for the user.
 
         Currently, the PERUN api does not return the ID of the created invitation, so we cannot store it
         and check in a background task if the invitation was accepted and then change the state of the request.
+
         """
+        assert request.view_args is not None
+
         request_id = decrypt(request.view_args["request_id"])
 
         # get the invitation request and check if it is submitted.
@@ -143,8 +152,9 @@ class OIDCEInfraResource(Resource):
         invitation_request.commit()
 
         current_requests_service.execute_action(system_identity, request_id, "accept")
+        return redirect("/")
 
 
-def create_rest_blueprint(app):
+def create_rest_blueprint(app: Flask) -> Blueprint:
     """Create a blueprint for the REST API."""
     return OIDCEInfraResource().as_blueprint()

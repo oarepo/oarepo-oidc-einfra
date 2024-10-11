@@ -5,6 +5,9 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""Mapping between perun capabilities and Invenio roles."""
+
+import dataclasses
 from typing import Dict, Optional
 
 from invenio_accounts.models import UserIdentity
@@ -12,9 +15,8 @@ from invenio_db import db
 from sqlalchemy import select
 
 
-def get_perun_capability_from_invenio_role(slug, role):
-    """
-    Get the capability name from the Invenio role.
+def get_perun_capability_from_invenio_role(slug: str, role: str) -> str:
+    """Get the capability name from the Invenio role.
 
     :param slug:        slug of the community
     :param role:        role in the community
@@ -23,30 +25,37 @@ def get_perun_capability_from_invenio_role(slug, role):
     return f"res:communities:{slug}:role:{role}"
 
 
-def get_invenio_role_from_capability(capability: str | list):
-    """
-    Get the Invenio role from the capability.
+@dataclasses.dataclass
+class SlugCommunityRole:
+    """A class representing a community slug and a role."""
+
+    slug: str
+    """Community slug."""
+
+    role: str
+    """Role name."""
+
+
+def get_invenio_role_from_capability(capability: str | list) -> SlugCommunityRole:
+    """Get the Invenio role from the capability.
 
     :param capability:      capability name
     :return:                (slug, role)
     """
-    if isinstance(capability, str):
-        parts = capability.split(":")
-    else:
-        parts = capability
+    parts = capability.split(":") if isinstance(capability, str) else capability
+
     if (
         len(parts) == 5
         and parts[0] == "res"
         and parts[1] == "communities"
         and parts[3] == "role"
     ):
-        return parts[2], parts[4]
+        return SlugCommunityRole(parts[2], parts[4])
     raise ValueError(f"Not an invenio role capability: {capability}")
 
 
 def get_user_einfra_id(user_id: int) -> Optional[str]:
-    """
-    Get e-infra identity for user with given id.
+    """Get e-infra identity for user with given id.
 
     :param user_id:     user id
     :return:            e-infra identity or None if user has no e-infra identity associated
@@ -60,9 +69,9 @@ def get_user_einfra_id(user_id: int) -> Optional[str]:
 
 
 def einfra_to_local_users_map() -> Dict[str, int]:
-    """
-    Returns a mapping of e-infra id to user id for local users, that have e-infra identity
-    and logged at least once with it.
+    """Return a mapping of e-infra id to user id for local users.
+
+     Only users that have e-infra identity and logged at least once with it re returned
 
     :return:                    a mapping of e-infra id to user id
     """

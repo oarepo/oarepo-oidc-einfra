@@ -5,6 +5,8 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""Encryption and decryption of request id using FernetEngine encryption."""
+
 from uuid import UUID
 
 from flask import current_app

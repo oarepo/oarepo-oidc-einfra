@@ -5,8 +5,10 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""Low-level API for Perun targeted at the operations needed by E-INFRA OIDC extension."""
+
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -19,8 +21,7 @@ class DoesNotExist(Exception):
 
 
 class PerunLowLevelAPI:
-    """
-    Low-level API for Perun targeted at the operations needed by E-INFRA OIDC extension.
+    """Low-level API for Perun targeted at the operations needed by E-INFRA OIDC extension.
 
     Note: Perun does not follow RESTful principles and the API is thus not resource-oriented,
     but rather manager-oriented and spills out implementation details. This class provides
@@ -29,9 +30,14 @@ class PerunLowLevelAPI:
     Note: All ids are internal Perun ids, not UUIDs or other external identifiers.
     """
 
-    def __init__(self, base_url: str, service_id: int, service_username: str, service_password: str):
-        """
-        Initialize the API with the base URL and the service credentials.
+    def __init__(
+        self,
+        base_url: str,
+        service_id: int,
+        service_username: str,
+        service_password: str,
+    ):
+        """Initialize the API with the base URL and the service credentials.
 
         :param base_url:            URL of Perun server
         :param service_id:          the id of the service that manages stuff
@@ -42,14 +48,35 @@ class PerunLowLevelAPI:
         self._service_id = service_id
         self._auth = HTTPBasicAuth(service_username, service_password)
 
-    def _perun_call(self, manager: str, method: str, payload: dict) -> dict|list:
+    def _perun_call_dict(self, manager: str, method: str, payload: dict) -> dict:
+        """Low-level call to Perun API with error handling, call returns a dict.
+
+        :param manager:     the manager to call
+        :param method:      the method to call
+        :param payload:     the json payload to send
+        """
+        ret = self._perun_call(manager, method, payload)
+        assert isinstance(ret, dict)
+        return ret
+
+    def _perun_call_list(self, manager: str, method: str, payload: dict) -> list:
+        """Low-level call to Perun API with error handling, call returns a list of objects.
+
+        :param manager:     the manager to call
+        :param method:      the method to call
+        :param payload:     the json payload to send
+        """
+        ret = self._perun_call(manager, method, payload)
+        assert isinstance(ret, list)
+        return ret
+
+    def _perun_call(self, manager: str, method: str, payload: dict) -> dict | list:
         """Low-level call to Perun API with error handling.
 
         :param manager:     the manager to call
         :param method:      the method to call
         :param payload:     the json payload to send
         """
-        print("PerunCall", manager, method, payload)
         resp = requests.post(
             f"{self._base_url}/krb/rpc/json/{manager}/{method}",
             auth=self._auth,
@@ -70,11 +97,15 @@ class PerunLowLevelAPI:
         return resp.json()
 
     def create_group(
-        self, *, name: str, description: str, parent_group_id: int,
-        parent_vo: int, check_existing: bool=True
-    ):
-        """
-        Create a new group in Perun and set the service as its admin
+        self,
+        *,
+        name: str,
+        description: str,
+        parent_group_id: int,
+        parent_vo: int,
+        check_existing: bool = True,
+    ) -> tuple[dict, bool, bool]:
+        """Create a new group in Perun and set the service as its admin.
 
         :param name: Name of the group
         :param description: Description of the group
@@ -88,6 +119,7 @@ class PerunLowLevelAPI:
         group_created = False
         admin_created = False
 
+        group: dict | None
         if check_existing:
             group = self.get_group_by_name(name, parent_group_id)
         else:
@@ -97,7 +129,7 @@ class PerunLowLevelAPI:
             log.info("Creating group %s within parent %s", name, parent_group_id)
 
             # Create a new group in Perun
-            group = self._perun_call(
+            group = self._perun_call_dict(
                 "groupsManager",
                 "createGroup",
                 {
@@ -106,6 +138,7 @@ class PerunLowLevelAPI:
                     "parentGroup": parent_group_id,
                 },
             )
+
             group_created = True
             log.info(
                 "Group %s within parent %s created, id %s",
@@ -144,9 +177,8 @@ class PerunLowLevelAPI:
 
         return (group, group_created, admin_created)
 
-    def get_group_by_name(self, name: str, parent_group_id: int) -> Optional[str]:
-        """
-        Get a group by name within a parent group.
+    def get_group_by_name(self, name: str, parent_group_id: int) -> Optional[dict]:
+        """Get a group by name within a parent group.
 
         :param name:                name of the group
         :param parent_group_id:     ID of the parent group
@@ -165,16 +197,15 @@ class PerunLowLevelAPI:
         *,
         vo_id: int,
         facility_id: int,
-        group_id : int,
+        group_id: int,
         name: str,
         description: str,
         capability_attr_id: int,
         capabilities: list[str],
         perun_sync_service_id: int,
-        check_existing: bool =True,
-    ) -> (dict, bool):
-        """
-        Create a new resource in Perun and assign the group to it.
+        check_existing: bool = True,
+    ) -> Tuple[dict, bool]:
+        """Create a new resource in Perun and assign the group to it.
 
         :param vo_id:           id of the virtual organization in within the resource is created
         :param facility_id:     id of the facility for which the resource is created. The service have facility manager rights
@@ -205,10 +236,14 @@ class PerunLowLevelAPI:
         return resource, resource_created
 
     def create_resource(
-        self, vo_id: int, facility_id: int, name: str, description: str, check_existing: bool=True
-    ) -> (dict, bool):
-        """
-        Create a new resource in Perun, optionally checking if a resource with the same name already exists.
+        self,
+        vo_id: int,
+        facility_id: int,
+        name: str,
+        description: str,
+        check_existing: bool = True,
+    ) -> Tuple[dict, bool]:
+        """Create a new resource in Perun, optionally checking if a resource with the same name already exists.
 
         :param vo_id:           id of the virtual organization in within the resource is created
         :param facility_id:     id of the facility for which the resource is created
@@ -230,7 +265,7 @@ class PerunLowLevelAPI:
                 facility_id,
                 vo_id,
             )
-            resource = self._perun_call(
+            resource = self._perun_call_dict(
                 "resourcesManager",
                 "createResource",
                 {
@@ -251,8 +286,7 @@ class PerunLowLevelAPI:
         return resource, resource_created
 
     def assign_group_to_resource(self, resource_id: int, group_id: int) -> None:
-        """
-        Assign a group to a resource.
+        """Assign a group to a resource.
 
         :param resource_id:         id of the resource
         :param group_id:            id of the group to be assigned
@@ -276,17 +310,17 @@ class PerunLowLevelAPI:
             )
             log.info("Group %s assigned to resource %s", group_id, resource_id)
 
-    def set_resource_capabilities(self, resource_id: int, capability_attr_id: int, capabilities: list[str]) -> None:
-        """
-        Set capabilities to a resource.
+    def set_resource_capabilities(
+        self, resource_id: int, capability_attr_id: int, capabilities: list[str]
+    ) -> None:
+        """Set capabilities to a resource.
 
         :param resource_id:             id of the resource
         :param capability_attr_id:      internal id of the attribute that holds the capabilities
         :param capabilities:            list of capabilities to be set
         """
-
         # check if the resource has the capability and if not, add it
-        attr = self._perun_call(
+        attr = self._perun_call_dict(
             "attributesManager",
             "getAttribute",
             {"resource": resource_id, "attributeId": capability_attr_id},
@@ -305,8 +339,7 @@ class PerunLowLevelAPI:
             log.info("Capabilities %s set to resource %s", capabilities, resource_id)
 
     def attach_service_to_resource(self, resource_id: int, service_id: int) -> None:
-        """
-        Attach a service to a resource.
+        """Attach a service to a resource.
 
         :param resource_id:                 id of the resource
         :param service_id:                  id of the service to be attached
@@ -336,9 +369,10 @@ class PerunLowLevelAPI:
                 resource_id,
             )
 
-    def get_resource_by_name(self, vo_id: int, facility_id: int, name: str) -> Optional[dict]:
-        """
-        Get a resource by name.
+    def get_resource_by_name(
+        self, vo_id: int, facility_id: int, name: str
+    ) -> Optional[dict]:
+        """Get a resource by name.
 
         :param vo_id:               id of the virtual organization
         :param facility_id:         id of the facility for which a resource is created
@@ -346,7 +380,7 @@ class PerunLowLevelAPI:
         :return:                    resource or None if not found
         """
         try:
-            return self._perun_call(
+            return self._perun_call_dict(
                 "resourcesManager",
                 "getResourceByName",
                 {"vo": vo_id, "facility": facility_id, "name": name},
@@ -354,9 +388,10 @@ class PerunLowLevelAPI:
         except DoesNotExist:
             return None
 
-    def get_resource_by_capability(self, *, vo_id: int, facility_id: int, capability: str) -> Optional[dict]:
-        """
-        Get a resource by capability.
+    def get_resource_by_capability(
+        self, *, vo_id: int, facility_id: int, capability: str
+    ) -> Optional[dict]:
+        """Get a resource by capability.
 
         :param vo_id:               id of the virtual organization
         :param facility_id:         id of the facility where we search for resource
@@ -383,8 +418,7 @@ class PerunLowLevelAPI:
         return matching_resources[0]
 
     def get_resource_groups(self, *, resource_id: int) -> list[dict]:
-        """
-        Get groups assigned to a resource.
+        """Get groups assigned to a resource.
 
         :param resource_id:         id of the resource
         :return:                    list of groups
@@ -400,9 +434,10 @@ class PerunLowLevelAPI:
             )
         ]
 
-    def get_user_by_attribute(self, *, attribute_name: str, attribute_value: str) -> Optional[dict]:
-        """
-        Get a user by attribute.
+    def get_user_by_attribute(
+        self, *, attribute_name: str, attribute_value: str
+    ) -> Optional[dict]:
+        """Get a user by attribute.
 
         :param attribute_name:          name of the attribute
         :param attribute_value:         value of the attribute
@@ -421,9 +456,10 @@ class PerunLowLevelAPI:
             return None
         return users[0]
 
-    def remove_user_from_group(self, *, vo_id: int, user_id: int, group_id: int) -> None:
-        """
-        Remove a user from a group.
+    def remove_user_from_group(
+        self, *, vo_id: int, user_id: int, group_id: int
+    ) -> None:
+        """Remove a user from a group.
 
         :param vo_id:           id of the virtual organization
         :param user_id:           internal perun id of the user
@@ -438,8 +474,7 @@ class PerunLowLevelAPI:
         )
 
     def add_user_to_group(self, *, vo_id: int, user_id: int, group_id: int) -> None:
-        """
-        Add a user to a group.
+        """Add a user to a group.
 
         :param vo_id:           id of the virtual organization
         :param user_id:           internal perun id of the user
@@ -447,7 +482,7 @@ class PerunLowLevelAPI:
         """
         member = self._get_or_create_member_in_vo(vo_id, user_id)
 
-        self._perun_call(
+        self._perun_call_dict(
             "groupsManager",
             "addMember",
             {"group": group_id, "member": member["id"]},
@@ -455,7 +490,7 @@ class PerunLowLevelAPI:
 
     def _get_or_create_member_in_vo(self, vo_id: int, user_id: int) -> dict:
         # TODO: create part here (but we might not need it if everything goes through invitations)
-        member = self._perun_call(
+        member = self._perun_call_dict(
             "membersManager", "getMemberByUser", {"vo": vo_id, "user": user_id}
         )
         return member
@@ -471,8 +506,7 @@ class PerunLowLevelAPI:
         expiration: str,
         redirect_url: str,
     ) -> dict:
-        """
-        Send an invitation to a user to join a group.
+        """Send an invitation to a user to join a group.
 
         :param vo_id:           id of the virtual organization
         :param group_id:        id of the group
@@ -482,7 +516,7 @@ class PerunLowLevelAPI:
         :param expiration:      expiration date of the invitation, format YYYY-MM-DD
         :param redirect_url:    URL to redirect to after accepting the invitation
         """
-        return self._perun_call(
+        return self._perun_call_dict(
             "invitationsManager",
             "inviteToGroup",
             {

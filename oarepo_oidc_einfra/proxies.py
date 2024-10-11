@@ -7,8 +7,15 @@
 #
 """Helper proxy to the state object."""
 
+from typing import TYPE_CHECKING
+
 from flask import current_app
 from werkzeug.local import LocalProxy
 
-current_einfra_oidc = LocalProxy(lambda: current_app.extensions["einfra-oidc"])
+if TYPE_CHECKING:
+    from oarepo_oidc_einfra.ext import EInfraOIDCApp
+
+current_einfra_oidc: "EInfraOIDCApp" = (
+    LocalProxy["EInfraOIDCApp"](lambda: current_app.extensions["einfra-oidc"])  # type: ignore
+)
 """Helper proxy to get the current einfra oidc."""

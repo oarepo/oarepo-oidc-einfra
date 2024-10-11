@@ -5,12 +5,15 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""Dump data from the PERUN."""
+
 import dataclasses
 import logging
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from datetime import UTC, datetime
 from functools import cached_property
-from typing import Any, Dict, Iterable, List, Set
+from typing import Dict, Iterable, List, Set
+from uuid import UUID
 
 import boto3
 from flask import current_app
@@ -19,9 +22,11 @@ from oarepo_oidc_einfra.communities import CommunityRole
 
 log = logging.getLogger("perun.dump_data")
 
+
 @dataclasses.dataclass(frozen=True)
 class AAIUser:
     """A user with their roles as received from the Perun AAI."""
+
     einfra_id: str
     email: str
     full_name: str
@@ -30,18 +35,15 @@ class AAIUser:
 
 
 class PerunDumpData:
-    """
-    Provides access to the data from the PERUN dump.
-    """
+    """Provides access to the data from the PERUN dump."""
 
     def __init__(
         self,
-        dump_data: Any,
-        community_slug_to_id: Dict[str, str],
+        dump_data: dict,
+        community_slug_to_id: Dict[str, UUID],
         community_role_names: Set[str],
     ):
-        """
-        Creates an instance of the data
+        """Create an instance of the data.
 
         :param dump_data:               The data from the PERUN dump (json)
         :param community_slug_to_id:    Mapping of community slugs to their ids (str of uuid)
@@ -53,8 +55,8 @@ class PerunDumpData:
 
     @cached_property
     def aai_community_roles(self) -> Set[CommunityRole]:
-        """
-        Returns all community roles (pairs of community id, role name) from the dump.
+        """Return all community roles from the dump.
+
         :return: set of community roles known to perun
         """
         aai_community_roles = set()
@@ -64,8 +66,7 @@ class PerunDumpData:
 
     @cached_property
     def resource_to_community_roles(self) -> Dict[str, List[CommunityRole]]:
-        """
-        Returns a mapping of resource id to community roles.
+        """Returns a mapping of resource id to community roles.
 
         :return:    for each Perun resource, mapping to associated community roles
         """
@@ -100,14 +101,15 @@ class PerunDumpData:
                     if role not in self.community_role_names:
                         log.error(f"Role from PERUN {role} not found in the repository")
                         continue
-                    community_role = CommunityRole(self.slug_to_id[community_slug], role)
+                    community_role = CommunityRole(
+                        self.slug_to_id[community_slug], role
+                    )
                     resources[r_id].append(community_role)
 
         return resources
 
     def users(self) -> Iterable[AAIUser]:
-        """
-        Returns all users from the dump.
+        """Return all users from the dump.
 
         :return: iterable of AAIUser
         """
@@ -135,8 +137,7 @@ class PerunDumpData:
     def _get_roles_for_resources(
         self, allowed_resources: Iterable[str]
     ) -> Set[CommunityRole]:
-        """
-        Returns community roles for an iterable of allowed resources.
+        """Return community roles for an iterable of allowed resources.
 
         :param allowed_resources:       iterable of resource ids
         :return:                        a set of associated community roles
@@ -148,8 +149,10 @@ class PerunDumpData:
 
 
 def import_dump_file(data: bytes) -> str:
-    """
-    Imports a dump file from the input stream into S3 and returns file name
+    """Import a dump file from the input stream into S3 and return file name.
+
+    :param data:    data to be imported
+    :return:        path to the object in S3
     """
     client = boto3.client(
         "s3",

@@ -6,14 +6,16 @@
 # details.
 #
 """Helper functions for working with communities."""
+
+from __future__ import annotations
+
+import dataclasses
 import logging
-from collections import namedtuple
 from functools import cached_property
-from typing import Dict, Set
+from typing import TYPE_CHECKING, Iterable
 
 from flask import current_app
 from invenio_access.permissions import system_identity
-from invenio_accounts.models import User
 from invenio_communities.communities.records.api import Community
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.models import MemberModel
@@ -21,36 +23,40 @@ from invenio_communities.proxies import current_communities
 from invenio_db import db
 from marshmallow import ValidationError
 from sqlalchemy import select
+from sqlalchemy.sql.expression import true
+
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from invenio_accounts.models import User
 
 log = logging.getLogger(__name__)
 
 
-CommunityRole = namedtuple("CommunityRole", ["community_id", "role"])
-"""A named tuple representing a community and a role."""
+@dataclasses.dataclass(frozen=True)
+class CommunityRole:
+    """A class representing a community and a role."""
+
+    community_id: UUID
+    role: str
 
 
 class CommunitySupport:
     """A support class for working with communities and their members."""
 
-    def __init__(self):
-        pass
-
     @cached_property
-    def slug_to_id(self) -> Dict[str, str]:
-        """
-        Returns a mapping of community slugs to their ids.
-        """
+    def slug_to_id(self) -> dict[str, UUID]:
+        """Returns a mapping of community slugs to their ids."""
         return {
-            row[1]: str(row[0])
+            row[1]: row[0]
             for row in db.session.execute(
                 select(Community.model_cls.id, Community.model_cls.slug)
             )
         }
 
     @cached_property
-    def all_community_roles(self) -> Set[CommunityRole]:
-        """
-        Returns a set of all community roles (pair of community id, role name) known to the repository.
+    def all_community_roles(self) -> set[CommunityRole]:
+        """Return a set of all community roles (pair of community id, role name) known to the repository.
 
         :return:                    a set of all community roles known to the repository
         """
@@ -63,16 +69,15 @@ class CommunitySupport:
         return repository_comunity_roles
 
     @cached_property
-    def role_names(self) -> Set[str]:
-        """
-        Returns a set of all known community role names, as configured inside the invenio.cfg
+    def role_names(self) -> set[str]:
+        """Return a set of all known community role names, as configured inside the invenio.cfg.
+
         :return:                a set of all known community role names
         """
         return {role["name"] for role in current_app.config["COMMUNITIES_ROLES"]}
 
     def role_priority(self, role_name: str) -> int:
-        """
-        Returns a priority of a given role name.
+        """Return a priority of a given role name.
 
         :param role_name:       role name
         :return:                role priority (0 is lowest (member), higher number is higher priority (up to owner))
@@ -80,9 +85,8 @@ class CommunitySupport:
         return self.role_priorities[role_name]
 
     @cached_property
-    def role_priorities(self) -> Dict[str, int]:
-        """
-        Returns a mapping of role names to their priorities.
+    def role_priorities(self) -> dict[str, int]:
+        """Returns a mapping of role names to their priorities.
 
         :return:                a mapping of role names to their priorities, 0 is lowest priority
         """
@@ -95,8 +99,8 @@ class CommunitySupport:
     def set_user_community_membership(
         cls,
         user: User,
-        new_community_roles: Set[CommunityRole],
-        current_community_roles: Set[CommunityRole] = None,
+        new_community_roles: set[CommunityRole],
+        current_community_roles: set[CommunityRole] | None = None,
     ) -> None:
         """Set user membership based on the new community roles.
 
@@ -109,8 +113,8 @@ class CommunitySupport:
         if not current_community_roles:
             current_community_roles = cls.get_user_community_membership(user)
 
-        for community_id, role in new_community_roles - current_community_roles:
-            cls._add_user_community_membership(community_id, role, user)
+        for community_role in new_community_roles - current_community_roles:
+            cls._add_user_community_membership(community_role, user)
 
         for v in new_community_roles:
             assert isinstance(v, CommunityRole)
@@ -131,7 +135,7 @@ class CommunitySupport:
                 )
 
     @classmethod
-    def get_user_community_membership(cls, user) -> Set[CommunityRole]:
+    def get_user_community_membership(cls, user: User) -> set[CommunityRole]:
         """Get user's actual community roles.
 
         :param user: User object
@@ -139,7 +143,7 @@ class CommunitySupport:
         ret = set()
         for row in db.session.execute(
             select([MemberModel.community_id, MemberModel.role]).where(
-                MemberModel.user_id == user.id, MemberModel.active == True
+                MemberModel.user_id == user.id, MemberModel.active == true()
             )
         ):
             ret.add(CommunityRole(row.community_id, row.role))
@@ -148,17 +152,17 @@ class CommunitySupport:
 
     @classmethod
     def get_user_list_community_membership(
-        cls, user_ids: list[int]
-    ) -> Dict[int, Set[CommunityRole]]:
+        cls, user_ids: Iterable[int]
+    ) -> dict[int, set[CommunityRole]]:
         """Get community roles of a list of users.
 
         :param user_ids: List of user ids
         """
-        ret = {}
+        ret: dict[int, set[CommunityRole]] = {}
         for row in db.session.execute(
             select(
                 [MemberModel.community_id, MemberModel.user_id, MemberModel.role]
-            ).where(MemberModel.user_id.in_(user_ids), MemberModel.active == True)
+            ).where(MemberModel.user_id.in_(user_ids), MemberModel.active == true())
         ):
             if row.user_id not in ret:
                 ret[row.user_id] = set()
@@ -168,25 +172,23 @@ class CommunitySupport:
 
     @classmethod
     def _add_user_community_membership(
-        cls, community_id: str, community_role: str, user: User
+        cls, community_role: CommunityRole, user: User
     ) -> None:
-        """
-        Add user to a community with a given role.
+        """Add user to a community with a given role.
 
-        :param community_id:            id of the community
         :param community_role:          community role
         :param user:                    user object
         :return:                        A membership result item from service
         """
         data = {
-            "role": community_role,
+            "role": community_role.role,
             "members": [{"type": "user", "id": str(user.id)}],
         }
         try:
             return current_communities.service.members.add(
-                system_identity, community_id, data
+                system_identity, community_role.community_id, data
             )
-        except AlreadyMemberError as e:
+        except AlreadyMemberError:
             # We are here because
             #
             # * active memberships have not returned this (community, role) for user
@@ -198,7 +200,9 @@ class CommunitySupport:
             # We need to get the associated invitation request and accept it here,
             # thus the membership will become active.
             results = current_communities.service.members.search_invitations(
-                system_identity, community_id, params={"user.id": str(user.id)}
+                system_identity,
+                community_role.community_id,
+                params={"user.id": str(user.id)},
             )
             hits = list(results.hits)
             if len(hits) == 1:
@@ -207,9 +211,8 @@ class CommunitySupport:
                 )
 
     @classmethod
-    def _remove_user_community_membership(cls, community_id, user) -> None:
-        """
-        Remove user from a community with a given role.
+    def _remove_user_community_membership(cls, community_id: UUID, user: User) -> None:
+        """Remove user from a community with a given role.
 
         :param community_id:        id of the community
         :param user:                user object

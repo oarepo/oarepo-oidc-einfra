@@ -5,6 +5,7 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""Configuration for the E-INFRA OIDC authentication, can be overwritten in invenio.cfg ."""
 
 EINFRA_COMMUNITY_SYNCHRONIZATION = True
 """Synchronize community to E-Infra Perun when community is created."""
