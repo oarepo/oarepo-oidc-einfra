@@ -5,6 +5,7 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+import dataclasses
 import logging
 from collections import defaultdict, namedtuple
 from datetime import UTC, datetime
@@ -18,10 +19,14 @@ from oarepo_oidc_einfra.communities import CommunityRole
 
 log = logging.getLogger("perun.dump_data")
 
-
-AAIUser = namedtuple(
-    "AAIUser", ["einfra_id", "email", "full_name", "organization", "roles"]
-)
+@dataclasses.dataclass(frozen=True)
+class AAIUser:
+    """A user with their roles as received from the Perun AAI."""
+    einfra_id: str
+    email: str
+    full_name: str
+    organization: str
+    roles: Set[CommunityRole]
 
 
 class PerunDumpData:
@@ -95,7 +100,7 @@ class PerunDumpData:
                     if role not in self.community_role_names:
                         log.error(f"Role from PERUN {role} not found in the repository")
                         continue
-                    community_role = (self.slug_to_id[community_slug], role)
+                    community_role = CommunityRole(self.slug_to_id[community_slug], role)
                     resources[r_id].append(community_role)
 
         return resources
@@ -142,7 +147,7 @@ class PerunDumpData:
         return aai_communities
 
 
-def import_dump_file(data: bytes):
+def import_dump_file(data: bytes) -> str:
     """
     Imports a dump file from the input stream into S3 and returns file name
     """

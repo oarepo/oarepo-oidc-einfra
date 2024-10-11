@@ -70,6 +70,13 @@ class CacheMutex:
         if current_cache.cache.get(self.key) == self.value:
             current_cache.cache.delete(self.key)
 
+    def force_clear(self):
+        """
+        Forces the mutex to be cleared.
+        Note: this does not stop any processes that might be using the mutex !
+        """
+        current_cache.cache.delete(self.key)
+
 
 mutex_thread_local = threading.local()
 """make the mutex below reentrant within the same thread"""

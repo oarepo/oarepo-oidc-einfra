@@ -11,6 +11,7 @@ Background tasks.
 import json
 import logging
 from io import BytesIO
+from itertools import chain, islice
 from typing import List, Tuple
 from urllib.parse import urljoin
 from uuid import UUID
@@ -203,32 +204,80 @@ def synchronize_communities_to_perun(repository_community_roles, aai_community_r
             synchronize_community_to_perun(community_id)
 
 
-from pprint import pprint
+
+
+def chunks(iterable, size=10):
+    iterator = iter(iterable)
+    for first in iterator:
+        yield chain([first], islice(iterator, size - 1))
 
 
 def synchronize_users_from_perun(dump, community_support):
     local_users_by_einfra = einfra_to_local_users_map()
-    for aai_user in dump.users():
-        print("Fixing AAI user:")
-        pprint(aai_user)
-        local_user_id = local_users_by_einfra.pop(aai_user.einfra_id, None)
-        # do not create new users proactively, we can do it on the first login
-        if not local_user_id:
+    print([aai_user.email for aai_user in dump.users()])
+    for aai_user_chunk in chunks(dump.users(), 100):
+        aai_user_chunk_by_einfra_id = {u.einfra_id: u for u in aai_user_chunk}
+
+        local_user_id_to_einfra_id = {}
+        for einfra_id in aai_user_chunk_by_einfra_id.keys():
+            local_user_id = local_users_by_einfra.pop(einfra_id, None)
+            if local_user_id:
+                local_user_id_to_einfra_id[local_user_id] = einfra_id
+        if not local_user_id_to_einfra_id:
             continue
 
-        user = User.query.filter_by(id=local_user_id).one()
-        print("Setting user", user, aai_user.roles)
-        update_user_metadata(
-            user, aai_user.full_name, aai_user.email, aai_user.organization
+        # bulk get users from the database
+        local_users = (
+            db.session.query(User)
+            .filter(User.id.in_(local_user_id_to_einfra_id.keys()))
+            .all()
         )
-        community_support.set_user_community_membership(
-            user, set(CommunityRole(UUID(x[0]), x[1]) for x in aai_user.roles)
+
+        # bulk get communities for the users
+        local_community_roles_by_user_id = (
+            community_support.get_user_list_community_membership(
+                local_user_id_to_einfra_id.keys()
+            )
         )
+
+        for user in local_users:
+            aai_user = aai_user_chunk_by_einfra_id[local_user_id_to_einfra_id[user.id]]
+            print("Setting user", user, aai_user.roles)
+            update_user_metadata(
+                user, aai_user.full_name, aai_user.email, aai_user.organization
+            )
+
+            new_community_roles = filter_community_roles(community_support, aai_user.roles)
+
+            community_support.set_user_community_membership(
+                user,
+                new_community_roles=new_community_roles,
+                current_community_roles=local_community_roles_by_user_id.get(
+                    user.id, set()
+                ),
+            )
+
     # for users that are not in the dump anymore, remove all communities
     for local_user_id in local_users_by_einfra.values():
         user = User.query.filter_by(id=local_user_id).one()
+        print("Removing obsolete user", user)
         community_support.set_user_community_membership(user, set())
 
+def filter_community_roles(community_support, aai_roles):
+    new_community_roles = {}
+
+    for community_id, role in aai_roles:
+        community_id = UUID(community_id)
+        if community_id not in new_community_roles or (
+            community_support.role_priority(role)
+            > community_support.role_priority(
+            new_community_roles[community_id].role
+        )
+        ):
+            new_community_roles[community_id] = CommunityRole(
+                community_id, role
+            )
+    return set(new_community_roles.values())
 
 def update_user_metadata(user, full_name, email, organization):
     save = False

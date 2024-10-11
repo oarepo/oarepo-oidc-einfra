@@ -17,6 +17,7 @@ from invenio_accounts.models import User, UserIdentity
 from invenio_db import db
 from werkzeug.local import LocalProxy
 
+from oarepo_oidc_einfra.mutex import CacheMutex
 from oarepo_oidc_einfra.perun.dump import import_dump_file
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
@@ -66,6 +67,12 @@ def update_from_dump(dump_name, on_background, fix_communities_in_perun):
 @with_appcontext
 def add_einfra_user(email, einfra_id):
     _add_einfra_user(email, einfra_id)
+
+
+@einfra.command("clear_import_mutex")
+@with_appcontext
+def clear_import_mutex():
+    CacheMutex("EINFRA_SYNC_MUTEX").force_clear()
 
 
 def _add_einfra_user(email, einfra_id):

@@ -70,15 +70,44 @@ class CommunitySupport:
         """
         return {role["name"] for role in current_app.config["COMMUNITIES_ROLES"]}
 
+    def role_priority(self, role_name: str) -> int:
+        """
+        Returns a priority of a given role name.
+
+        :param role_name:       role name
+        :return:                role priority (0 is lowest (member), higher number is higher priority (up to owner))
+        """
+        return self.role_priorities[role_name]
+
+    @cached_property
+    def role_priorities(self) -> Dict[str, int]:
+        """
+        Returns a mapping of role names to their priorities.
+
+        :return:                a mapping of role names to their priorities, 0 is lowest priority
+        """
+        return {
+            role["name"]: len(current_app.config["COMMUNITIES_ROLES"]) - role_idx
+            for role_idx, role in enumerate(current_app.config["COMMUNITIES_ROLES"])
+        }
+
     @classmethod
     def set_user_community_membership(
-        cls, user: User, new_community_roles: Set[CommunityRole]
+        cls,
+        user: User,
+        new_community_roles: Set[CommunityRole],
+        current_community_roles: Set[CommunityRole] = None,
     ) -> None:
         """Set user membership based on the new community roles.
 
         The previous community roles, not present in new_community_roles, are removed.
+
+        :param user:                    User object for which communities will be set
+        :param new_community_roles:     Set of new community roles
+        :param current_community_roles: Set of current community roles. If not passed, it is fetched from the database.
         """
-        current_community_roles = cls.get_user_community_membership(user)
+        if not current_community_roles:
+            current_community_roles = cls.get_user_community_membership(user)
 
         for community_id, role in new_community_roles - current_community_roles:
             cls._add_user_community_membership(community_id, role, user)
@@ -114,6 +143,26 @@ class CommunitySupport:
             )
         ):
             ret.add(CommunityRole(row.community_id, row.role))
+
+        return ret
+
+    @classmethod
+    def get_user_list_community_membership(
+        cls, user_ids: list[int]
+    ) -> Dict[int, Set[CommunityRole]]:
+        """Get community roles of a list of users.
+
+        :param user_ids: List of user ids
+        """
+        ret = {}
+        for row in db.session.execute(
+            select(
+                [MemberModel.community_id, MemberModel.user_id, MemberModel.role]
+            ).where(MemberModel.user_id.in_(user_ids), MemberModel.active == True)
+        ):
+            if row.user_id not in ret:
+                ret[row.user_id] = set()
+            ret[row.user_id].add(CommunityRole(row.community_id, row.role))
 
         return ret
 
