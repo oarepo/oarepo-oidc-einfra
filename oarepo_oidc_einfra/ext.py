@@ -7,28 +7,39 @@
 #
 """A flask extension for E-INFRA OIDC authentication."""
 
-from flask import current_app
-from invenio_communities.communities.services.components import \
-    DefaultCommunityComponents
+from flask import Flask, current_app
+from invenio_communities.communities.services.components import (
+    DefaultCommunityComponents,
+)
+from invenio_communities.members.services.components import (
+    DefaultCommunityMemberComponents,
+)
 
 from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 from oarepo_oidc_einfra.services.components.aai_communities import CommunityAAIComponent
+from oarepo_oidc_einfra.services.components.aai_invitations import (
+    AAIInvitationComponent,
+)
+
+from .cli import einfra as einfra_cmd
 
 
 class EInfraOIDCApp:
-    def __init__(self, app=None):
-        """Creates the extension."""
+    """EInfra OIDC extension."""
+
+    def __init__(self, app: Flask | None = None):
+        """Create the extension."""
         if app:
             self.init_app(app)
 
-    def init_app(self, app):
-        """Adds the extension to the app and loads initial configuration."""
+    def init_app(self, app: Flask) -> None:
+        """Add the extension to the app and loads initial configuration."""
         app.extensions["einfra-oidc"] = self
         self.init_config(app)
+        app.cli.add_command(einfra_cmd)
 
-    def init_config(self, app):
-        """Loads the default configuration."""
-
+    def init_config(self, app: Flask) -> None:
+        """Load the default configuration."""
         self.register_sync_component_to_community_service(app)
 
         # sets the default configuration values
@@ -38,11 +49,9 @@ class EInfraOIDCApp:
             if k.startswith("EINFRA_"):
                 app.config.setdefault(k, getattr(config, k))
 
-    def register_sync_component_to_community_service(self, app):
-        """Registers a component to the community service.
-
-        This component is responsible for synchronizing the community to the E-INFRA Perun.
-        """
+    def register_sync_component_to_community_service(self, app: Flask) -> None:
+        """Register components to the community service."""
+        # Community -> AAI synchronization service component
         communities_components = app.config.get("COMMUNITIES_SERVICE_COMPONENTS", None)
         if isinstance(communities_components, list):
             communities_components.append(CommunityAAIComponent)
@@ -52,8 +61,20 @@ class EInfraOIDCApp:
                 *DefaultCommunityComponents,
             ]
 
-    def perun_api(self):
+        # Invitation service component
+        communities_members_components = app.config.get(
+            "COMMUNITIES_MEMBERS_SERVICE_COMPONENTS", None
+        )
+        if isinstance(communities_members_components, list):
+            communities_members_components.append(AAIInvitationComponent)
+        elif not communities_members_components:
+            app.config["COMMUNITIES_MEMBERS_SERVICE_COMPONENTS"] = [
+                AAIInvitationComponent,
+                *DefaultCommunityMemberComponents,
+            ]
 
+    def perun_api(self) -> PerunLowLevelAPI:
+        """Create a new Perun API instance."""
         return PerunLowLevelAPI(
             base_url=current_app.config["EINFRA_API_URL"],
             service_id=current_app.config["EINFRA_SERVICE_ID"],

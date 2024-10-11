@@ -15,7 +15,6 @@ from oarepo_oidc_einfra.resources import upload_dump_action
 
 
 def test_store_dump(app, db, client, test_ui_pages):
-
     user = User(email="test@test.com", active=True)
     db.session.add(user)
     db.session.commit()

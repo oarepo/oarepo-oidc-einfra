@@ -5,8 +5,7 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
-"""E-INFRA OIDC Auth backend for OARepo."""
 
-from setuptools import setup
 
-setup()
+def test_invitation(smart_record, low_level_perun_api):
+    pass
