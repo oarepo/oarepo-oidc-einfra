@@ -125,10 +125,12 @@ def app_config(app_config):
 
     return app_config
 
+
 @pytest.fixture()
 def s3_dump_bucket(app):
     import boto3
     from botocore.exceptions import ClientError
+
     client = boto3.client(
         "s3",
         aws_access_key_id=app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
@@ -140,8 +142,6 @@ def s3_dump_bucket(app):
         client.create_bucket(Bucket=app.config["EINFRA_USER_DUMP_S3_BUCKET"])
     except ClientError:
         pass
-
-
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -205,11 +205,13 @@ def low_level_perun_api(
         service_password=perun_service_password,
     )
 
+
 @pytest.fixture()
 def constants_template():
     constants_file = Path(__file__).parent / "constants_template.yaml"
     with constants_file.open() as f:
         return SimpleNamespace(**{k: str(v) for k, v in yaml.safe_load(f).items()})
+
 
 @pytest.fixture()
 def constants(constants_template):
@@ -218,6 +220,7 @@ def constants(constants_template):
         return constants_template
     with constants_file.open() as f:
         return SimpleNamespace(**{k: str(v) for k, v in yaml.safe_load(f).items()})
+
 
 @pytest.fixture()
 def smart_record(perun_api_url, low_level_perun_api, constants, constants_template):
@@ -232,10 +235,12 @@ def smart_record(perun_api_url, low_level_perun_api, constants, constants_templa
                 yield constants
                 messages = recorder.get_registry().registered
                 for r in messages:
-                    replace_in_response(r, source_constants=constants, target_constants=constants_template)
-                recorder.dump_to_file(
-                    file_path=file_path, registered=messages
-                )
+                    replace_in_response(
+                        r,
+                        source_constants=constants,
+                        target_constants=constants_template,
+                    )
+                recorder.dump_to_file(file_path=file_path, registered=messages)
         else:
             print("Using recorded data")
             low_level_perun_api._auth = (
@@ -247,6 +252,7 @@ def smart_record(perun_api_url, low_level_perun_api, constants, constants_templa
 
     return smart_record
 
+
 def replace_in_response(resp, source_constants, target_constants):
     if not resp.body:
         return
@@ -254,15 +260,13 @@ def replace_in_response(resp, source_constants, target_constants):
 
     replacement_map = {
         getattr(source_constants, k): getattr(target_constants, k)
-        for k in dir(source_constants) if not k.startswith("_")
+        for k in dir(source_constants)
+        if not k.startswith("_")
     }
 
     def replace_recursively(data):
         if isinstance(data, dict):
-            return {
-                k: replace_recursively(v)
-                for k, v in data.items()
-            }
+            return {k: replace_recursively(v) for k, v in data.items()}
         elif isinstance(data, list):
             return [replace_recursively(v) for v in data]
         if data in (True, False, None):
@@ -272,7 +276,6 @@ def replace_in_response(resp, source_constants, target_constants):
 
     content = replace_recursively(content)
     resp.body = json.dumps(content)
-
 
 
 @pytest.fixture(scope="function")

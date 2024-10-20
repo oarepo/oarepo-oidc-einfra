@@ -20,6 +20,7 @@ import boto3
 from celery import shared_task
 from flask import current_app, url_for
 from invenio_accounts.models import User
+from invenio_cache.proxies import current_cache
 from invenio_communities.communities.records.api import Community
 from invenio_communities.members.records.api import Member
 from invenio_db import db
@@ -35,7 +36,6 @@ from oarepo_oidc_einfra.perun.mapping import (
     get_user_einfra_id,
 )
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
-from invenio_cache.proxies import current_cache
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -159,7 +159,9 @@ def synchronize_all_communities_to_perun() -> None:
 @shared_task
 @mutex("EINFRA_SYNC_MUTEX")
 def update_from_perun_dump(
-    dump_path: str, fix_communities_in_perun: bool = True, check_dump_in_cache=True
+    dump_path: str,
+    fix_communities_in_perun: bool = True,
+    check_dump_in_cache: bool = True,
 ) -> None:
     """Update user communities from perun dump and propagate local communities that are not in perun yet.
 
@@ -172,7 +174,6 @@ def update_from_perun_dump(
     :param dump_path:        url with the dump
     :param fix_communities_in_perun     if some local communities were not propagated to perun, propagate them
     """
-
     if check_dump_in_cache:
         cache_dump_path = current_cache.cache.get("EINFRA_LAST_DUMP_PATH")
         if cache_dump_path != dump_path:

@@ -154,7 +154,7 @@ class PerunLowLevelAPI:
                 {
                     "fromGroup": parent_group_id,
                     "toGroup": group["id"],
-                    "idempotent": True
+                    "idempotent": True,
                 },
             )
             # copy mails from the parent to the group
@@ -166,7 +166,6 @@ class PerunLowLevelAPI:
                     "toGroup": group["id"],
                 },
             )
-
 
         # check if the group has the service as an admin and if not, add it
         # if inheritance works, do not duplicate the admin here

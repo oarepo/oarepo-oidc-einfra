@@ -19,7 +19,7 @@ def test_create_non_existing_group(
             parent_group_id=test_repo_communities_id,
             parent_vo=test_vo_id,
         )
-        assert 'id' in group
+        assert "id" in group
 
         assert group_created is True
         assert admin_created is True
@@ -62,7 +62,7 @@ def test_create_resource_for_group(
                 perun_sync_service_id=perun_sync_service_id,
             )
         )
-        assert 'id' in resource
+        assert "id" in resource
         assert resource_created is True
 
 
@@ -89,7 +89,7 @@ def test_create_resource_for_group_existing(
                 perun_sync_service_id=perun_sync_service_id,
             )
         )
-        assert 'id' in resource
+        assert "id" in resource
 
         assert resource_created is False
 

@@ -14,6 +14,7 @@ import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
 
+import boto3
 from flask import Blueprint, Flask, current_app, g, redirect, request
 from flask_login import login_required
 from flask_principal import PermissionDenied
@@ -21,17 +22,14 @@ from flask_resources import Resource, ResourceConfig, route
 from invenio_access import Permission, action_factory
 from invenio_access.permissions import system_identity
 from invenio_accounts.models import User
+from invenio_cache.proxies import current_cache
 from invenio_db import db
-from invenio_files_rest.storage import PyFSFileStorage
 from invenio_records_resources.resources.errors import PermissionDeniedError
 from invenio_requests.proxies import current_requests_service
 from invenio_requests.records.api import Request
 
 from oarepo_oidc_einfra.encryption import decrypt
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
-
-from invenio_cache.proxies import current_cache
-import boto3
 
 if TYPE_CHECKING:
     from werkzeug import Response
@@ -151,10 +149,19 @@ class OIDCEInfraResource(Resource):
         return redirect("/")
 
 
-def store_dump(request_data):
-    dump_url = current_app.config["EINFRA_DUMP_DATA_URL"]
+def store_dump(request_data: bytes) -> str:
+    """Store the dump in the configured location and return the path.
+
+    The dump is stored in the bucket configured in the EINFRA_USER_DUMP_S3_BUCKET,
+    the actual path is put into the cache under the key EINFRA_LAST_DUMP_PATH
+    and the path is returned.
+
+    Storing the path into the cache means that even if the background task process
+    multiple dumps out of order, the last one will be always the one that is processed -
+    the previous ones will be ignored.
+    """
     now = datetime.now(UTC).strftime("%Y-%m-%d-%H-%M-%S")
-    dump_path = f"{dump_url}/{now}.json"
+    dump_path = f"{now}.json"
     client = boto3.client(
         "s3",
         aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
