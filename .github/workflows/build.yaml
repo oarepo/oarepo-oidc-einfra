@@ -27,6 +27,14 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+      minio:
+        image: lazybit/minio
+        ports:
+          - 19000:9000
+        env:
+          MINIO_ROOT_USER: tests
+          MINIO_ROOT_PASSWORD: teststests
+        options: --name=minio --health-cmd "curl http://localhost:9000/minio/health/live"
 
     steps:
       - name: Show oarepo version
