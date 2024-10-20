@@ -30,6 +30,9 @@ from invenio_requests.records.api import Request
 from oarepo_oidc_einfra.encryption import decrypt
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
+from invenio_cache.proxies import current_cache
+import boto3
+
 if TYPE_CHECKING:
     from werkzeug import Response
 
@@ -88,14 +91,7 @@ class OIDCEInfraResource(Resource):
                 "message": "Content-Type must be application/json",
             }, 400
 
-        dump_url = current_app.config["EINFRA_DUMP_DATA_URL"]
-        now = datetime.now(UTC).strftime("%Y-%m-%d-%H-%M-%S")
-        dump_path = f"{dump_url}/{now}.json"
-
-        location = PyFSFileStorage(dump_path)  # handles both filesystem and s3
-        with location.open(mode="wb") as f:
-            f.write(request.data)
-
+        dump_path = store_dump(request.data)
         update_from_perun_dump.delay(dump_path)
         return {"status": "ok"}, 201
 
@@ -153,6 +149,25 @@ class OIDCEInfraResource(Resource):
 
         current_requests_service.execute_action(system_identity, request_id, "accept")
         return redirect("/")
+
+
+def store_dump(request_data):
+    dump_url = current_app.config["EINFRA_DUMP_DATA_URL"]
+    now = datetime.now(UTC).strftime("%Y-%m-%d-%H-%M-%S")
+    dump_path = f"{dump_url}/{now}.json"
+    client = boto3.client(
+        "s3",
+        aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
+        aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
+        endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
+    )
+    client.put_object(
+        Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
+        Key=dump_path,
+        Body=request_data,
+    )
+    current_cache.cache.set("EINFRA_LAST_DUMP_PATH", dump_path)
+    return dump_path
 
 
 def create_rest_blueprint(app: Flask) -> Blueprint:

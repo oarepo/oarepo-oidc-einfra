@@ -1,0 +1,16 @@
+sample_user_einfra_id: sample@einfra.cesnet.cz
+sample_user_id: "1001001"
+sample_user_first_name: SampleFirstName
+sample_user_last_name: SampleLastName
+sample_user_uuid: 11111111-1111-1111-1111-111111111111
+
+member_by_user_id: "1001002"
+member_by_user_created_by: member@cesnet.cz
+member_by_user_created_by_id: "1001002"
+
+attribute_created_by: 1001002@muni.cz
+
+nrp_fa_devrepo_service: nrp_fa_devrepo@einfra.cesnet.cz
+# nrp_fa_devrepo_id: "1001003"
+nrp_fa_devrepo_uuid: 11111111-2222-1111-1111-111111111111
+nrp_fa_creator_id: "1001004"

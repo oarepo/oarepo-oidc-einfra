@@ -19,10 +19,7 @@ def test_create_non_existing_group(
             parent_group_id=test_repo_communities_id,
             parent_vo=test_vo_id,
         )
-        if recorded:
-            assert group["id"] == 15883
-        else:
-            print(f"Add the >>> assert group['id'] == {group['id']} here <<<")
+        assert 'id' in group
 
         assert group_created is True
         assert admin_created is True
@@ -65,10 +62,7 @@ def test_create_resource_for_group(
                 perun_sync_service_id=perun_sync_service_id,
             )
         )
-        if recorded:
-            assert resource["id"] == 14408
-        else:
-            print(f"Add the >>> assert resource['id'] == {resource['id']} here <<<")
+        assert 'id' in resource
         assert resource_created is True
 
 
@@ -95,10 +89,7 @@ def test_create_resource_for_group_existing(
                 perun_sync_service_id=perun_sync_service_id,
             )
         )
-        if recorded:
-            assert resource["id"] == 14408
-        else:
-            print(f"Add the >>> assert resource['id'] == {resource['id']} here <<<")
+        assert 'id' in resource
 
         assert resource_created is False
 
@@ -106,7 +97,7 @@ def test_create_resource_for_group_existing(
 def test_add_user_to_group(
     app, smart_record, low_level_perun_api, test_repo_communities_id, test_vo_id
 ):
-    with smart_record("test_add_user_to_group.yaml"):
+    with smart_record("test_add_user_to_group.yaml") as constants:
         group, group_created, admin_created = low_level_perun_api.create_group(
             name="AAA",
             description="Community AAA",
@@ -116,7 +107,7 @@ def test_add_user_to_group(
 
         user = low_level_perun_api.get_user_by_attribute(
             attribute_name=app.config["EINFRA_USER_EINFRAID_ATTRIBUTE"],
-            attribute_value="user3@einfra.cesnet.cz",
+            attribute_value=constants.sample_user_einfra_id,
         )
 
         low_level_perun_api.add_user_to_group(

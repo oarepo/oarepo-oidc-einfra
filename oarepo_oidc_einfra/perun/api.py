@@ -47,6 +47,7 @@ class PerunLowLevelAPI:
         self._base_url = base_url
         self._service_id = service_id
         self._auth = HTTPBasicAuth(service_username, service_password)
+        self._session = requests.Session()
 
     def _perun_call_dict(self, manager: str, method: str, payload: dict) -> dict:
         """Low-level call to Perun API with error handling, call returns a dict.
@@ -77,7 +78,7 @@ class PerunLowLevelAPI:
         :param method:      the method to call
         :param payload:     the json payload to send
         """
-        resp = requests.post(
+        resp = self._session.post(
             f"{self._base_url}/krb/rpc/json/{manager}/{method}",
             auth=self._auth,
             json=payload,
@@ -146,15 +147,26 @@ class PerunLowLevelAPI:
                 parent_group_id,
                 group["id"],
             )
+            # copy form to the group
             self._perun_call(
                 "registrarManager",
                 "copyForm",
                 {
-                    "fromVO": parent_vo,
+                    "fromGroup": parent_group_id,
+                    "toGroup": group["id"],
+                    "idempotent": True
+                },
+            )
+            # copy mails from the parent to the group
+            self._perun_call(
+                "registrarManager",
+                "copyMails",
+                {
                     "fromGroup": parent_group_id,
                     "toGroup": group["id"],
                 },
             )
+
 
         # check if the group has the service as an admin and if not, add it
         # if inheritance works, do not duplicate the admin here
@@ -482,7 +494,7 @@ class PerunLowLevelAPI:
         """
         member = self._get_or_create_member_in_vo(vo_id, user_id)
 
-        self._perun_call_dict(
+        self._perun_call(
             "groupsManager",
             "addMember",
             {"group": group_id, "member": member["id"]},

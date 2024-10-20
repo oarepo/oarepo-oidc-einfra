@@ -12,6 +12,8 @@ import os
 import shutil
 import sys
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Generator
 
 import pytest
 import yaml
@@ -65,7 +67,11 @@ def app_config(app_config):
 
     app_config["EINFRA_SERVICE_ID"] = 143975
     app_config["EINFRA_SERVICE_USERNAME"] = "nrp-fa-devrepo"
-    app_config["EINFRA_COMMUNITIES_GROUP_ID"] = 15393
+
+    # test communities group
+    # Note: you need to have templates & notifications set up on this group
+    app_config["EINFRA_COMMUNITIES_GROUP_ID"] = 16460
+
     app_config["EINFRA_REPOSITORY_VO_ID"] = 4003
     app_config["EINFRA_REPOSITORY_FACILITY_ID"] = 4662
     app_config["EINFRA_CAPABILITIES_ATTRIBUTE_ID"] = 3585
@@ -112,7 +118,30 @@ def app_config(app_config):
         "INVENIO_EINFRA_CONSUMER_SECRET"
     )
 
+    app_config["EINFRA_USER_DUMP_S3_ACCESS_KEY"] = "tests"
+    app_config["EINFRA_USER_DUMP_S3_SECRET_KEY"] = "teststests"
+    app_config["EINFRA_USER_DUMP_S3_ENDPOINT"] = "http://localhost:19000"
+    app_config["EINFRA_USER_DUMP_S3_BUCKET"] = "einfra-user-dumps"
+
     return app_config
+
+@pytest.fixture()
+def s3_dump_bucket(app):
+    import boto3
+    from botocore.exceptions import ClientError
+    client = boto3.client(
+        "s3",
+        aws_access_key_id=app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
+        aws_secret_access_key=app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
+        endpoint_url=app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
+    )
+    # create bucket
+    try:
+        client.create_bucket(Bucket=app.config["EINFRA_USER_DUMP_S3_BUCKET"])
+    except ClientError:
+        pass
+
+
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -176,20 +205,36 @@ def low_level_perun_api(
         service_password=perun_service_password,
     )
 
+@pytest.fixture()
+def constants_template():
+    constants_file = Path(__file__).parent / "constants_template.yaml"
+    with constants_file.open() as f:
+        return SimpleNamespace(**{k: str(v) for k, v in yaml.safe_load(f).items()})
 
 @pytest.fixture()
-def smart_record(perun_api_url, low_level_perun_api):
+def constants(constants_template):
+    constants_file = Path(__file__).parent.parent / ".perun_constants.yaml"
+    if not constants_file.exists():
+        return constants_template
+    with constants_file.open() as f:
+        return SimpleNamespace(**{k: str(v) for k, v in yaml.safe_load(f).items()})
+
+@pytest.fixture()
+def smart_record(perun_api_url, low_level_perun_api, constants, constants_template):
     import responses
     from responses._recorder import Recorder
 
     @contextlib.contextmanager
-    def smart_record(fname):
+    def smart_record(fname) -> Generator[SimpleNamespace, None, None]:
         file_path = Path(__file__).parent / "request_data" / fname
         if not file_path.exists():
             with Recorder() as recorder:
-                yield False
+                yield constants
+                messages = recorder.get_registry().registered
+                for r in messages:
+                    replace_in_response(r, source_constants=constants, target_constants=constants_template)
                 recorder.dump_to_file(
-                    file_path=file_path, registered=recorder.get_registry().registered
+                    file_path=file_path, registered=messages
                 )
         else:
             print("Using recorded data")
@@ -198,9 +243,36 @@ def smart_record(perun_api_url, low_level_perun_api):
             )
             with responses.RequestsMock() as rsps:
                 rsps._add_from_file(file_path=file_path)
-                yield True
+                yield constants_template
 
     return smart_record
+
+def replace_in_response(resp, source_constants, target_constants):
+    if not resp.body:
+        return
+    content = json.loads(resp.body)
+
+    replacement_map = {
+        getattr(source_constants, k): getattr(target_constants, k)
+        for k in dir(source_constants) if not k.startswith("_")
+    }
+
+    def replace_recursively(data):
+        if isinstance(data, dict):
+            return {
+                k: replace_recursively(v)
+                for k, v in data.items()
+            }
+        elif isinstance(data, list):
+            return [replace_recursively(v) for v in data]
+        if data in (True, False, None):
+            return data
+        data = str(data)
+        return replacement_map.get(data, data)
+
+    content = replace_recursively(content)
+    resp.body = json.dumps(content)
+
 
 
 @pytest.fixture(scope="function")

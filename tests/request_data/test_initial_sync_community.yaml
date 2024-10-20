@@ -1,23 +1,12 @@
 responses:
 - response:
     auto_calculate_content_length: false
-    body: '[{"id":15883,"createdAt":"2024-09-05 08:38:34.31645","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      08:38:34.31645","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:AAA","description":"Community
-      AAA","uuid":"9e43aeab-1d1d-4aaa-bb36-6aa452269c3b","shortName":"AAA","beanName":"Group"},{"id":15516,"createdAt":"2024-06-05
-      09:58:30.7417","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:30.7417","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:ABC","description":"","uuid":"06ff5c42-20a4-4c44-9894-dadcfeec99a7","shortName":"ABC","beanName":"Group"},{"id":15518,"createdAt":"2024-06-05
-      09:58:31.153758","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.153758","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:curators","description":"Community
-      curators","uuid":"87b677b2-145a-414f-b139-842d521f24a4","shortName":"curators","beanName":"Group"},{"id":15517,"createdAt":"2024-06-05
-      09:58:31.04761","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.04761","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:members","description":"Community
-      members","uuid":"f0a02638-cd54-4924-b1e9-b61f43753ca3","shortName":"members","beanName":"Group"},{"id":15520,"createdAt":"2024-06-05
-      09:58:31.377526","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.377526","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:publishers","description":"Community
-      publishers (publishes the record)","uuid":"1a74190e-5634-4624-899e-04da844771f5","shortName":"publishers","beanName":"Group"},{"id":15519,"createdAt":"2024-06-05
-      09:58:31.264524","createdBy":"user1@einfra.cesnet.cz","modifiedAt":"2024-06-05
-      09:58:31.264524","modifiedBy":"user1@einfra.cesnet.cz","createdByUid":131924,"modifiedByUid":131924,"voId":4003,"parentGroupId":15516,"name":"devrepo:communities:ABC:reviewers","description":"Community
-      reviewers (mark records as reviewed)","uuid":"72cc98a0-7ab9-4197-a93d-4f56265b529b","shortName":"reviewers","beanName":"Group"}]'
+    body: '[{"id": "16463", "createdAt": "2024-10-20 19:47:02.469686", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 19:47:02.469686", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "voId": "4003", "parentGroupId": "16460", "name": "devrepo:test-communities:AAA",
+      "description": "Community AAA", "uuid": "c205599d-d420-4ebf-87dd-7f50fb63ee39",
+      "shortName": "AAA", "beanName": "Group"}]'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -25,7 +14,7 @@ responses:
       Keep-Alive: timeout=5, max=100
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
+      Set-Cookie: PERUNSESSION=F2A4EF2301C011A1AEAF659E1D97060E; Path=/; Secure; HttpOnly;
         SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
@@ -38,19 +27,19 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
-    body: '{"id":15889,"createdAt":"2024-09-05 13:53:26.67219","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:26.67219","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15393,"name":"devrepo:communities:Community
-      cuni","description":"Charles university members","uuid":"439f9fe9-0a2e-44e8-bc44-8b0f0f1cbad8","shortName":"Community
-      cuni","beanName":"Group"}'
+    body: '{"id": "16464", "createdAt": "2024-10-20 21:17:48.549752", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 21:17:48.549752", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "voId": "4003", "parentGroupId": "16460", "name": "devrepo:test-communities:Community
+      cuni", "description": "Charles university members", "uuid": "464fbbc8-b11c-465d-be4f-28308684e3b2",
+      "shortName": "Community cuni", "beanName": "Group"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=99
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -62,16 +51,52 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
 - response:
     auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=98
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyForm
+- response:
+    auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=97
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyMails
+- response:
+    auto_calculate_content_length: false
     body: '[]'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=96
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -88,11 +113,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=95
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -104,16 +127,15 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
 - response:
     auto_calculate_content_length: false
-    body: '{"errorId":"191c2084328","resource":null,"name":"ResourceNotExistsException","message":"Error
-      191c2084328: Incorrect result size: expected 1, actual 0","friendlyMessageTemplate":null,"suppressed":[]}'
+    body: '{"errorId": "192ab5d4641", "resource": null, "name": "ResourceNotExistsException",
+      "message": "Error 192ab5d4641: Incorrect result size: expected 1, actual 0",
+      "friendlyMessageTemplate": null, "suppressed": []}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       X-Content-Type-Options: nosniff
@@ -124,9 +146,12 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
 - response:
     auto_calculate_content_length: false
-    body: '{"id":14412,"createdAt":"2024-09-05 13:53:27.221654","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:27.221654","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"facilityId":4662,"voId":4003,"name":"Community:cuni","description":"Resource
-      for community cuni","uuid":"b5e649a9-913f-49a3-abd5-b31adc85c01d","beanName":"Resource"}'
+    body: '{"id": "15028", "createdAt": "2024-10-20 21:17:49.896349", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 21:17:49.896349", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "facilityId": "4662", "voId": "4003", "name": "Community:cuni", "description":
+      "Resource for community cuni", "uuid": "5dad073f-adc3-4c82-8b14-3842f68962b5",
+      "beanName": "Resource"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -134,8 +159,6 @@ responses:
       Keep-Alive: timeout=5, max=100
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -152,11 +175,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=99
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -173,11 +194,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=98
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -189,19 +208,23 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
-      according to AARC specification. i.e. specification of resource and optional
-      actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":null,"valueCreatedAt":null,"valueCreatedBy":null,"valueModifiedAt":null,"valueModifiedBy":null,"entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
+    body: '{"id": "3585", "createdAt": "2019-11-04 09:18:27.260377", "createdBy":
+      "1001002@muni.cz", "modifiedAt": "2019-11-04 09:18:27.260377", "modifiedBy":
+      "1001002@muni.cz", "createdByUid": "1001004", "modifiedByUid": "1001004", "friendlyName":
+      "capabilities", "namespace": "urn:perun:resource:attribute-def:def", "description":
+      "Capabilities according to AARC specification. i.e. specification of resource
+      and optional actions.", "type": "java.util.ArrayList", "displayName": "Capabilities",
+      "writable": true, "unique": false, "value": null, "valueCreatedAt": null, "valueCreatedBy":
+      null, "valueModifiedAt": null, "valueModifiedBy": null, "entity": "resource",
+      "baseFriendlyName": "capabilities", "friendlyNameParameter": "", "beanName":
+      "Attribute"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=97
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -218,11 +241,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=96
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -239,11 +260,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=95
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -260,11 +279,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=94
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -281,11 +298,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=93
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -297,20 +312,20 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
-    body: '{"id":15890,"createdAt":"2024-09-05 13:53:28.371454","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:28.371454","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
-      cuni:Role curator of cuni","description":"Group for role curator of community
-      cuni","uuid":"7a3d2f5b-b8f1-4e11-a9a4-c9d7f30eeea6","shortName":"Role curator
-      of cuni","beanName":"Group"}'
+    body: '{"id": "16465", "createdAt": "2024-10-20 21:17:50.65078", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 21:17:50.65078", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "voId": "4003", "parentGroupId": "16464", "name": "devrepo:test-communities:Community
+      cuni:Role curator of cuni", "description": "Group for role curator of community
+      cuni", "uuid": "f357c28a-5ed3-4eaf-bf08-51fbef952ed5", "shortName": "Role curator
+      of cuni", "beanName": "Group"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=92
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -322,16 +337,52 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
 - response:
     auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=91
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyForm
+- response:
+    auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=90
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyMails
+- response:
+    auto_calculate_content_length: false
     body: '[]'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=89
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -348,11 +399,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=88
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -364,16 +413,15 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
 - response:
     auto_calculate_content_length: false
-    body: '{"errorId":"191c20849f9","resource":null,"name":"ResourceNotExistsException","message":"Error
-      191c20849f9: Incorrect result size: expected 1, actual 0","friendlyMessageTemplate":null,"suppressed":[]}'
+    body: '{"errorId": "192ab5d4ec5", "resource": null, "name": "ResourceNotExistsException",
+      "message": "Error 192ab5d4ec5: Incorrect result size: expected 1, actual 0",
+      "friendlyMessageTemplate": null, "suppressed": []}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       X-Content-Type-Options: nosniff
@@ -384,9 +432,12 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
 - response:
     auto_calculate_content_length: false
-    body: '{"id":14413,"createdAt":"2024-09-05 13:53:28.957072","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:28.957072","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"facilityId":4662,"voId":4003,"name":"Community:cuni:curator","description":"Resource
-      for community cuni and role curator","uuid":"c3342a80-8c86-420f-948d-f943c1584aa1","beanName":"Resource"}'
+    body: '{"id": "15029", "createdAt": "2024-10-20 21:17:52.078647", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 21:17:52.078647", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "facilityId": "4662", "voId": "4003", "name": "Community:cuni:curator", "description":
+      "Resource for community cuni and role curator", "uuid": "564bf05f-86ce-418c-83ac-ee47fa1eb11a",
+      "beanName": "Resource"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -394,8 +445,6 @@ responses:
       Keep-Alive: timeout=5, max=100
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -412,11 +461,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=99
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -433,11 +480,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=98
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -449,19 +494,23 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
-      according to AARC specification. i.e. specification of resource and optional
-      actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":null,"valueCreatedAt":null,"valueCreatedBy":null,"valueModifiedAt":null,"valueModifiedBy":null,"entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
+    body: '{"id": "3585", "createdAt": "2019-11-04 09:18:27.260377", "createdBy":
+      "1001002@muni.cz", "modifiedAt": "2019-11-04 09:18:27.260377", "modifiedBy":
+      "1001002@muni.cz", "createdByUid": "1001004", "modifiedByUid": "1001004", "friendlyName":
+      "capabilities", "namespace": "urn:perun:resource:attribute-def:def", "description":
+      "Capabilities according to AARC specification. i.e. specification of resource
+      and optional actions.", "type": "java.util.ArrayList", "displayName": "Capabilities",
+      "writable": true, "unique": false, "value": null, "valueCreatedAt": null, "valueCreatedBy":
+      null, "valueModifiedAt": null, "valueModifiedBy": null, "entity": "resource",
+      "baseFriendlyName": "capabilities", "friendlyNameParameter": "", "beanName":
+      "Attribute"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=97
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -478,11 +527,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=96
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -499,11 +546,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=95
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -520,11 +565,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=94
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -536,20 +579,20 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignService
 - response:
     auto_calculate_content_length: false
-    body: '[{"id":15890,"createdAt":"2024-09-05 13:53:28.371454","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:28.371454","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
-      cuni:Role curator of cuni","description":"Group for role curator of community
-      cuni","uuid":"7a3d2f5b-b8f1-4e11-a9a4-c9d7f30eeea6","shortName":"Role curator
-      of cuni","beanName":"Group"}]'
+    body: '[{"id": "16465", "createdAt": "2024-10-20 21:17:50.65078", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 21:17:50.65078", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "voId": "4003", "parentGroupId": "16464", "name": "devrepo:test-communities:Community
+      cuni:Role curator of cuni", "description": "Group for role curator of community
+      cuni", "uuid": "f357c28a-5ed3-4eaf-bf08-51fbef952ed5", "shortName": "Role curator
+      of cuni", "beanName": "Group"}]'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=93
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -561,20 +604,20 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAllSubGroups
 - response:
     auto_calculate_content_length: false
-    body: '{"id":15891,"createdAt":"2024-09-05 13:53:30.111419","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:30.111419","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"voId":4003,"parentGroupId":15889,"name":"devrepo:communities:Community
-      cuni:Role member of cuni","description":"Group for role member of community
-      cuni","uuid":"350b11fd-ac63-4478-b237-160b5d9e816f","shortName":"Role member
-      of cuni","beanName":"Group"}'
+    body: '{"id": "16466", "createdAt": "2024-10-20 21:17:52.81746", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 21:17:52.81746", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "voId": "4003", "parentGroupId": "16464", "name": "devrepo:test-communities:Community
+      cuni:Role member of cuni", "description": "Group for role member of community
+      cuni", "uuid": "a93d8c54-b8f0-44c4-a36a-ce75d745d99e", "shortName": "Role member
+      of cuni", "beanName": "Group"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=92
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -586,16 +629,52 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
 - response:
     auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=91
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyForm
+- response:
+    auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=90
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyMails
+- response:
+    auto_calculate_content_length: false
     body: '[]'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=89
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -612,11 +691,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=88
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -628,16 +705,15 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
 - response:
     auto_calculate_content_length: false
-    body: '{"errorId":"191c20850bf","resource":null,"name":"ResourceNotExistsException","message":"Error
-      191c20850bf: Incorrect result size: expected 1, actual 0","friendlyMessageTemplate":null,"suppressed":[]}'
+    body: '{"errorId": "192ab5d56c3", "resource": null, "name": "ResourceNotExistsException",
+      "message": "Error 192ab5d56c3: Incorrect result size: expected 1, actual 0",
+      "friendlyMessageTemplate": null, "suppressed": []}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       X-Content-Type-Options: nosniff
@@ -648,9 +724,12 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
 - response:
     auto_calculate_content_length: false
-    body: '{"id":14414,"createdAt":"2024-09-05 13:53:30.702549","createdBy":"nrp-fa-devrepo@META","modifiedAt":"2024-09-05
-      13:53:30.702549","modifiedBy":"nrp-fa-devrepo@META","createdByUid":143975,"modifiedByUid":143975,"facilityId":4662,"voId":4003,"name":"Community:cuni:member","description":"Resource
-      for community cuni and role member","uuid":"f7dedca0-1302-401d-8328-cbdee1180202","beanName":"Resource"}'
+    body: '{"id": "15030", "createdAt": "2024-10-20 21:17:54.116766", "createdBy":
+      "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 21:17:54.116766", "modifiedBy":
+      "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+      "facilityId": "4662", "voId": "4003", "name": "Community:cuni:member", "description":
+      "Resource for community cuni and role member", "uuid": "22e51a5c-ee98-44dd-b91e-ed4f4f85834e",
+      "beanName": "Resource"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -658,8 +737,6 @@ responses:
       Keep-Alive: timeout=5, max=100
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -676,11 +753,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=99
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -697,11 +772,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=98
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -713,19 +786,23 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/assignGroupToResource
 - response:
     auto_calculate_content_length: false
-    body: '{"id":3585,"createdAt":"2019-11-04 09:18:27.260377","createdBy":"user1@muni.cz","modifiedAt":"2019-11-04
-      09:18:27.260377","modifiedBy":"user1@muni.cz","createdByUid":59835,"modifiedByUid":59835,"friendlyName":"capabilities","namespace":"urn:perun:resource:attribute-def:def","description":"Capabilities
-      according to AARC specification. i.e. specification of resource and optional
-      actions.","type":"java.util.ArrayList","displayName":"Capabilities","writable":true,"unique":false,"value":null,"valueCreatedAt":null,"valueCreatedBy":null,"valueModifiedAt":null,"valueModifiedBy":null,"entity":"resource","baseFriendlyName":"capabilities","friendlyNameParameter":"","beanName":"Attribute"}'
+    body: '{"id": "3585", "createdAt": "2019-11-04 09:18:27.260377", "createdBy":
+      "1001002@muni.cz", "modifiedAt": "2019-11-04 09:18:27.260377", "modifiedBy":
+      "1001002@muni.cz", "createdByUid": "1001004", "modifiedByUid": "1001004", "friendlyName":
+      "capabilities", "namespace": "urn:perun:resource:attribute-def:def", "description":
+      "Capabilities according to AARC specification. i.e. specification of resource
+      and optional actions.", "type": "java.util.ArrayList", "displayName": "Capabilities",
+      "writable": true, "unique": false, "value": null, "valueCreatedAt": null, "valueCreatedBy":
+      null, "valueModifiedAt": null, "valueModifiedBy": null, "entity": "resource",
+      "baseFriendlyName": "capabilities", "friendlyNameParameter": "", "beanName":
+      "Attribute"}'
     content_type: text/plain
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=97
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -742,11 +819,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=96
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -763,11 +838,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=95
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
@@ -784,11 +857,9 @@ responses:
     headers:
       Cache-Control: no-cache, no-store, max-age=0, must-revalidate
       Expires: '0'
-      Keep-Alive: timeout=5, max=100
+      Keep-Alive: timeout=5, max=94
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=1; Path=/; Secure; HttpOnly;
-        SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
       Vary: Accept-Encoding
