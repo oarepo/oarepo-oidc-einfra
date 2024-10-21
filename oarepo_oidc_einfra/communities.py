@@ -113,11 +113,11 @@ class CommunitySupport:
         if not current_community_roles:
             current_community_roles = cls.get_user_community_membership(user)
 
-        for community_role in new_community_roles - current_community_roles:
-            cls._add_user_community_membership(community_role, user)
-
         for v in new_community_roles:
             assert isinstance(v, CommunityRole)
+
+        for community_role in new_community_roles - current_community_roles:
+            cls._add_user_community_membership(community_role, user)
 
         print("Current community roles ", current_community_roles)
         print("New community roles ", new_community_roles)

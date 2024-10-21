@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from io import BytesIO
@@ -16,7 +17,6 @@ from itertools import chain, islice
 from typing import TYPE_CHECKING, Iterable, Literal
 from urllib.parse import urljoin
 
-import boto3
 from celery import shared_task
 from flask import current_app, url_for
 from invenio_accounts.models import User
@@ -160,6 +160,7 @@ def synchronize_all_communities_to_perun() -> None:
 @mutex("EINFRA_SYNC_MUTEX")
 def update_from_perun_dump(
     dump_path: str,
+    checksum: str,
     fix_communities_in_perun: bool = True,
     check_dump_in_cache: bool = True,
 ) -> None:
@@ -172,19 +173,16 @@ def update_from_perun_dump(
     will take less than 1 hour (the default task timeout inside the mutex).
 
     :param dump_path:        url with the dump
+    :param checksum:         sha-256 checksum of the dump
     :param fix_communities_in_perun     if some local communities were not propagated to perun, propagate them
+    :param check_dump_in_cache:    if the dump path is already in the cache, do not process it again
     """
     if check_dump_in_cache:
         cache_dump_path = current_cache.cache.get("EINFRA_LAST_DUMP_PATH")
         if cache_dump_path != dump_path:
             # already have a new dump path, no need to process this one
             return
-    client = boto3.client(
-        "s3",
-        aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
-        aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
-        endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
-    )
+    client = current_einfra_oidc.dump_boto3_client
 
     with BytesIO() as obj:
         client.download_fileobj(
@@ -193,7 +191,14 @@ def update_from_perun_dump(
             Fileobj=obj,
         )
         obj.seek(0)
-        data = json.loads(obj.getvalue().decode("utf-8"))
+        value = obj.getvalue()
+        value_checksum = hashlib.sha256(value).hexdigest()
+        if value_checksum != checksum:
+            log.error(
+                "Checksum of the downloaded dump does not match the expected checksum."
+            )
+            return
+        data = json.loads(value.decode("utf-8"))
 
     community_support = CommunitySupport()
     dump = PerunDumpData(

@@ -7,6 +7,11 @@
 #
 """A flask extension for E-INFRA OIDC authentication."""
 
+import threading
+from functools import cached_property
+
+import boto3
+import botocore.client
 from flask import Flask, current_app
 from invenio_communities.communities.services.components import (
     DefaultCommunityComponents,
@@ -22,6 +27,8 @@ from oarepo_oidc_einfra.services.components.aai_invitations import (
 )
 
 from .cli import einfra as einfra_cmd
+
+boto3_client_lock = threading.Lock()
 
 
 class EInfraOIDCApp:
@@ -81,3 +88,18 @@ class EInfraOIDCApp:
             service_username=current_app.config["EINFRA_SERVICE_USERNAME"],
             service_password=current_app.config["EINFRA_SERVICE_PASSWORD"],
         )
+
+    @cached_property
+    def dump_boto3_client(self) -> botocore.client.BaseClient:
+        """Create a new boto3 client for the dump."""
+        with boto3_client_lock:
+            # see https://stackoverflow.com/questions/52820971/is-boto3-client-thread-safe
+            # why this lock is here
+            return boto3.client(
+                "s3",
+                aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
+                aws_secret_access_key=current_app.config[
+                    "EINFRA_USER_DUMP_S3_SECRET_KEY"
+                ],
+                endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
+            )

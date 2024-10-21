@@ -19,8 +19,8 @@ from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
 def update_from_file(filename):
     pth = Path(__file__).parent / "dump_data" / filename
-    dump_path = store_dump(pth.read_bytes())
-    update_from_perun_dump(dump_path)
+    dump_path, checksum = store_dump(pth.read_bytes())
+    update_from_perun_dump(dump_path, checksum)
 
 
 def test_no_communities(app, db, location, search_clear):

@@ -12,7 +12,6 @@ from datetime import UTC, datetime
 from io import BytesIO
 from typing import TYPE_CHECKING
 
-import boto3
 import click
 from flask import current_app
 from flask.cli import with_appcontext
@@ -21,7 +20,8 @@ from invenio_db import db
 from werkzeug.local import LocalProxy
 
 from oarepo_oidc_einfra.mutex import CacheMutex
-from oarepo_oidc_einfra.perun.dump import import_dump_file
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
+from oarepo_oidc_einfra.resources import store_dump
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
 if TYPE_CHECKING:
@@ -33,20 +33,20 @@ def einfra() -> None:
     """EInfra commands."""
 
 
-@einfra.command("import_dump")
+@einfra.command("upload_dump")
 @click.argument("dump_file")
 @with_appcontext
-def import_dump(dump_file: str) -> None:
-    """Import a dump file.
+def upload_dump(dump_file: str) -> None:
+    """Upload a dump file to s3 and process it.
 
     :param dump_file: Path to the dump file on the local filesystem to import.
     """
     click.echo(f"Importing dump file {dump_file}")
 
     with open(dump_file, "rb") as f:
-        path = import_dump_file(f.read())
+        path, checksum = store_dump(f.read())
 
-    update_from_perun_dump.delay(path)
+    update_from_perun_dump.delay(path, checksum)
 
 
 @einfra.command("update_from_dump")
@@ -107,8 +107,7 @@ def _add_einfra_user(email: str, einfra_id: str) -> None:
         _datastore.create_user(**kwargs)
         db.session.commit()
 
-        user = User.query.filter_by(email=email).first()
-        assert user is not None
+        user = User.query.filter_by(email=email).one()
 
     identity = UserIdentity.query.filter_by(
         method="e-infra", id=einfra_id, id_user=user.id
@@ -129,13 +128,10 @@ def import_dump_users(dump_path: str) -> None:
     """Import users from a dump file.
 
     :param dump_path: Path to the dump file in the S3 bucket.
+
+    Note: this cli command is usually not used in the application, it is here for testing purposes.
     """
-    client = boto3.client(
-        "s3",
-        aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
-        aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
-        endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
-    )
+    client = current_einfra_oidc.dump_boto3_client
 
     with BytesIO() as obj:
         client.download_fileobj(
@@ -155,5 +151,5 @@ def import_dump_users(dump_path: str) -> None:
         )
         if not email or not einfra_id:
             continue
-        print("Fixing user", email, einfra_id)
+        print("Importing user", email, einfra_id)
         _add_einfra_user(email, einfra_id)

@@ -10,11 +10,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
 
-import boto3
 from flask import Blueprint, Flask, current_app, g, redirect, request
 from flask_login import login_required
 from flask_principal import PermissionDenied
@@ -29,6 +29,7 @@ from invenio_requests.proxies import current_requests_service
 from invenio_requests.records.api import Request
 
 from oarepo_oidc_einfra.encryption import decrypt
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
 if TYPE_CHECKING:
@@ -89,8 +90,8 @@ class OIDCEInfraResource(Resource):
                 "message": "Content-Type must be application/json",
             }, 400
 
-        dump_path = store_dump(request.data)
-        update_from_perun_dump.delay(dump_path)
+        dump_path, checksum = store_dump(request.data)
+        update_from_perun_dump.delay(dump_path, checksum)
         return {"status": "ok"}, 201
 
     @login_required
@@ -137,19 +138,20 @@ class OIDCEInfraResource(Resource):
                     request_user_id,
                     g.identity.id,
                 )
-                raise PermissionDenied(
-                    "The invitation was intended for a different user"
-                )
+                raise PermissionDenied("Invitation link invalid")
 
         # now, change the receiver to the current user
         invitation_request.receiver = {"user": g.identity.id}
         invitation_request.commit()
 
+        # accept the invitation. This has to be accepted with system_identity, because
+        # the user instance has not been known at the time of the request creation (just the email address)
+        # and the receiver thus had to be the system_identity.
         current_requests_service.execute_action(system_identity, request_id, "accept")
         return redirect("/")
 
 
-def store_dump(request_data: bytes) -> str:
+def store_dump(request_data: bytes) -> tuple[str, str]:
     """Store the dump in the configured location and return the path.
 
     The dump is stored in the bucket configured in the EINFRA_USER_DUMP_S3_BUCKET,
@@ -162,19 +164,15 @@ def store_dump(request_data: bytes) -> str:
     """
     now = datetime.now(UTC).strftime("%Y-%m-%d-%H-%M-%S")
     dump_path = f"{now}.json"
-    client = boto3.client(
-        "s3",
-        aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
-        aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
-        endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
-    )
+    client = current_einfra_oidc.dump_boto3_client
     client.put_object(
         Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
         Key=dump_path,
         Body=request_data,
     )
     current_cache.cache.set("EINFRA_LAST_DUMP_PATH", dump_path)
-    return dump_path
+
+    return dump_path, hashlib.sha256(request_data).hexdigest()
 
 
 def create_rest_blueprint(app: Flask) -> Blueprint:

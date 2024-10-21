@@ -201,7 +201,10 @@ class AAIInvitationComponent(ServiceComponent):
         title = _('Invitation to join "{community}"').format(
             community=community.metadata["title"],
         )
-        description = _('You will join as "{role}".').format(role=role.title)
+        description = _("You have been invited as {role} of {community}.").format(
+            role=role.title, community=community.metadata["title"]
+        )
+
         request_item = current_requests_service.create(
             identity,
             {"title": title, "description": description, "user": user_id},

@@ -14,6 +14,9 @@ EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION = True
 """Synchronize community membership invitation to E-Infra Perun
     (create perun invitation) when user is invited in repository UI."""
 
+EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION = True
+"""Synchronize community membership to E-Infra Perun when user changes role within a community."""
+
 EINFRA_ENTITLEMENT_NAMESPACES = ["geant"]
 """URN prefix for capabilities that can represent community roles."""
 
@@ -57,6 +60,18 @@ EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM
 # EINFRA_SYNC_SERVICE_ID = 0
 # """Internal ID of the service in the E-INFRA Perun that is responsible for synchronization
 # (creating and pushing dumps with resources and users)."""
+
+# EINFRA_USER_DUMP_S3_ACCESS_KEY = ""
+# """Access key for the S3 bucket where the user dump from PERUN is stored."""
+#
+# EINFRA_USER_DUMP_S3_SECRET_KEY = ""
+# """Secret key for the S3 bucket where the user dump from PERUN is stored."""
+#
+# EINFRA_USER_DUMP_S3_ENDPOINT = ""
+# """Endpoint for the S3 bucket where the user dump from PERUN is stored."""
+#
+# EINFRA_USER_DUMP_S3_BUCKET = ""
+# """Bucket where the user dump from PERUN is stored."""
 
 EINFRA_USER_EINFRAID_ATTRIBUTE = (
     "urn:perun:user:attribute-def:def:login-namespace:einfraid-persistent-shadow"

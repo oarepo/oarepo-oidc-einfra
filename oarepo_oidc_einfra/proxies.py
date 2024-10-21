@@ -15,7 +15,7 @@ from werkzeug.local import LocalProxy
 if TYPE_CHECKING:
     from oarepo_oidc_einfra.ext import EInfraOIDCApp
 
-current_einfra_oidc: "EInfraOIDCApp" = (
-    LocalProxy["EInfraOIDCApp"](lambda: current_app.extensions["einfra-oidc"])  # type: ignore
+current_einfra_oidc: "EInfraOIDCApp" = (  # type: ignore
+    LocalProxy["EInfraOIDCApp"](lambda: current_app.extensions["einfra-oidc"])
 )
 """Helper proxy to get the current einfra oidc."""
