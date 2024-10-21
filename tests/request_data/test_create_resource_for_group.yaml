@@ -10,7 +10,7 @@ responses:
       Expires: '0'
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=93619CEE47E98D1BA097207980308BB1; Path=/; Secure; HttpOnly;
+      Set-Cookie: PERUNSESSION=session; Path=/; Secure; HttpOnly;
         SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked

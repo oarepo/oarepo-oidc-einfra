@@ -14,7 +14,7 @@ responses:
       Keep-Alive: timeout=5, max=100
       Pragma: no-cache
       Referrer-Policy: no-referrer-when-downgrade
-      Set-Cookie: PERUNSESSION=BD508AB7D14E3B0FF7B2E6EF948A8DE1; Path=/; Secure; HttpOnly;
+      Set-Cookie: PERUNSESSION=session; Path=/; Secure; HttpOnly;
         SameSite=Strict
       Strict-Transport-Security: max-age=63072000
       Transfer-Encoding: chunked
