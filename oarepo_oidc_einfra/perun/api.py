@@ -173,7 +173,7 @@ class PerunLowLevelAPI:
             "groupsManager", "getAdmins", {"group": group["id"], "onlyDirectAdmins": 0}
         )
         for admin in admins:
-            if admin["id"] == self._service_id:
+            if str(admin["id"]) == str(self._service_id):
                 break
         else:
             log.info(
@@ -310,7 +310,7 @@ class PerunLowLevelAPI:
             },
         )
         for grp in groups:
-            if grp["id"] == group_id:
+            if str(grp["id"]) == str(group_id):
                 break
         else:
             log.info("Assigning group %s to resource %s", group_id, resource_id)
@@ -361,7 +361,7 @@ class PerunLowLevelAPI:
             "resourcesManager", "getAssignedServices", {"resource": resource_id}
         )
         for service in services:
-            if service["id"] == service_id:
+            if str(service["id"]) == str(service_id):
                 break
         else:
             log.info(

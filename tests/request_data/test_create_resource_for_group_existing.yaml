@@ -27,7 +27,7 @@ responses:
     url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getResourceByName
 - response:
     auto_calculate_content_length: false
-    body: '[{"id": "16463", "createdAt": "2024-10-20 19:47:02.469686", "createdBy":
+    body: '[{"id": "16468", "createdAt": "2024-10-20 19:47:02.469686", "createdBy":
       "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 19:47:02.469686", "modifiedBy":
       "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
       "voId": "4003", "parentGroupId": "16460", "name": "devrepo:test-communities:AAA",
