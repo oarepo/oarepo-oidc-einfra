@@ -371,37 +371,48 @@ def create_aai_invitation(request_id: str) -> dict | None:
     request = Request.get_record(request_id)
     invitation = Member.get_member_by_request(request_id)
 
+    topic = request.topic.resolve()
+
     capability = get_perun_capability_from_invenio_role(
-        request.topic.slug, invitation.role
+        topic.slug, invitation.role
     )
-    group = perun_api.get_resource_by_capability(
+    resource = perun_api.get_resource_by_capability(
         vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
         facility_id=current_app.config["EINFRA_REPOSITORY_FACILITY_ID"],
         capability=capability,
     )
+    groups = perun_api.get_resource_groups(resource_id=resource["id"])
+    groups = [
+        group for group in groups if group["voId"] == current_app.config["EINFRA_REPOSITORY_VO_ID"]
+    ]
 
-    if not group:
+    if not groups:
         log.error(
             f"Resource for capability {capability} not found inside Perun, "
             f"so can not send invitation to its associated group."
         )
         return None
+    if len(groups) > 1:
+        log.error(
+            f"More than one group for capability {capability} found inside Perun, "
+            f"so can not send invitation to its associated group."
+        )
 
     encrypted_request_id = encrypt(request_id)
 
-    redirect_url = urljoin(
-        f'https://{current_app.config["SERVER_NAME"]}',
-        url_for(
-            "oarepo_oidc_einfra.invitation_redirect", request_id=encrypted_request_id
-        ),
+    redirect_url = url_for(
+        "oarepo_oidc_einfra.accept_invitation", request_id=encrypted_request_id,
+        _external=True
     )
+    if redirect_url.startswith("http://"):
+        redirect_url = redirect_url.replace("http://", "https://", 1)
 
-    email = invitation.user.email
+    user = User.query.filter_by(id=invitation.model.user_id).one()
     return perun_api.send_invitation(
         vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
-        group_id=group["id"],
-        email=email,
-        fullName=invitation.user.user_profile.get("full_name", email),
+        group_id=groups[0]["id"],
+        email=user.email,
+        fullName=user.user_profile.get("full_name", user.email),
         language=current_app.config["EINFRA_DEFAULT_INVITATION_LANGUAGE"],
         expiration=request.expires_at.date().isoformat(),
         redirect_url=redirect_url,

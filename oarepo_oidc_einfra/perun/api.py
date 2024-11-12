@@ -410,16 +410,29 @@ class PerunLowLevelAPI:
 
         :return:                    resource or None if not found
         """
+        # Implementation 2: iterate all resources and filter
         resources = self._perun_call(
-            "searcher",
-            "getResources",
-            {"attributesWithSearchingValues": {"capabilities": capability}},
+            "resourcesManager",
+            "getEnrichedResourcesForFacility",
+            {"facility": facility_id},
         )
         matching_resources = [
-            resource
+            resource["resource"]
             for resource in resources
-            if resource["voId"] == vo_id and resource["facilityId"] == facility_id
+            if self._has_capability(resource, capability)
         ]
+
+        # Implementation 1: searcher
+        # resources = self._perun_call(
+        #     "searcher",
+        #     "getResources",
+        #     {"attributesWithSearchingValues": {"capabilities": capability}},
+        # )
+        # matching_resources = [
+        #     resource
+        #     for resource in resources
+        #     if resource["voId"] == vo_id and resource["facilityId"] == facility_id
+        # ]
         if not matching_resources:
             return None
         if len(matching_resources) > 1:
@@ -428,6 +441,12 @@ class PerunLowLevelAPI:
             )
         return matching_resources[0]
 
+    def _has_capability(self, resource: dict, capability: str) -> bool:
+        attributes = resource.get('attributes', [])
+        for attr in attributes:
+            if attr['namespace'] == 'urn:perun:resource:attribute-def:def' and attr['friendlyName'] == 'capabilities':
+                return capability in attr['value']
+
     def get_resource_groups(self, *, resource_id: int) -> list[dict]:
         """Get groups assigned to a resource.
 
@@ -435,10 +454,10 @@ class PerunLowLevelAPI:
         :return:                    list of groups
         """
         return [
-            x["enrichedGroup"]["group"]
+            x
             for x in self._perun_call(
                 "resourcesManager",
-                "getGroupAssignments",
+                "getAssignedGroups",
                 {
                     "resource": resource_id,
                 },

@@ -47,7 +47,7 @@ class OIDCEInfraResourceConfig(ResourceConfig):
     blueprint_name = "oarepo_oidc_einfra"
     """Blueprint name."""
 
-    url_prefix = "/oidc-einfra"
+    url_prefix = "/auth/oidc/einfra"
     """URL prefix for the resource, will be at /api/oidc-einfra."""
 
     routes = {
@@ -175,6 +175,6 @@ def store_dump(request_data: bytes) -> tuple[str, str]:
     return dump_path, hashlib.sha256(request_data).hexdigest()
 
 
-def create_rest_blueprint(app: Flask) -> Blueprint:
+def create_blueprint(app: Flask) -> Blueprint:
     """Create a blueprint for the REST API."""
     return OIDCEInfraResource().as_blueprint()

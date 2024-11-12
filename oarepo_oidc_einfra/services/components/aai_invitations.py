@@ -72,7 +72,7 @@ class AAIInvitationComponent(ServiceComponent):
         """
         member = record
 
-        member_email = member.get("email")
+        member_email = member.get("id")
         member_first_name = member.get("first_name")
         member_last_name = member.get("last_name")
 
@@ -98,7 +98,7 @@ class AAIInvitationComponent(ServiceComponent):
             community,
             role,
             visible,
-            member,
+            {"type": "user", "id": user_id},
             message,
             self.uow,
             active=False,
@@ -206,7 +206,7 @@ class AAIInvitationComponent(ServiceComponent):
         )
 
         request_item = current_requests_service.create(
-            identity,
+            system_identity,
             {"title": title, "description": description, "user": user_id},
             AAICommunityInvitation,
             receiver=None,
@@ -232,13 +232,23 @@ class AAIInvitationComponent(ServiceComponent):
         if u:
             return u.id
 
+        if member_last_name:
+            if member_first_name:
+                member_full_name = f"{member_first_name} {member_last_name}"
+            else:
+                member_full_name = member_last_name
+        elif member_first_name:
+            member_full_name = member_first_name
+        else:
+            member_full_name = member_email.split('@')[0]
+
         user = current_users_service.create(
             system_identity,
             {
                 "email": member_email,
-                "profile": {
-                    "full_name": f"{member_first_name} {member_last_name}",
-                },
             },
         )
+        user._user.user_profile = {"full_name": member_full_name}
+        user._user.commit()
+
         return user["id"]

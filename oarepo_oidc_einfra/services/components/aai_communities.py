@@ -31,7 +31,7 @@ class PropagateToAAIOp(Operation):
         """
         from oarepo_oidc_einfra.tasks import synchronize_community_to_perun
 
-        synchronize_community_to_perun.delay(self.community.id)
+        synchronize_community_to_perun.delay(str(self.community.id))
 
 
 class CommunityAAIComponent(ServiceComponent):

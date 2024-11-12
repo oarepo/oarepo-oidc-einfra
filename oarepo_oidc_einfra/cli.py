@@ -22,7 +22,12 @@ from werkzeug.local import LocalProxy
 from oarepo_oidc_einfra.mutex import CacheMutex
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 from oarepo_oidc_einfra.resources import store_dump
-from oarepo_oidc_einfra.tasks import update_from_perun_dump
+from oarepo_oidc_einfra.tasks import update_from_perun_dump, synchronize_community_to_perun, create_aai_invitation
+
+from invenio_access.permissions import system_identity
+from invenio_communities.proxies import current_communities
+from invenio_communities.members.records.models import MemberModel
+from invenio_communities.communities.records.models import CommunityMetadata
 
 if TYPE_CHECKING:
     from flask_security.datastore import UserDatastore
@@ -153,3 +158,30 @@ def import_dump_users(dump_path: str) -> None:
             continue
         print("Importing user", email, einfra_id)
         _add_einfra_user(email, einfra_id)
+
+
+@einfra.command("synchronize_community")
+@click.argument("community_slug")
+@with_appcontext
+def synchronize_community(community_slug: str) -> None:
+    """Re-synchronize a community to Perun.
+    """
+    community = current_communities.service.read(system_identity, community_slug)
+    synchronize_community_to_perun(str(community.id))
+
+
+@einfra.command("resend_invitation")
+@click.argument("community_slug")
+@click.argument("email")
+@with_appcontext
+def resend_invitation(community_slug: str, email: str) -> None:
+    """Resend an invitation to a user to a community.
+
+    :param community_slug: Slug of the community.
+    :param email: Email of the user.
+    """
+    community = CommunityMetadata.query.filter_by(slug=community_slug).one()
+    user = User.query.filter_by(email=email).one()
+    member = MemberModel.query.filter_by(user_id=user.id, community_id=community.id).one()
+    request_id = member.request_id
+    create_aai_invitation(str(request_id))
