@@ -5,14 +5,22 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""Configuration for the E-INFRA OIDC authentication, can be overwritten in invenio.cfg ."""
 
 EINFRA_COMMUNITY_SYNCHRONIZATION = True
 """Synchronize community to E-Infra Perun when community is created."""
 
+EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION = True
+"""Synchronize community membership invitation to E-Infra Perun
+    (create perun invitation) when user is invited in repository UI."""
+
+EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION = True
+"""Synchronize community membership to E-Infra Perun when user changes role within a community."""
+
 EINFRA_ENTITLEMENT_NAMESPACES = ["geant"]
 """URN prefix for capabilities that can represent community roles."""
 
-EINFRA_ENTITLEMENT_COMMUNITIES_GROUP_PARTS = [["cesnet.cz", "res", "communities"]]
+EINFRA_ENTITLEMENT_PREFIX = "cesnet.cz"
 """Parts of the entitlement URN name that represent communities."""
 
 EINFRA_DUMP_DATA_URL = "s3://einfra-dump-bucket"
@@ -52,3 +60,23 @@ EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM
 # EINFRA_SYNC_SERVICE_ID = 0
 # """Internal ID of the service in the E-INFRA Perun that is responsible for synchronization
 # (creating and pushing dumps with resources and users)."""
+
+# EINFRA_USER_DUMP_S3_ACCESS_KEY = ""
+# """Access key for the S3 bucket where the user dump from PERUN is stored."""
+#
+# EINFRA_USER_DUMP_S3_SECRET_KEY = ""
+# """Secret key for the S3 bucket where the user dump from PERUN is stored."""
+#
+# EINFRA_USER_DUMP_S3_ENDPOINT = ""
+# """Endpoint for the S3 bucket where the user dump from PERUN is stored."""
+#
+# EINFRA_USER_DUMP_S3_BUCKET = ""
+# """Bucket where the user dump from PERUN is stored."""
+
+EINFRA_USER_EINFRAID_ATTRIBUTE = (
+    "urn:perun:user:attribute-def:def:login-namespace:einfraid-persistent-shadow"
+)
+"""Attribute on user inside perun that represents the E-INFRA ID of the user."""
+
+EINFRA_DEFAULT_INVITATION_LANGUAGE = "en"
+"""Language of the invitation emails that are sent to the users."""
