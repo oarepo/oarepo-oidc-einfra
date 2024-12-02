@@ -60,7 +60,7 @@ def get_user_einfra_id(user_id: int) -> Optional[str]:
     :param user_id:     user id
     :return:            e-infra identity or None if user has no e-infra identity associated
     """
-    user_identity = UserIdentity.query_by(
+    user_identity = UserIdentity.query.filter_by(
         id_user=user_id, method="e-infra"
     ).one_or_none()
     if user_identity:

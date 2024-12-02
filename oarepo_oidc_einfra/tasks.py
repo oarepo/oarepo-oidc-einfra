@@ -499,4 +499,9 @@ def aai_group_op(
 
     # 2. for each group, perform the operation on it
     for group in perun_api.get_resource_groups(resource_id=resource["id"]):
-        getattr(perun_api, op)(user["id"], group["id"])
+        try:
+            getattr(perun_api, op)(vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"], user_id=user["id"], group_id=group["id"])
+        except:
+            log.error(
+                f"Error while performing {op} on group {group['id']} for user {user['id']}"
+            )
