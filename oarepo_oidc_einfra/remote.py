@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CESNET z.s.p.o.
 #
@@ -6,15 +5,18 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""E-Infra OIDC Remote Auth backend for NRP."""
 
 import datetime
 
 import jwt
+from flask_oauthlib.client import OAuthRemoteApp
 from invenio_accounts.models import User, UserIdentity
 from invenio_db import db
 from invenio_oauthclient import current_oauthclient
 from invenio_oauthclient.contrib.settings import OAuthSettingsHelper
 from invenio_oauthclient.handlers.token import token_getter
+from invenio_oauthclient.models import RemoteToken
 from invenio_oauthclient.oauth import oauth_get_user
 from invenio_oauthclient.signals import account_info_received
 
@@ -25,22 +27,22 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
     def __init__(
         self,
         *,
-        title="E-Infra AAI",
-        description="E-Infra authentication and authorization service.",
-        base_url="https://login.e-infra.cz/oidc/",
-        app_key="EINFRA",
-        icon=None,
-        access_token_url=None,
-        authorize_url=None,
-        access_token_method="POST",
-        request_token_params=None,
-        request_token_url=None,
-        precedence_mask=None,
-        signup_options=None,
-        logout_url=None,
-        **kwargs,
+        title: str = "E-Infra AAI",
+        description: str = "E-Infra authentication and authorization service.",
+        base_url: str = "https://login.e-infra.cz/oidc/",
+        app_key: str = "EINFRA",
+        icon: str | None = None,
+        access_token_url: str | None = None,
+        authorize_url: str | None = None,
+        access_token_method: str | None = "POST",
+        request_token_params: dict | None = None,
+        request_token_url: str | None = None,
+        precedence_mask: str | None = None,
+        signup_options: dict | None = None,
+        logout_url: str | None = None,
+        **kwargs: dict,
     ):
-
+        """Initialize the E-Infra OIDC Remote Auth backend for NRP."""
         request_token_params = request_token_params or {
             "scope": " ".join(
                 [
@@ -100,11 +102,11 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
             error_redirect_url="/",
         )
 
-    def get_handlers(self):
+    def get_handlers(self) -> dict:
         """Return CESNET auth handlers."""
         return self._handlers
 
-    def get_rest_handlers(self):
+    def get_rest_handlers(self) -> dict:
         """Return CESNET auth REST handlers."""
         return self._rest_handlers
 
@@ -117,9 +119,8 @@ CESNET OpenID remote app.
 EINFRA_LOGIN_APP = _cesnet_app.remote_app
 
 
-def account_info_serializer(remote, resp):
-    """
-    Serialize the account info response object.
+def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
+    """Serialize the account info response object.
 
     :param remote: The remote application.
     :param resp: The response of the `authorized` endpoint.
@@ -146,9 +147,8 @@ def account_info_serializer(remote, resp):
     }
 
 
-def account_info(remote, resp):
-    """
-    Retrieve remote account information used to find local user.
+def account_info(remote: OAuthRemoteApp, resp: dict) -> dict:
+    """Retrieve remote account information used to find local user.
 
     It returns a dictionary with the following structure:
         {
@@ -172,9 +172,8 @@ def account_info(remote, resp):
     return handler_resp
 
 
-def account_setup(remote, token, resp):
-    """
-    Perform additional setup after user have been logged in.
+def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> None:
+    """Perform additional setup after user have been logged in.
 
     :param remote: The remote application.
     :param token: The token value.
@@ -207,7 +206,19 @@ def account_setup(remote, token, resp):
 
 # During overlay initialization.
 @account_info_received.connect
-def autocreate_user(remote, token=None, response=None, account_info=None):
+def autocreate_user(
+    remote: OAuthRemoteApp,
+    token: RemoteToken | None = None,
+    response: dict | None = None,
+    account_info: dict | None = None,
+) -> None:
+    """Create a user if it does not exist.
+
+    :param remote: The remote application.
+    :param token: access token
+    :param response: access response from the remote server
+    :param account_info: account info from the remote server
+    """
     assert account_info is not None
 
     email = account_info["user"]["email"].lower()
@@ -252,7 +263,15 @@ def autocreate_user(remote, token=None, response=None, account_info=None):
             db.session.commit()
 
 
-def account_info_link_perun_groups(remote, *, account_info, **kwargs):
+def account_info_link_perun_groups(
+    remote: OAuthRemoteApp, *, account_info: dict, **kwargs: dict
+) -> None:
+    """Set local user community membership based on the Perun groups retrieved from the userinfo token.
+
+    :param remote: The remote application.
+    :param account_info: The account info of the current user
+    :param kwargs: Additional arguments (not used)
+    """
     # make the import local to avoud circular imports
     from oarepo_oidc_einfra.communities import CommunitySupport
     from oarepo_oidc_einfra.perun import get_communities_from_userinfo_token

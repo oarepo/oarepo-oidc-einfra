@@ -45,7 +45,7 @@
             "urn:perun:user:attribute-def:core:displayName" : "Miroslav Šimek",
             "urn:perun:user:attribute-def:def:organization" : "CESNET, z. s. p. o.",
             "urn:perun:user:attribute-def:def:preferredMail" : "Miroslav.Simek@cesnet.cz",
-            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent" : "12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz"
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent" : "user1@einfra.cesnet.cz"
          }
       }
    }
