@@ -15,7 +15,7 @@ import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
 
-from flask import Blueprint, Flask, current_app, g, redirect, request
+from flask import Blueprint, Flask, g, redirect, request
 from flask_login import login_required
 from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
@@ -120,15 +120,15 @@ class OIDCEInfraResource(Resource):
 
         # get the invitation request and check if it is submitted.
         invitation_request = Request.get_record(request_id)
-        assert invitation_request.state == "submitted"
+        assert invitation_request.status == "submitted"
 
         # if its user is not the current user, we might to delete
         # the user on the request so that it does not pollute the space
-        request_user_id = invitation_request.payload.get("user_id")
+        request_user_id = invitation_request["payload"].get("user_id")
         if request_user_id != str(g.identity.id):
             user = User.query.filter_by(User.id == request_user_id).one()
             if not user.is_active:
-                db.session.delete(user)
+                db.session.delete(user)  # type: ignore
             else:
                 log.error(
                     "Invitation check failed: The user for which the invitation was sent (%s) "
@@ -166,7 +166,7 @@ def store_dump(request_data: bytes) -> tuple[str, str]:
     dump_path = f"{now}.json"
     client = current_einfra_oidc.dump_boto3_client
     client.put_object(
-        Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
+        Bucket=current_einfra_oidc.dump_s3_bucket,
         Key=dump_path,
         Body=request_data,
     )

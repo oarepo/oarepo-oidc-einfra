@@ -54,11 +54,11 @@ EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM
 # EINFRA_REPOSITORY_FACILITY_ID = 0
 # """Internal ID of the facility in the E-INFRA Perun that represents the repository."""
 
-# EINFRA_CAPABILITIES_ATTRIBUTE_ID = 0
-# """Internal ID of the attribute in the E-INFRA Perun that represents the capabilities."""
+EINFRA_CAPABILITIES_ATTRIBUTE_NAME = "urn:perun:resource:attribute-def:def:capabilities"
+"""urn of the attribute in the E-INFRA Perun that represents the capabilities."""
 
-# EINFRA_SYNC_SERVICE_ID = 0
-# """Internal ID of the service in the E-INFRA Perun that is responsible for synchronization
+# EINFRA_SYNC_SERVICE_NAME = "..."
+# """name of the service in the E-INFRA Perun that is responsible for synchronization
 # (creating and pushing dumps with resources and users)."""
 
 # EINFRA_USER_DUMP_S3_ACCESS_KEY = ""
@@ -78,5 +78,25 @@ EINFRA_USER_EINFRAID_ATTRIBUTE = (
 )
 """Attribute on user inside perun that represents the E-INFRA ID of the user."""
 
+EINFRA_USER_PERSISTENT_EINFRA_ID_ATTRIBUTE = (
+    "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
+)
+"""Attribute on user inside perun that represents the E-INFRA ID of the user."""
+
+EINFRA_USER_DISPLAY_NAME_ATTRIBUTE = "urn:perun:user:attribute-def:core:displayName"
+"""Attribute on user inside perun that represents the display name of the user."""
+
+EINFRA_USER_ORGANIZATION_ATTRIBUTE = "urn:perun:user:attribute-def:def:organization"
+"""Attribute on user inside perun that represents the organization of the user."""
+
+EINFRA_USER_PREFERRED_MAIL_ATTRIBUTE = "urn:perun:user:attribute-def:def:preferredMail"
+"""Attribute on user inside perun that represents the preferred mail of the user."""
+
 EINFRA_DEFAULT_INVITATION_LANGUAGE = "en"
 """Language of the invitation emails that are sent to the users."""
+
+EINFRA_ENTITLEMENT_NAMESPACES = {"geant"}
+"""URN prefix for capabilities that can represent community roles."""
+
+EINFRA_ENTITLEMENT_GROUP_PARTS = [["cesnet.cz", "group"], ["e-infra.cz", "group"]]
+"""Parts of the entitlement URN name that represent groups."""

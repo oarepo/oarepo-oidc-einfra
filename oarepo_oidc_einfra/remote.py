@@ -8,6 +8,7 @@
 """E-Infra OIDC Remote Auth backend for NRP."""
 
 import datetime
+from typing import cast
 
 import jwt
 from flask_oauthlib.client import OAuthRemoteApp
@@ -34,7 +35,7 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
         icon: str | None = None,
         access_token_url: str | None = None,
         authorize_url: str | None = None,
-        access_token_method: str | None = "POST",
+        access_token_method: str = "POST",
         request_token_params: dict | None = None,
         request_token_url: str | None = None,
         precedence_mask: str | None = None,
@@ -130,8 +131,8 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
     decoded_token = jwt.decode(
         resp["id_token"],
         options={"verify_signature": True},
-        key=remote.rsa_key,
-        audience=remote.consumer_key,
+        key=remote.rsa_key,  # type: ignore
+        audience=remote.consumer_key,  # type: ignore
         algorithms=["RS256"],
     )
 
@@ -183,11 +184,11 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
         resp["id_token"],
         options={"verify_signature": True},
         algorithms=["RS256"],
-        key=remote.rsa_key,
-        audience=remote.consumer_key,
+        key=remote.rsa_key,  # type: ignore
+        audience=remote.consumer_key,  # type: ignore
     )
 
-    with db.session.begin_nested():
+    with db.session.begin_nested():  # type: ignore
         token.remote_account.extra_data = {
             "full_name": decoded_token["name"],
         }
@@ -244,13 +245,13 @@ def autocreate_user(
             """
             user.confirmed_at = datetime.datetime.now()
 
-            with db.session.begin_nested():
-                db.session.add(user)
-                db.session.commit()
+            with db.session.begin_nested():  # type: ignore
+                db.session.add(user)  # type: ignore
+                db.session.commit()  # type: ignore
 
-        with db.session.begin_nested():
+        with db.session.begin_nested():  # type: ignore
             UserIdentity.create(user=user, method=method, external_id=id)
-            db.session.commit()
+            db.session.commit()  # type: ignore
 
     else:
         assert user_identity.user is not None
@@ -258,9 +259,9 @@ def autocreate_user(
         user_identity.user.email = email
         user_identity.user.user_profile = user_profile
 
-        with db.session.begin_nested():
-            db.session.add(user_identity.user)
-            db.session.commit()
+        with db.session.begin_nested():  # type: ignore
+            db.session.add(user_identity.user)  # type: ignore
+            db.session.commit()  # type: ignore
 
 
 def account_info_link_perun_groups(
@@ -279,14 +280,16 @@ def account_info_link_perun_groups(
     user = oauth_get_user(
         remote.consumer_key,
         account_info=account_info,
-        access_token=token_getter(remote)[0],
+        access_token=token_getter(remote)[0],  # type: ignore
     )
 
     if user is None:
         return
 
-    userinfo_token = remote.get(remote.base_url + "userinfo").data
-    aai_community_roles = get_communities_from_userinfo_token(userinfo_token)
+    userinfo_token = remote.get(cast(str, remote.base_url) + "userinfo").data
+    aai_community_roles = get_communities_from_userinfo_token(
+        cast(dict, userinfo_token)
+    )
 
     CommunitySupport.set_user_community_membership(user, aai_community_roles)
 

@@ -15,6 +15,7 @@ from typing import Dict, Iterable, List, Set
 from uuid import UUID
 
 from oarepo_oidc_einfra.communities import CommunityRole
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 log = logging.getLogger("perun.dump_data")
 
@@ -77,7 +78,7 @@ class PerunDumpData:
             #   }
             # },
             capabilities = r.get("attributes", {}).get(
-                "urn:perun:resource:attribute-def:def:capabilities", []
+                current_einfra_oidc.capabilities_attribute_name, []
             )
             for capability in capabilities:
                 parts = capability.split(":")
@@ -111,16 +112,16 @@ class PerunDumpData:
         """
         for u in self.dump_data["users"].values():
             einfra_id = u["attributes"].get(
-                "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
+                current_einfra_oidc.user_persistent_einfra_id_attribute,
             )
             full_name = u["attributes"].get(
-                "urn:perun:user:attribute-def:core:displayName"
+                current_einfra_oidc.user_display_name_attribute
             )
             organization = u["attributes"].get(
-                "urn:perun:user:attribute-def:def:organization"
+                current_einfra_oidc.user_organization_attribute
             )
             email = u["attributes"].get(
-                "urn:perun:user:attribute-def:def:preferredMail"
+                current_einfra_oidc.user_preferred_mail_attribute
             )
             yield AAIUser(
                 einfra_id=einfra_id,

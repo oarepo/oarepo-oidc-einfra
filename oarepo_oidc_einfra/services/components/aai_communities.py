@@ -8,13 +8,13 @@
 """AAI (perun) communities mapping."""
 
 import re
-from typing import Optional
 
-from flask import current_app
 from invenio_access.permissions import Identity
 from invenio_communities.communities.records.api import Community
 from invenio_records_resources.services.records.components.base import ServiceComponent
 from invenio_records_resources.services.uow import Operation, UnitOfWork
+
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 
 class PropagateToAAIOp(Operation):
@@ -41,8 +41,8 @@ class CommunityAAIComponent(ServiceComponent):
         self,
         identity: Identity,
         *,
-        record: Optional[Community] = None,
-        data: Optional[dict] = None,
+        record: Community,
+        data: dict,
         **kwargs: dict,
     ) -> None:
         """Create handler.
@@ -65,14 +65,15 @@ class CommunityAAIComponent(ServiceComponent):
                 "Invalid slug, only lowercase letters, numbers and hyphens are allowed"
             )
 
-        if current_app.config["EINFRA_COMMUNITY_SYNCHRONIZATION"]:
+        if current_einfra_oidc.synchronization_enabled:
             self.uow.register(PropagateToAAIOp(record))
 
     def update(
         self,
         identity: Identity,
-        record: Optional[Community] = None,
-        data: Optional[dict] = None,
+        *,
+        record: Community,
+        data: dict,
         **kwargs: dict,
     ) -> None:
         """Update handler.
@@ -92,9 +93,7 @@ class CommunityAAIComponent(ServiceComponent):
                 "Cannot change the slug of the community as it is used in AAI"
             )
 
-    def delete(
-        self, identity: Identity, record: Optional[Community] = None, **kwargs: dict
-    ) -> None:
+    def delete(self, identity: Identity, *, record: Community, **kwargs: dict) -> None:
         """Delete handler.
 
         At this time, we do not want to delete communities in AAI, so we raise an error.

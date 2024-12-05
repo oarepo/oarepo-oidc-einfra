@@ -49,7 +49,7 @@ class CommunitySupport:
         """Returns a mapping of community slugs to their ids."""
         return {
             row[1]: row[0]
-            for row in db.session.execute(
+            for row in db.session.execute(  # type: ignore
                 select(Community.model_cls.id, Community.model_cls.slug)
             )
         }
@@ -119,8 +119,8 @@ class CommunitySupport:
         for community_role in new_community_roles - current_community_roles:
             cls._add_user_community_membership(community_role, user)
 
-        print("Current community roles ", current_community_roles)
-        print("New community roles ", new_community_roles)
+        log.info("Current community roles ", current_community_roles)
+        log.info("New community roles ", new_community_roles)
 
         community_ids = {
             r.community_id for r in current_community_roles - new_community_roles
@@ -130,7 +130,7 @@ class CommunitySupport:
                 cls._remove_user_community_membership(community_id, user)
             except ValidationError as e:
                 # This is a case when the user is the last member of a community - in this case he can not be removed
-                current_app.logger.error(
+                log.error(
                     f"Failed to remove user {user.id} from community {community_id}: {e}"
                 )
 
@@ -141,7 +141,7 @@ class CommunitySupport:
         :param user: User object
         """
         ret = set()
-        for row in db.session.execute(
+        for row in db.session.execute(  # type: ignore
             select([MemberModel.community_id, MemberModel.role]).where(
                 MemberModel.user_id == user.id, MemberModel.active == true()
             )
@@ -159,10 +159,10 @@ class CommunitySupport:
         :param user_ids: List of user ids
         """
         ret: dict[int, set[CommunityRole]] = {}
-        for row in db.session.execute(
+        for row in db.session.execute(  # type: ignore
             select(
                 [MemberModel.community_id, MemberModel.user_id, MemberModel.role]
-            ).where(MemberModel.user_id.in_(user_ids), MemberModel.active == true())
+            ).where(MemberModel.user_id.in_(user_ids), MemberModel.active == true())  # type: ignore
         ):
             if row.user_id not in ret:
                 ret[row.user_id] = set()

@@ -33,7 +33,6 @@ class PerunLowLevelAPI:
     def __init__(
         self,
         base_url: str,
-        service_id: int,
         service_username: str,
         service_password: str,
     ):
@@ -45,9 +44,13 @@ class PerunLowLevelAPI:
         :param service_password:    the password of the service that manages stuff
         """
         self._base_url = base_url
-        self._service_id = service_id
         self._auth = HTTPBasicAuth(service_username, service_password)
         self._session = requests.Session()
+        self._service_id = self._perun_call_dict(
+            "authzResolver",
+            "getLoggedUser",
+            {},
+        )["id"]
 
     def _perun_call_dict(self, manager: str, method: str, payload: dict) -> dict:
         """Low-level call to Perun API with error handling, call returns a dict.
@@ -442,10 +445,14 @@ class PerunLowLevelAPI:
         return matching_resources[0]
 
     def _has_capability(self, resource: dict, capability: str) -> bool:
-        attributes = resource.get('attributes', [])
+        attributes = resource.get("attributes", [])
         for attr in attributes:
-            if attr['namespace'] == 'urn:perun:resource:attribute-def:def' and attr['friendlyName'] == 'capabilities':
-                return capability in attr['value']
+            if (
+                attr["namespace"] == "urn:perun:resource:attribute-def:def"
+                and attr["friendlyName"] == "capabilities"
+            ):
+                return capability in attr["value"]
+        return False
 
     def get_resource_groups(self, *, resource_id: int) -> list[dict]:
         """Get groups assigned to a resource.
@@ -485,6 +492,26 @@ class PerunLowLevelAPI:
         if not users:
             return None
         return users[0]
+
+    def get_service_by_name(self, name: str) -> dict:
+        """Get a service by name.
+
+        :param name:        name of the service
+        """
+        return self._perun_call_dict(
+            "servicesManager",
+            "getServiceByName",
+            {"name": name},
+        )
+
+    def get_attribute_by_name(self, name: str) -> dict:
+        """Get an attribute by name.
+
+        :param name:        name of the attribute
+        """
+        return self._perun_call_dict(
+            "attributesManager", "getAttributeDefinition", {"attributeName": name}
+        )
 
     def remove_user_from_group(
         self, *, vo_id: int, user_id: int, group_id: int

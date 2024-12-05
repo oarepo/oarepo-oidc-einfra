@@ -12,10 +12,10 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+from datetime import date, timedelta
 from io import BytesIO
 from itertools import chain, islice
 from typing import TYPE_CHECKING, Iterable, Literal
-from urllib.parse import urljoin
 
 from celery import shared_task
 from flask import current_app, url_for
@@ -68,7 +68,7 @@ def synchronize_community_to_perun(community_id: str) -> None:
       +-- Community:{slug}    - capab. res:communities:{slug}, assigned community group
         +-- Community:{slug}:{role_name}  - capab. res:communities:{slug}:role:{role_name}, assigned role group
     """
-    community = Community.pid.resolve(community_id)
+    community: Community = Community.pid.resolve(community_id)  # type: ignore
     slug = community.slug
     roles = current_app.config["COMMUNITIES_ROLES"]
 
@@ -76,10 +76,10 @@ def synchronize_community_to_perun(community_id: str) -> None:
 
     group, resource = map_community_or_role(
         api,
-        parent_id=current_app.config["EINFRA_COMMUNITIES_GROUP_ID"],
-        parent_vo=current_app.config["EINFRA_REPOSITORY_VO_ID"],
+        parent_id=current_einfra_oidc.communities_group_id,
+        parent_vo=current_einfra_oidc.repository_vo_id,
         name=f"Community {slug}",
-        description=community.metadata.get("description")
+        description=community.metadata.get("description")  # type: ignore
         or f"Group for community {slug}",
         resource_name=f"Community:{slug}",
         resource_description=f"Resource for community {slug}",
@@ -96,7 +96,7 @@ def synchronize_community_to_perun(community_id: str) -> None:
             name=f"Role {role_name} of {slug}",
             description=f"Group for role {role_name} of community {slug}",
             parent_id=parent_id,
-            parent_vo=current_app.config["EINFRA_REPOSITORY_VO_ID"],
+            parent_vo=current_einfra_oidc.repository_vo_id,
             resource_name=f"Community:{slug}:{role_name}",
             resource_description=f"Resource for community {slug} and role {role_name}",
             resource_capabilities=[f"res:communities:{slug}:role:{role_name}"],
@@ -137,14 +137,14 @@ def map_community_or_role(
 
     # add the synchronization resource
     resource, resource_created = api.create_resource_with_group_and_capabilities(
-        vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
-        facility_id=current_app.config["EINFRA_REPOSITORY_FACILITY_ID"],
+        vo_id=current_einfra_oidc.repository_vo_id,
+        facility_id=current_einfra_oidc.repository_facility_id,
         group_id=group["id"],
         name=resource_name,
         description=resource_description,
-        capability_attr_id=current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_ID"],
+        capability_attr_id=current_einfra_oidc.capabilities_attribute_id,
         capabilities=resource_capabilities,
-        perun_sync_service_id=current_app.config["EINFRA_SYNC_SERVICE_ID"],
+        perun_sync_service_id=current_einfra_oidc.sync_service_id,
     )
     return group, resource
 
@@ -160,7 +160,7 @@ def synchronize_all_communities_to_perun() -> None:
 @mutex("EINFRA_SYNC_MUTEX")
 def update_from_perun_dump(
     dump_path: str,
-    checksum: str,
+    checksum: str | None,
     fix_communities_in_perun: bool = True,
     check_dump_in_cache: bool = True,
 ) -> None:
@@ -186,18 +186,19 @@ def update_from_perun_dump(
 
     with BytesIO() as obj:
         client.download_fileobj(
-            Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
+            Bucket=current_einfra_oidc.dump_s3_bucket,
             Key=dump_path,
             Fileobj=obj,
         )
         obj.seek(0)
         value = obj.getvalue()
-        value_checksum = hashlib.sha256(value).hexdigest()
-        if value_checksum != checksum:
-            log.error(
-                "Checksum of the downloaded dump does not match the expected checksum."
-            )
-            return
+        if checksum is not None:
+            value_checksum = hashlib.sha256(value).hexdigest()
+            if value_checksum != checksum:
+                log.error(
+                    "Checksum of the downloaded dump does not match the expected checksum."
+                )
+                return
         data = json.loads(value.decode("utf-8"))
 
     community_support = CommunitySupport()
@@ -269,7 +270,7 @@ def synchronize_users_from_perun(
 
         # bulk get users from the database
         local_users = (
-            db.session.query(User)
+            db.session.query(User)  # type: ignore
             .filter(User.id.in_(local_user_id_to_einfra_id.keys()))
             .all()
         )
@@ -355,8 +356,8 @@ def update_user_metadata(
         save = True
     if save:
         user.user_profile = {**user_profile}
-        db.session.add(user)
-        db.session.commit()
+        db.session.add(user)  # type: ignore - we might need to install sqlalchemy[mypy]
+        db.session.commit()  # type: ignore
 
 
 @shared_task
@@ -370,20 +371,28 @@ def create_aai_invitation(request_id: str) -> dict | None:
 
     request = Request.get_record(request_id)
     invitation = Member.get_member_by_request(request_id)
+    invitation_role: str = invitation.role  # type: ignore
 
-    topic = request.topic.resolve()
+    if request.topic:
+        topic = request.topic.resolve()  # type: ignore
+    else:
+        raise ValueError("AAI Invitation Request does not have a topic.")
 
-    capability = get_perun_capability_from_invenio_role(
-        topic.slug, invitation.role
-    )
+    capability = get_perun_capability_from_invenio_role(topic.slug, invitation_role)
     resource = perun_api.get_resource_by_capability(
-        vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
-        facility_id=current_app.config["EINFRA_REPOSITORY_FACILITY_ID"],
+        vo_id=current_einfra_oidc.repository_vo_id,
+        facility_id=current_einfra_oidc.repository_facility_id,
         capability=capability,
     )
+    if not resource:
+        raise ValueError(
+            f"Resource for capability {capability} not found inside Perun."
+        )
     groups = perun_api.get_resource_groups(resource_id=resource["id"])
     groups = [
-        group for group in groups if group["voId"] == current_app.config["EINFRA_REPOSITORY_VO_ID"]
+        group
+        for group in groups
+        if group["voId"] == current_einfra_oidc.repository_vo_id
     ]
 
     if not groups:
@@ -401,20 +410,29 @@ def create_aai_invitation(request_id: str) -> dict | None:
     encrypted_request_id = encrypt(request_id)
 
     redirect_url = url_for(
-        "oarepo_oidc_einfra.accept_invitation", request_id=encrypted_request_id,
-        _external=True
+        "oarepo_oidc_einfra.accept_invitation",
+        request_id=encrypted_request_id,
+        _external=True,
     )
     if redirect_url.startswith("http://"):
         redirect_url = redirect_url.replace("http://", "https://", 1)
 
+    if not invitation.model:
+        raise ValueError(f"Invitation {invitation} does not have a model.")
+
+    if request.expires_at is None:
+        expiration_date = date.today() + timedelta(days=7)
+    else:
+        expiration_date = request.expires_at.date()  # type: ignore
+
     user = User.query.filter_by(id=invitation.model.user_id).one()
     return perun_api.send_invitation(
-        vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
+        vo_id=current_einfra_oidc.repository_vo_id,
         group_id=groups[0]["id"],
         email=user.email,
         fullName=user.user_profile.get("full_name", user.email),
-        language=current_app.config["EINFRA_DEFAULT_INVITATION_LANGUAGE"],
-        expiration=request.expires_at.date().isoformat(),
+        language=current_einfra_oidc.default_language,
+        expiration=expiration_date.isoformat(),
         redirect_url=redirect_url,
     )
 
@@ -475,8 +493,8 @@ def aai_group_op(
 
     # 1. find resource by capability
     resource = perun_api.get_resource_by_capability(
-        vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"],
-        facility_id=current_app.config["EINFRA_REPOSITORY_FACILITY_ID"],
+        vo_id=current_einfra_oidc.repository_vo_id,
+        facility_id=current_einfra_oidc.repository_facility_id,
         capability=get_perun_capability_from_invenio_role(community_slug, role),
     )
     if resource is None:
@@ -487,7 +505,7 @@ def aai_group_op(
         return
 
     user = perun_api.get_user_by_attribute(
-        attribute_name=current_app.config["EINFRA_USER_EINFRAID_ATTRIBUTE"],
+        attribute_name=current_einfra_oidc.user_einfra_id_attribute,
         attribute_value=einfra_id,
     )
     if user is None:
@@ -500,7 +518,11 @@ def aai_group_op(
     # 2. for each group, perform the operation on it
     for group in perun_api.get_resource_groups(resource_id=resource["id"]):
         try:
-            getattr(perun_api, op)(vo_id=current_app.config["EINFRA_REPOSITORY_VO_ID"], user_id=user["id"], group_id=group["id"])
+            getattr(perun_api, op)(
+                vo_id=current_einfra_oidc.repository_vo_id,
+                user_id=user["id"],
+                group_id=group["id"],
+            )
         except:
             log.error(
                 f"Error while performing {op} on group {group['id']} for user {user['id']}"

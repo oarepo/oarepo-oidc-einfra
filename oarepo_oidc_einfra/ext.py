@@ -84,9 +84,108 @@ class EInfraOIDCApp:
         """Create a new Perun API instance."""
         return PerunLowLevelAPI(
             base_url=current_app.config["EINFRA_API_URL"],
-            service_id=current_app.config["EINFRA_SERVICE_ID"],
             service_username=current_app.config["EINFRA_SERVICE_USERNAME"],
             service_password=current_app.config["EINFRA_SERVICE_PASSWORD"],
+        )
+
+    @property
+    def repository_vo_id(self) -> int:
+        """Get the repository VO ID."""
+        return current_app.config["EINFRA_REPOSITORY_VO_ID"]
+
+    @property
+    def repository_facility_id(self) -> int:
+        """Get the repository facility ID."""
+        return current_app.config["EINFRA_REPOSITORY_FACILITY_ID"]
+
+    @property
+    def communities_group_id(self) -> int:
+        """Get the communities group ID."""
+        return current_app.config["EINFRA_COMMUNITIES_GROUP_ID"]
+
+    @cached_property
+    def capabilities_attribute_id(self) -> int:
+        """Get the capabilities attribute ID."""
+        return self.perun_api().get_attribute_by_name(
+            current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"]
+        )["id"]
+
+    @property
+    def capabilities_attribute_name(self) -> str:
+        """Get the capabilities attribute name."""
+        return current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"]
+
+    @cached_property
+    def sync_service_id(self) -> int:
+        """Get the synchronization service ID."""
+        return self.perun_api().get_service_by_name(
+            current_app.config["EINFRA_SYNC_SERVICE_NAME"]
+        )["id"]
+
+    @property
+    def default_language(self) -> str:
+        """Get the default language."""
+        return current_app.config["EINFRA_DEFAULT_INVITATION_LANGUAGE"]
+
+    @property
+    def user_einfra_id_attribute(self) -> str:
+        """Get the user EInfra ID attribute."""
+        return current_app.config["EINFRA_USER_EINFRAID_ATTRIBUTE"]
+
+    @property
+    def user_persistent_einfra_id_attribute(self) -> str:
+        """Get the user persistent EInfra ID attribute."""
+        return current_app.config["EINFRA_USER_PERSISTENT_EINFRA_ID_ATTRIBUTE"]
+
+    @property
+    def user_display_name_attribute(self) -> str:
+        """Get the user display name attribute."""
+        return current_app.config["EINFRA_USER_DISPLAY_NAME_ATTRIBUTE"]
+
+    @property
+    def user_organization_attribute(self) -> str:
+        """Get the user organization attribute."""
+        return current_app.config["EINFRA_USER_ORGANIZATION_ATTRIBUTE"]
+
+    @property
+    def user_preferred_mail_attribute(self) -> str:
+        """Get the user preferred mail attribute."""
+        return current_app.config["EINFRA_USER_PREFERRED_MAIL_ATTRIBUTE"]
+
+    @property
+    def dump_s3_bucket(self) -> str:
+        """Get the dump S3 bucket name."""
+        return current_app.config["EINFRA_USER_DUMP_S3_BUCKET"]
+
+    @property
+    def entitlement_namespaces(self) -> list[str]:
+        """Get the entitlement namespaces."""
+        return current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]
+
+    @property
+    def entitlement_prefix(self) -> str:
+        """Get the entitlement prefix."""
+        return current_app.config["EINFRA_ENTITLEMENT_PREFIX"]
+
+    @property
+    def synchronization_enabled(self) -> bool:
+        """Is the synchronization enabled."""
+        return current_app.config["EINFRA_COMMUNITY_SYNCHRONIZATION"]
+
+    @property
+    def invitation_synchronization_enabled(self) -> bool:
+        """Is the invitation synchronization enabled."""
+        return (
+            current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]
+            and self.synchronization_enabled
+        )
+
+    @property
+    def members_synchronization_enabled(self) -> bool:
+        """Is the members synchronization enabled."""
+        return (
+            current_app.config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"]
+            and self.synchronization_enabled
         )
 
     @cached_property

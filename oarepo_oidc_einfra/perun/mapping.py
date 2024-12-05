@@ -76,7 +76,7 @@ def einfra_to_local_users_map() -> Dict[str, int]:
     :return:                    a mapping of e-infra id to user id
     """
     local_users = {}
-    rows = db.session.execute(
+    rows = db.session.execute(  # type: ignore
         select(UserIdentity.id, UserIdentity.id_user).where(
             UserIdentity.method == "e-infra"
         )

@@ -10,10 +10,10 @@
 import logging
 from typing import Set
 
-from flask import current_app
 from urnparse import URN8141, InvalidURNFormatError
 
 from ..communities import CommunityRole, CommunitySupport
+from ..proxies import current_einfra_oidc
 from .mapping import SlugCommunityRole, get_invenio_role_from_capability
 
 log = logging.getLogger(__name__)
@@ -41,13 +41,10 @@ def get_communities_from_userinfo_token(userinfo_token: dict) -> Set[CommunityRo
         except InvalidURNFormatError:
             # not a valid URN, skipping
             continue
-        if (
-            urn.namespace_id.value
-            not in current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]
-        ):
+        if urn.namespace_id.value not in current_einfra_oidc.entitlement_namespaces:
             continue
         parts = urn.specific_string.parts
-        if not parts or parts[0] != current_app.config["EINFRA_ENTITLEMENT_PREFIX"]:
+        if not parts or parts[0] != current_einfra_oidc.entitlement_prefix:
             continue
         try:
             slug_role: SlugCommunityRole = get_invenio_role_from_capability(parts[1:])

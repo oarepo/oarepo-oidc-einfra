@@ -7,6 +7,8 @@
 #
 """AAI (perun) membership handling."""
 
+from typing import cast
+
 from flask import current_app
 from invenio_access.permissions import Identity, system_identity
 from invenio_accounts.models import User
@@ -21,6 +23,7 @@ from invenio_requests.services.requests.results import RequestItem
 from invenio_users_resources.proxies import current_users_service
 from oarepo_runtime.i18n import lazy_gettext as _
 
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
 from oarepo_oidc_einfra.services.requests.invitation import AAICommunityInvitation
 
 
@@ -38,7 +41,7 @@ class CreateAAIInvitationOp(Operation):
         """Create an invitation in AAI."""
         from oarepo_oidc_einfra.tasks import create_aai_invitation
 
-        if current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"]:
+        if current_einfra_oidc.invitation_synchronization_enabled:
             create_aai_invitation.delay(self.membership_request_id)
 
 
@@ -130,13 +133,17 @@ class AAIInvitationComponent(ServiceComponent):
             # not a user => can not update in AAI
             return
 
-        if current_app.config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"]:
+        if current_einfra_oidc.members_synchronization_enabled:
             # call it immediately. It might take a bit of time but calling
             # it later (after commit) would mean that we could end up with
             # a situation where the changes were performed locally but not
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
-            change_aai_role(community.slug, record.user_id, record.role)
+            change_aai_role(
+                cast(str, community.slug),
+                cast(int, record.user_id),
+                cast(str, record.role),
+            )
 
     def members_delete(
         self,
@@ -167,7 +174,9 @@ class AAIInvitationComponent(ServiceComponent):
             # a situation where the changes were performed locally but not
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
-            remove_aai_user_from_community(community.slug, record.user_id)
+            remove_aai_user_from_community(
+                cast(str, community.slug), cast(int, record.user_id)
+            )
 
     def _add_invitation_message_to_request(
         self, identity: Identity, request_item: RequestItem, message: str
@@ -198,11 +207,12 @@ class AAIInvitationComponent(ServiceComponent):
         :param user_id:         user id
         :param role:            role of the user in the community
         """
+        metadata: dict = cast(dict, community.metadata)
         title = _('Invitation to join "{community}"').format(
-            community=community.metadata["title"],
+            community=metadata["title"],
         )
         description = _("You have been invited as {role} of {community}.").format(
-            role=role.title, community=community.metadata["title"]
+            role=role.title, community=metadata["title"]
         )
 
         request_item = current_requests_service.create(
@@ -218,7 +228,10 @@ class AAIInvitationComponent(ServiceComponent):
         return request_item
 
     def _get_invitation_user(
-        self, member_email: str, member_first_name: str, member_last_name: str
+        self,
+        member_email: str,
+        member_first_name: str | None,
+        member_last_name: str | None,
     ) -> User:
         """Get user id for the invitation.
 
@@ -240,7 +253,7 @@ class AAIInvitationComponent(ServiceComponent):
         elif member_first_name:
             member_full_name = member_first_name
         else:
-            member_full_name = member_email.split('@')[0]
+            member_full_name = member_email.split("@")[0]
 
         user = current_users_service.create(
             system_identity,

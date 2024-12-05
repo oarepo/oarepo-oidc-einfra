@@ -15,19 +15,22 @@ from typing import TYPE_CHECKING
 import click
 from flask import current_app
 from flask.cli import with_appcontext
+from invenio_access.permissions import system_identity
 from invenio_accounts.models import User, UserIdentity
+from invenio_communities.communities.records.models import CommunityMetadata
+from invenio_communities.members.records.models import MemberModel
+from invenio_communities.proxies import current_communities
 from invenio_db import db
 from werkzeug.local import LocalProxy
 
 from oarepo_oidc_einfra.mutex import CacheMutex
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 from oarepo_oidc_einfra.resources import store_dump
-from oarepo_oidc_einfra.tasks import update_from_perun_dump, synchronize_community_to_perun, create_aai_invitation
-
-from invenio_access.permissions import system_identity
-from invenio_communities.proxies import current_communities
-from invenio_communities.members.records.models import MemberModel
-from invenio_communities.communities.records.models import CommunityMetadata
+from oarepo_oidc_einfra.tasks import (
+    create_aai_invitation,
+    synchronize_community_to_perun,
+    update_from_perun_dump,
+)
 
 if TYPE_CHECKING:
     from flask_security.datastore import UserDatastore
@@ -55,12 +58,16 @@ def upload_dump(dump_file: str) -> None:
 
 
 @einfra.command("update_from_dump")
-@click.argument("dump-name")
+@click.argument("dump-path")
 @click.option("--on-background/--on-foreground", default=False)
 @click.option("--fix-communities-in-perun/--no-fix-communities-in-perun", default=True)
+@click.option("--checksum", default=None)
 @with_appcontext
 def update_from_dump(
-    dump_name: str, on_background: bool, fix_communities_in_perun: bool
+    dump_path: str,
+    on_background: bool,
+    fix_communities_in_perun: bool,
+    checksum: str | None = None,
 ) -> None:
     """Update the data from the last imported dump.
 
@@ -70,11 +77,13 @@ def update_from_dump(
     """
     if on_background:
         update_from_perun_dump.delay(
-            dump_name, fix_communities_in_perun=fix_communities_in_perun
+            dump_path, fix_communities_in_perun=fix_communities_in_perun
         )
     else:
         update_from_perun_dump(
-            dump_name, fix_communities_in_perun=fix_communities_in_perun
+            dump_path=dump_path,
+            checksum=checksum,
+            fix_communities_in_perun=fix_communities_in_perun,
         )
 
 
@@ -96,9 +105,9 @@ def clear_import_mutex() -> None:
 
 def _add_einfra_user(email: str, einfra_id: str) -> None:
     """Add a user to the system if it does not exist and link it with the EInfra identity."""
-    _datastore: UserDatastore = LocalProxy(
+    _datastore: UserDatastore = LocalProxy(  # type: ignore
         lambda: current_app.extensions["security"].datastore
-    )  # noqa
+    )
 
     email = email.lower()
     user = User.query.filter_by(email=email).first()
@@ -110,7 +119,7 @@ def _add_einfra_user(email: str, einfra_id: str) -> None:
             "confirmed_at": datetime.now(UTC),
         }
         _datastore.create_user(**kwargs)
-        db.session.commit()
+        db.session.commit()  # type: ignore
 
         user = User.query.filter_by(email=email).one()
 
@@ -123,7 +132,7 @@ def _add_einfra_user(email: str, einfra_id: str) -> None:
             method="e-infra",
             external_id=einfra_id,
         )
-        db.session.commit()
+        db.session.commit()  # type: ignore
 
 
 @einfra.command("import_dump_users")
@@ -140,7 +149,7 @@ def import_dump_users(dump_path: str) -> None:
 
     with BytesIO() as obj:
         client.download_fileobj(
-            Bucket=current_app.config["EINFRA_USER_DUMP_S3_BUCKET"],
+            Bucket=current_einfra_oidc.dump_s3_bucket,
             Key=dump_path,
             Fileobj=obj,
         )
@@ -164,8 +173,7 @@ def import_dump_users(dump_path: str) -> None:
 @click.argument("community_slug")
 @with_appcontext
 def synchronize_community(community_slug: str) -> None:
-    """Re-synchronize a community to Perun.
-    """
+    """Re-synchronize a community to Perun."""
     community = current_communities.service.read(system_identity, community_slug)
     synchronize_community_to_perun(str(community.id))
 
@@ -182,6 +190,8 @@ def resend_invitation(community_slug: str, email: str) -> None:
     """
     community = CommunityMetadata.query.filter_by(slug=community_slug).one()
     user = User.query.filter_by(email=email).one()
-    member = MemberModel.query.filter_by(user_id=user.id, community_id=community.id).one()
+    member = MemberModel.query.filter_by(
+        user_id=user.id, community_id=community.id
+    ).one()
     request_id = member.request_id
     create_aai_invitation(str(request_id))
