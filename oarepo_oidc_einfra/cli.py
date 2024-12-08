@@ -178,6 +178,17 @@ def synchronize_community(community_slug: str) -> None:
     synchronize_community_to_perun(str(community.id))
 
 
+@einfra.command("synchronize_all_communities")
+@with_appcontext
+def synchronize_all_communities() -> None:
+    """Re-synchronize all communities to Perun."""
+    from tqdm import tqdm
+
+    community_list = CommunityMetadata.query.all()
+    for community in tqdm(community_list):
+        synchronize_community_to_perun(str(community.id))
+
+
 @einfra.command("resend_invitation")
 @click.argument("community_slug")
 @click.argument("email")
