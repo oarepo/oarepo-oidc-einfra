@@ -179,7 +179,7 @@ def update_from_perun_dump(
     """
     if check_dump_in_cache:
         cache_dump_path = current_cache.cache.get("EINFRA_LAST_DUMP_PATH")
-        if cache_dump_path != dump_path:
+        if cache_dump_path and cache_dump_path != dump_path:
             # already have a new dump path, no need to process this one
             return
     client = current_einfra_oidc.dump_boto3_client
@@ -200,7 +200,6 @@ def update_from_perun_dump(
                 )
                 return
         data = json.loads(value.decode("utf-8"))
-
     community_support = CommunitySupport()
     dump = PerunDumpData(
         data, community_support.slug_to_id, community_support.role_names
@@ -524,6 +523,4 @@ def aai_group_op(
                 group_id=group["id"],
             )
         except:
-            log.error(
-                f"Error while performing {op} on group {group['id']} for user {user['id']}"
-            )
+            log.error(f"Error while performing {op} on group {group} for user {user}")
