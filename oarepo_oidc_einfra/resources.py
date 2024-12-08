@@ -16,19 +16,20 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
 
 from flask import Blueprint, Flask, g, redirect, request
-from flask_login import login_required
+from flask_login import fresh_login_required, logout_user
 from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
 from invenio_access import Permission, action_factory
 from invenio_access.permissions import system_identity
 from invenio_accounts.models import User
 from invenio_cache.proxies import current_cache
+from invenio_communities.members.records.api import Member
 from invenio_db import db
 from invenio_records_resources.resources.errors import PermissionDeniedError
 from invenio_requests.proxies import current_requests_service
 from invenio_requests.records.api import Request
 
-from oarepo_oidc_einfra.encryption import decrypt
+from oarepo_oidc_einfra.encryption import decrypt, encrypt
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
@@ -94,7 +95,7 @@ class OIDCEInfraResource(Resource):
         update_from_perun_dump.delay(dump_path, checksum)
         return {"status": "ok"}, 201
 
-    @login_required
+    @fresh_login_required
     def accept_invitation(self) -> Response:
         """Accept an invitation to join a community.
 
@@ -118,18 +119,47 @@ class OIDCEInfraResource(Resource):
 
         request_id = decrypt(request.view_args["request_id"])
 
+        # force re-authentication
+        if "fresh_login_token" not in request.args:
+            # force logout and redirect to the same page with the fresh_login_token
+            # so that the user is logged in again
+            logout_user()
+            fresh_login_token = encrypt("fresh_login_token_" + str(request_id))
+            return redirect(request.url + "?fresh_login_token=" + fresh_login_token)
+        else:
+            fresh_login_token = decrypt(request.args["fresh_login_token"])
+            if fresh_login_token != "fresh_login_token_" + str(request_id):
+                raise PermissionDenied("Invalid login token")
+
         # get the invitation request and check if it is submitted.
         invitation_request = Request.get_record(request_id)
         assert invitation_request.status == "submitted"
 
         # if its user is not the current user, we might to delete
         # the user on the request so that it does not pollute the space
-        request_user_id = invitation_request["payload"].get("user_id")
-        if request_user_id != str(g.identity.id):
-            user = User.query.filter_by(User.id == request_user_id).one()
-            if not user.is_active:
+        invitation = Member.get_member_by_request(request_id)
+
+        if not invitation.model:
+            raise ValueError(f"Invitation {invitation} does not have a model.")
+
+        request_user_id = invitation.model.user_id
+
+        if str(request_user_id) != str(g.identity.id):
+            # switch the user to the actual one, as he has just authenticated and
+            # the email address the invitation was sent to is different than the one
+            # that has come from the AAI
+            invitation.model.user_id = g.identity.id
+            db.session.add(invitation.model)
+
+            # if the user has not been confirmed yet, we can safely delete the user
+            user = User.query.filter(User.id == request_user_id).one()
+            if not user.confirmed_at:
                 db.session.delete(user)  # type: ignore
             else:
+                # otherwise the user is trying to exist in two different identities,
+                # which is a problem. Can not be handled automatically and needs
+                # to be resolved manually. Logging error here will put it to glitchtip
+                # and user is instructed to contact the administrator.
                 log.error(
                     "Invitation check failed: The user for which the invitation was sent (%s) "
                     "is an active user and is not the same as the current user %s, thus the "
@@ -138,11 +168,9 @@ class OIDCEInfraResource(Resource):
                     request_user_id,
                     g.identity.id,
                 )
-                raise PermissionDenied("Invitation link invalid")
-
-        # now, change the receiver to the current user
-        invitation_request.receiver = {"user": g.identity.id}
-        invitation_request.commit()
+                raise PermissionDenied(
+                    "Invitation link invalid. Please contact the administrator to resolve this issue."
+                )
 
         # accept the invitation. This has to be accepted with system_identity, because
         # the user instance has not been known at the time of the request creation (just the email address)
