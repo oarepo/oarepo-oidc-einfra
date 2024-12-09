@@ -224,6 +224,7 @@ def smart_record(perun_api_url, low_level_perun_api, constants, constants_templa
     def smart_record(fname) -> Generator[SimpleNamespace, None, None]:
         file_path = Path(__file__).parent / "request_data" / fname
         if not file_path.exists():
+            print(f"Could not find recorded data at path {file_path}, recording ...")
             with Recorder() as recorder:
                 yield constants
                 messages = recorder.get_registry().registered
@@ -235,7 +236,7 @@ def smart_record(perun_api_url, low_level_perun_api, constants, constants_templa
                     )
                 recorder.dump_to_file(file_path=file_path, registered=messages)
         else:
-            print("Using recorded data")
+            print(f"Using recorded data from path {file_path}")
             low_level_perun_api._auth = (
                 None  # reset the auth just to make sure we use the recorded data
             )
