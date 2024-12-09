@@ -119,8 +119,8 @@ class CommunitySupport:
         for community_role in new_community_roles - current_community_roles:
             cls._add_user_community_membership(community_role, user)
 
-        log.info("Current community roles ", current_community_roles)
-        log.info("New community roles ", new_community_roles)
+        log.info("Current community roles %s", current_community_roles)
+        log.info("New community roles %s", new_community_roles)
 
         community_ids = {
             r.community_id for r in current_community_roles - new_community_roles

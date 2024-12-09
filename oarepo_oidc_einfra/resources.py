@@ -6,7 +6,7 @@
 # details.
 #
 
-"""REST resources."""
+"""OIDC resources (API + UI)."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
 
 from flask import Blueprint, Flask, g, redirect, request
-from flask_login import fresh_login_required, logout_user
+from flask_login import fresh_login_required, login_required, logout_user
 from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
 from invenio_access import Permission, action_factory
@@ -42,58 +42,34 @@ log = logging.getLogger(__name__)
 upload_dump_action = action_factory("upload-oidc-einfra-dump")
 
 
-class OIDCEInfraResourceConfig(ResourceConfig):
+class OIDCEInfraUIResourceConfig(ResourceConfig):
     """Configuration for the REST API."""
 
-    blueprint_name = "oarepo_oidc_einfra"
+    blueprint_name = "oarepo_oidc_einfra_ui"
     """Blueprint name."""
 
     url_prefix = "/auth/oidc/einfra"
-    """URL prefix for the resource, will be at /api/oidc-einfra."""
+    """URL prefix for the resource."""
 
     routes = {
-        "upload-dump": "/dumps/upload",
         "accept-invitation": "/invitations/<request_id>/accept",
     }
     """Routes for the resource."""
 
 
-class OIDCEInfraResource(Resource):
+class OIDCEInfraUIResource(Resource):
     """REST API for the EInfra OIDC."""
 
-    def __init__(self, config: Optional[OIDCEInfraResourceConfig] = None):
+    def __init__(self, config: Optional[OIDCEInfraUIResourceConfig] = None):
         """Initialize the resource."""
-        super().__init__(config=config or OIDCEInfraResourceConfig())
+        super().__init__(config=config or OIDCEInfraUIResourceConfig())
 
     def create_url_rules(self) -> list[dict]:
         """Create URL rules for the resource."""
         routes = self.config.routes
         return [
-            route("POST", routes["upload-dump"], self.upload_dump),
             route("GET", routes["accept-invitation"], self.accept_invitation),
         ]
-
-    def upload_dump(self) -> tuple[dict, int]:
-        """Upload a dump of the EInfra data.
-
-        The dump will be uploaded to the configured location (EINFRA_DUMP_DATA_URL inside config)
-        and then processed by a celery synchronization task.
-
-        The caller must have the permission to upload the dump (upload-oidc-einfra-dump action
-        that can be assigned via invenio access commandline tool).
-        """
-        if not Permission(upload_dump_action).allows(g.identity):
-            raise PermissionDeniedError()
-
-        if request.headers.get("Content-Type") != "application/json":
-            return {
-                "status": "error",
-                "message": "Content-Type must be application/json",
-            }, 400
-
-        dump_path, checksum = store_dump(request.data)
-        update_from_perun_dump.delay(dump_path, checksum)
-        return {"status": "ok"}, 201
 
     @fresh_login_required
     def accept_invitation(self) -> Response:
@@ -179,6 +155,59 @@ class OIDCEInfraResource(Resource):
         return redirect("/")
 
 
+class OIDCEInfraAPIResourceConfig(ResourceConfig):
+    """Configuration for the REST API."""
+
+    blueprint_name = "oarepo_oidc_einfra_api"
+    """Blueprint name."""
+
+    url_prefix = "/auth/oidc/einfra"
+    """URL prefix for the resource, will be at /api/auth/oidc/einfra."""
+
+    routes = {
+        "upload-dump": "/dumps/upload",
+    }
+    """Routes for the resource."""
+
+
+class OIDCEInfraAPIResource(Resource):
+    """REST API for the EInfra OIDC."""
+
+    def __init__(self, config: Optional[OIDCEInfraAPIResourceConfig] = None):
+        """Initialize the resource."""
+        super().__init__(config=config or OIDCEInfraAPIResourceConfig())
+
+    def create_url_rules(self) -> list[dict]:
+        """Create URL rules for the resource."""
+        routes = self.config.routes
+        return [
+            route("POST", routes["upload-dump"], self.upload_dump),
+        ]
+
+    @login_required
+    def upload_dump(self) -> tuple[dict, int]:
+        """Upload a dump of the EInfra data.
+
+        The dump will be uploaded to the configured location (EINFRA_DUMP_DATA_URL inside config)
+        and then processed by a celery synchronization task.
+
+        The caller must have the permission to upload the dump (upload-oidc-einfra-dump action
+        that can be assigned via invenio access commandline tool).
+        """
+        if not Permission(upload_dump_action).allows(g.identity):
+            raise PermissionDeniedError()
+
+        if request.headers.get("Content-Type") != "application/json":
+            return {
+                "status": "error",
+                "message": "Content-Type must be application/json",
+            }, 400
+
+        dump_path, checksum = store_dump(request.data)
+        update_from_perun_dump.delay(dump_path, checksum)
+        return {"status": "ok"}, 201
+
+
 def store_dump(request_data: bytes) -> tuple[str, str]:
     """Store the dump in the configured location and return the path.
 
@@ -203,6 +232,11 @@ def store_dump(request_data: bytes) -> tuple[str, str]:
     return dump_path, hashlib.sha256(request_data).hexdigest()
 
 
-def create_blueprint(app: Flask) -> Blueprint:
+def create_ui_blueprint(app: Flask) -> Blueprint:
     """Create a blueprint for the REST API."""
-    return OIDCEInfraResource().as_blueprint()
+    return OIDCEInfraUIResource().as_blueprint()
+
+
+def create_api_blueprint(app: Flask) -> Blueprint:
+    """Create a blueprint for the REST API."""
+    return OIDCEInfraAPIResource().as_blueprint()

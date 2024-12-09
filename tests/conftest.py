@@ -76,6 +76,7 @@ def app_config(app_config):
     app_config["EINFRA_REPOSITORY_FACILITY_ID"] = 4662
     app_config["EINFRA_CAPABILITIES_ATTRIBUTE_ID"] = 3585
     app_config["EINFRA_SYNC_SERVICE_ID"] = 1020
+    app_config["EINFRA_SYNC_SERVICE_NAME"] = "test-sync"
     app_config["EINFRA_RSA_KEY"] = (
         b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3\nPHloIk/Ljs2vZl/RAaitkXDx6aqpl1kGpS44eYJOaer4oWc6/QNaMtynvlSlnkuW\nrG765adNKT9sgAWSrPb81xkojsQabrSNv4nIOWUQi0Tjh0WxXQmbV+bMxkVaElhd\nHNFzUfHv+XqI8Hkc82mIGtyeMQn+VAuZbYkVXnjyCwwa9RmPOSH+O4N4epDXKk1V\nK9dUxf/rEYbjMNZGDva30do0mrBkU8W3O1mDVJSSgHn4ejKdGNYMm0JKPAgCWyPW\nJDoL092ctPCFlUMBBZ/OP3omvgnw0GaWZXxqSqaSvxFJkqCHqLMwpxmWTTAgEvAb\nnwIDAQAB\n-----END PUBLIC KEY-----\n"
     )
@@ -155,11 +156,6 @@ def perun_api_url(app):
 
 
 @pytest.fixture()
-def perun_service_id(app):
-    return app.config["EINFRA_SERVICE_ID"]
-
-
-@pytest.fixture()
 def perun_service_username(app):
     return app.config["EINFRA_SERVICE_USERNAME"]
 
@@ -195,12 +191,9 @@ def test_repo_communities_id(app):
 
 
 @pytest.fixture()
-def low_level_perun_api(
-    perun_api_url, perun_service_id, perun_service_username, perun_service_password
-):
+def low_level_perun_api(perun_api_url, perun_service_username, perun_service_password):
     return PerunLowLevelAPI(
         base_url=perun_api_url,
-        service_id=perun_service_id,
         service_username=perun_service_username,
         service_password=perun_service_password,
     )

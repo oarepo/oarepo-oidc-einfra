@@ -23,8 +23,8 @@ def test_store_dump(app, db, client, test_ui_pages, s3_dump_bucket):
     db.session.commit()
 
     with pytest.raises(PermissionDeniedError):
-        client.post(
-            "/api/oidc-einfra/dumps/upload",
+        post_result = client.post(
+            "/api/auth/oidc/einfra/dumps/upload",
             base_url="https://127.0.0.1:5000/",
             json={
                 "resources": {},
@@ -40,7 +40,7 @@ def test_store_dump(app, db, client, test_ui_pages, s3_dump_bucket):
     db.session.commit()
 
     post_result = client.post(
-        "/api/oidc-einfra/dumps/upload",
+        "/api/auth/oidc/einfra/dumps/upload",
         base_url="https://127.0.0.1:5000/",
         json={
             "resources": {},
