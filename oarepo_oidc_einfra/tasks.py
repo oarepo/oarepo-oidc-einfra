@@ -255,7 +255,6 @@ def synchronize_users_from_perun(
     :param community_support:    community support object
     """
     local_users_by_einfra = einfra_to_local_users_map()
-    print([aai_user.email for aai_user in dump.users()])
     for aai_user_chunk in chunks(dump.users(), 100):
         aai_user_chunk_by_einfra_id = {u.einfra_id: u for u in aai_user_chunk}
 
@@ -284,7 +283,6 @@ def synchronize_users_from_perun(
         for user in local_users:
             aai_user = aai_user_chunk_by_einfra_id[local_user_id_to_einfra_id[user.id]]
             log.info("Setting user %s with roles %s", user, aai_user.roles)
-            print("Setting user", user, aai_user.roles)
             update_user_metadata(
                 user, aai_user.full_name, aai_user.email, aai_user.organization
             )
@@ -299,6 +297,14 @@ def synchronize_users_from_perun(
                 current_community_roles=local_community_roles_by_user_id.get(
                     user.id, set()
                 ),
+            )
+
+        for unknown_user in set(aai_user_chunk_by_einfra_id.keys()) - set(
+            local_user_id_to_einfra_id.values()
+        ):
+            log.info(
+                "User with einfra id %s not yet found in the local database",
+                unknown_user,
             )
 
     # for users that are not in the dump anymore, remove all communities

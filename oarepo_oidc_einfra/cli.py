@@ -8,6 +8,7 @@
 """EInfra terminal commands."""
 
 import json
+import logging
 from datetime import UTC, datetime
 from io import BytesIO
 from typing import TYPE_CHECKING
@@ -75,6 +76,11 @@ def update_from_dump(
     :param on_background: Whether to run the task in the background.
     :param fix_communities_in_perun: Whether to fix communities in Perun.
     """
+    # set python logger to show info from PerunSynchronizationTask
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger("PerunSynchronizationTask")
+    logger.setLevel(logging.INFO)
+
     if on_background:
         update_from_perun_dump.delay(
             dump_path, fix_communities_in_perun=fix_communities_in_perun

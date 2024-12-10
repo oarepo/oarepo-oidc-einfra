@@ -8,6 +8,7 @@
 """Low-level API for Perun targeted at the operations needed by E-INFRA OIDC extension."""
 
 import logging
+from functools import cached_property
 from typing import Optional, Tuple
 
 import requests
@@ -46,7 +47,14 @@ class PerunLowLevelAPI:
         self._base_url = base_url
         self._auth = HTTPBasicAuth(service_username, service_password)
         self._session = requests.Session()
-        self._service_id = self._perun_call_dict(
+
+    @cached_property
+    def _service_id(self) -> int:
+        """Get the id of the service that manages VO/groups.
+
+        :return the id of the service
+        """
+        return self._perun_call_dict(
             "authzResolver",
             "getLoggedUser",
             {},
