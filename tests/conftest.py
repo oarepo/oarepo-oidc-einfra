@@ -278,7 +278,7 @@ def test_group_id():
         Path(__file__).parent / "request_data" / "test_create_group.yaml"
     ).open() as f:
         data = yaml.safe_load(f)
-        payload = json.loads(data["responses"][1]["response"]["body"])
+        payload = json.loads(data["responses"][2]["response"]["body"])
         return payload["id"]
 
 
