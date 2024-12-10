@@ -106,7 +106,7 @@ def test_add_user_to_group(
         )
 
         user = low_level_perun_api.get_user_by_attribute(
-            attribute_name=app.config["EINFRA_USER_EINFRAID_ATTRIBUTE"],
+            attribute_name=app.config["EINFRA_USER_ID_SEARCH_ATTRIBUTE"],
             attribute_value=constants.sample_user_einfra_id,
         )
 
