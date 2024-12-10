@@ -6,27 +6,30 @@
 # details.
 #
 """OIDC utilities."""
-from typing import Dict, Set
 
-from flask import current_app
-from invenio_accounts.models import UserIdentity
-from invenio_db import db
-from sqlalchemy import select
+import logging
+from typing import Set
+
 from urnparse import URN8141, InvalidURNFormatError
 
 from ..communities import CommunityRole, CommunitySupport
+from ..proxies import current_einfra_oidc
+from .mapping import SlugCommunityRole, get_invenio_role_from_capability
+
+log = logging.getLogger(__name__)
 
 
-def get_communities_from_userinfo_token(userinfo_token) -> Set[CommunityRole]:
-    """
-    Extracts communities and roles from userinfo token.
+def get_communities_from_userinfo_token(userinfo_token: dict) -> Set[CommunityRole]:
+    """Extract communities and roles from userinfo token.
 
     :param userinfo_token:          userinfo token from perun/oidc server
     :return:                        a set of community roles associated with the user
     """
-    slug_to_id = CommunitySupport().slug_to_id
+    cs = CommunitySupport()
 
-    community_roles = CommunitySupport().role_names
+    slug_to_id = cs.slug_to_id
+
+    community_roles = cs.role_names
 
     # Entitlement looks like:
     # 1 = {str} 'urn:geant:cesnet.cz:res:communities:cuni:role:curator#perun.cesnet.cz'
@@ -38,43 +41,20 @@ def get_communities_from_userinfo_token(userinfo_token) -> Set[CommunityRole]:
         except InvalidURNFormatError:
             # not a valid URN, skipping
             continue
-        if (
-            urn.namespace_id.value
-            not in current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]
-        ):
+        if urn.namespace_id.value not in current_einfra_oidc.entitlement_namespaces:
             continue
-        for group_parts in current_app.config[
-            "EINFRA_ENTITLEMENT_COMMUNITIES_GROUP_PARTS"
-        ]:
-            if urn.specific_string.parts[: len(group_parts)] == group_parts and len(
-                urn.specific_string.parts
-            ) > len(group_parts):
-                parts = urn.specific_string.parts[len(group_parts) :]
-                if (
-                    len(parts) == 3
-                    and parts[0] in slug_to_id
-                    and parts[2] in community_roles
-                ):
-                    aai_groups.add((slug_to_id[parts[0]], parts[2]))
+        parts = urn.specific_string.parts
+        if not parts or parts[0] != current_einfra_oidc.entitlement_prefix:
+            continue
+        try:
+            slug_role: SlugCommunityRole = get_invenio_role_from_capability(parts[1:])
+            if slug_role.role not in community_roles:
+                log.error(
+                    f"Role {slug_role.role} not found in community roles in urn {urn}"
+                )
+                continue
+            aai_groups.add(CommunityRole(slug_to_id[slug_role.slug], slug_role.role))
+        except ValueError:
+            continue
+
     return aai_groups
-
-
-def einfra_to_local_users_map() -> Dict[str, int]:
-    """
-    Returns a mapping of e-infra id to user id for local users, that have e-infra identity
-    and logged at least once with it.
-
-    :return:                    a mapping of e-infra id to user id
-    """
-    local_users = {}
-    rows = db.session.execute(
-        select(UserIdentity.id, UserIdentity.id_user).where(
-            UserIdentity.method == "e-infra"
-        )
-    )
-    for row in rows:
-        einfra_id = row[0]
-        user_id = row[1]
-        if einfra_id:
-            local_users[einfra_id] = user_id
-    return local_users

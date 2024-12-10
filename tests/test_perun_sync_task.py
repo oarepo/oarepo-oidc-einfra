@@ -25,5 +25,5 @@ def test_sync_community(app, db, location, smart_record, search_clear):
     )
     current_communities.service.indexer.refresh()
 
-    with smart_record("test_initial_sync_community") as recorded:
+    with smart_record("test_initial_sync_community.yaml"):
         synchronize_community_to_perun(community.id)
