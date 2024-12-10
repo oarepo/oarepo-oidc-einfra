@@ -17,7 +17,7 @@ EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION = True
 EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION = True
 """Synchronize community membership to E-Infra Perun when user changes role within a community."""
 
-EINFRA_ENTITLEMENT_NAMESPACES = ["geant"]
+EINFRA_ENTITLEMENT_NAMESPACES = {"geant"}
 """URN prefix for capabilities that can represent community roles."""
 
 EINFRA_ENTITLEMENT_PREFIX = "cesnet.cz"
@@ -41,9 +41,6 @@ EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AM
 
 # EINFRA_SERVICE_PASSWORD = "password"
 # """Password of the service in the E-INFRA Perun."""
-
-# EINFRA_SERVICE_ID = 0
-# """Internal ID of the service (whose username and password are above) in the E-INFRA Perun."""
 
 # EINFRA_REPOSITORY_VO_ID = 0
 # """Internal ID of the VO in the E-INFRA Perun that represents the repository."""
@@ -73,12 +70,12 @@ EINFRA_CAPABILITIES_ATTRIBUTE_NAME = "urn:perun:resource:attribute-def:def:capab
 # EINFRA_USER_DUMP_S3_BUCKET = ""
 # """Bucket where the user dump from PERUN is stored."""
 
-EINFRA_USER_EINFRAID_ATTRIBUTE = (
+EINFRA_USER_ID_SEARCH_ATTRIBUTE = (
     "urn:perun:user:attribute-def:def:login-namespace:einfraid-persistent-shadow"
 )
 """Attribute on user inside perun that represents the E-INFRA ID of the user."""
 
-EINFRA_USER_PERSISTENT_EINFRA_ID_ATTRIBUTE = (
+EINFRA_USER_ID_DUMP_ATTRIBUTE = (
     "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
 )
 """Attribute on user inside perun that represents the E-INFRA ID of the user."""
@@ -94,9 +91,3 @@ EINFRA_USER_PREFERRED_MAIL_ATTRIBUTE = "urn:perun:user:attribute-def:def:preferr
 
 EINFRA_DEFAULT_INVITATION_LANGUAGE = "en"
 """Language of the invitation emails that are sent to the users."""
-
-EINFRA_ENTITLEMENT_NAMESPACES = {"geant"}
-"""URN prefix for capabilities that can represent community roles."""
-
-EINFRA_ENTITLEMENT_GROUP_PARTS = [["cesnet.cz", "group"], ["e-infra.cz", "group"]]
-"""Parts of the entitlement URN name that represent groups."""

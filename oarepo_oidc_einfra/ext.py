@@ -128,14 +128,14 @@ class EInfraOIDCApp:
         return current_app.config["EINFRA_DEFAULT_INVITATION_LANGUAGE"]
 
     @property
-    def user_einfra_id_attribute(self) -> str:
+    def einfra_user_id_search_attribute(self) -> str:
         """Get the user EInfra ID attribute."""
-        return current_app.config["EINFRA_USER_EINFRAID_ATTRIBUTE"]
+        return current_app.config["EINFRA_USER_ID_SEARCH_ATTRIBUTE"]
 
     @property
-    def user_persistent_einfra_id_attribute(self) -> str:
+    def einfra_user_id_dump_attribute(self) -> str:
         """Get the user persistent EInfra ID attribute."""
-        return current_app.config["EINFRA_USER_PERSISTENT_EINFRA_ID_ATTRIBUTE"]
+        return current_app.config["EINFRA_USER_ID_DUMP_ATTRIBUTE"]
 
     @property
     def user_display_name_attribute(self) -> str:

@@ -112,7 +112,7 @@ class PerunDumpData:
         """
         for u in self.dump_data["users"].values():
             einfra_id = u["attributes"].get(
-                current_einfra_oidc.user_persistent_einfra_id_attribute,
+                current_einfra_oidc.einfra_user_id_dump_attribute,
             )
             full_name = u["attributes"].get(
                 current_einfra_oidc.user_display_name_attribute

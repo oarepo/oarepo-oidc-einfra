@@ -510,7 +510,7 @@ def aai_group_op(
         return
 
     user = perun_api.get_user_by_attribute(
-        attribute_name=current_einfra_oidc.user_einfra_id_attribute,
+        attribute_name=current_einfra_oidc.einfra_user_id_search_attribute,
         attribute_value=einfra_id,
     )
     if user is None:
