@@ -73,3 +73,29 @@ responses:
       method: POST
       status: 200
       url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
+  - response:
+      auto_calculate_content_length: false
+      body:
+        '{"id": "13", "createdAt": "2024-10-20 19:51:21.123512", "createdBy": "nrp-fa-devrepo@META",
+        "modifiedAt": "2024-10-20 19:51:21.123512", "modifiedBy": "nrp-fa-devrepo@META",
+        "createdByUid": "143975", "modifiedByUid": "143975", "voId": "4003", "groupId":
+        "16463", "applicationId": null, "senderId": "143975", "receiverName": "Test
+        Testovic", "receiverEmail": "test@test.com", "redirectUrl": "https://example.com/invitation-accepted/123456",
+        "token": "1cafa1fe-3b5f-48b3-a8d4-5a04d28f8072", "language": "en", "expiration":
+        "2024-10-25", "status": "PENDING", "beanName": "Invitation"}'
+      content_type: text/plain
+      headers:
+        Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+        Expires: "0"
+        Keep-Alive: timeout=5, max=98
+        Pragma: no-cache
+        Referrer-Policy: no-referrer-when-downgrade
+        Strict-Transport-Security: max-age=63072000
+        Transfer-Encoding: chunked
+        Vary: Accept-Encoding
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: SAMEORIGIN
+        X-XSS-Protection: 1; mode=block
+      method: POST
+      status: 200
+      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/invitationsManager/inviteToGroup

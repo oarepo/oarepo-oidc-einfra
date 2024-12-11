@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CESNET z.s.p.o.
 #
@@ -7,7 +6,7 @@
 # details.
 #
 
-"""E-INFRA OIDC Auth backend for OARepo"""
+"""E-INFRA OIDC Auth backend for OARepo."""
 
 from .remote import EINFRA_LOGIN_APP
 

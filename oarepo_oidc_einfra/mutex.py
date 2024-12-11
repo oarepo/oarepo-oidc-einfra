@@ -5,23 +5,25 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
-"""
-An implementation of a mutex over the cache. Note: if you have multiple redis caches,
+"""An implementation of a mutex over the cache.
+
+Note: if you have multiple redis caches,
 you need to implement a distributed lock instead of this simple implementation to have
 a mutex that works in all cases of disaster scenarios.
 """
+
 import functools
 import secrets
 import threading
 import time
 from random import random
+from typing import Callable
 
 from invenio_cache import current_cache
 
 
 class CacheMutex:
-    """
-    A simple mutex implementation using the cache.
+    """A simple mutex implementation using the cache.
 
     Because propagation from master cache server to slaves might be asynchronous and
     messages might be lost in case when master responds before the slave is updated,
@@ -31,8 +33,10 @@ class CacheMutex:
     slaves and implement a distributed lock such as Redlock algorithm for redis.
     """
 
-    def __init__(self, key, timeout=3600, tries=10, wait_time=120):
-        """Creates the mutex.
+    def __init__(
+        self, key: str, timeout: float = 3600, tries: int = 10, wait_time: float = 120
+    ):
+        """Create the mutex.
 
         :param key: The key inside cache where the mutex data are stored.
         :param timeout: The mutex will be released automatically after this time.
@@ -52,7 +56,7 @@ class CacheMutex:
 
     def __enter__(self):
         """Acquires the mutex."""
-        for k in range(self.tries):
+        for _k in range(self.tries):
             if current_cache.cache.add(self.key, self.value, timeout=self.timeout):
                 # sanity check
                 if current_cache.cache.get(self.key) != self.value:
@@ -65,19 +69,27 @@ class CacheMutex:
             f"waiting {self.wait_time} seconds each time"
         )
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, traceback):  # noqa
         """Releases the mutex."""
         if current_cache.cache.get(self.key) == self.value:
             current_cache.cache.delete(self.key)
+
+    def force_clear(self) -> None:
+        """Force the mutex to be cleared.
+
+        Note: this does not stop any processes that might be using the mutex !
+        """
+        current_cache.cache.delete(self.key)
 
 
 mutex_thread_local = threading.local()
 """make the mutex below reentrant within the same thread"""
 
 
-def mutex(key, timeout=3600, tries=10, wait_time=120):
-    """
-    A decorator that creates a mutex for a function.
+def mutex(
+    key: str, timeout: float = 3600, tries: int = 10, wait_time: float = 120
+) -> Callable:
+    """Create a mutex for a function.
 
     :param key: The key inside cache where the mutex data are stored.
     :param timeout: The mutex will be released automatically after this time.
@@ -93,9 +105,9 @@ def mutex(key, timeout=3600, tries=10, wait_time=120):
         # do something that needs to be protected by the mutex
     """
 
-    def decorator(func):
+    def decorator(func):  # noqa
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs):  # noqa
             if not hasattr(mutex_thread_local, key):
                 setattr(mutex_thread_local, key, True)
                 try:

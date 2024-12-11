@@ -13,25 +13,26 @@ from invenio_communities import current_communities
 from invenio_communities.members import Member
 
 from oarepo_oidc_einfra.communities import CommunityRole, CommunitySupport
+from oarepo_oidc_einfra.resources import store_dump
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
 
-def touri(filename):
-    return (Path(__file__).parent / "dump_data" / filename).as_uri()
+def update_from_file(filename):
+    pth = Path(__file__).parent / "dump_data" / filename
+    dump_path, checksum = store_dump(pth.read_bytes())
+    update_from_perun_dump(dump_path, checksum)
 
 
 def test_no_communities(app, db, location, search_clear):
-    update_from_perun_dump(touri("1.json"))
-    update_from_perun_dump(touri("2.json"))
-    update_from_perun_dump(touri("3.json"))
+    update_from_file("1.json")
+    update_from_file("2.json")
+    update_from_file("3.json")
 
 
 def test_no_communities_user_exists_but_not_linked(
     app, db, location, search_clear, smart_record
 ):
-    with smart_record(
-        "test_no_communities_user_exists_but_not_linked.yaml"
-    ) as recorded:
+    with smart_record("test_no_communities_user_exists_but_not_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
             username="asdasdasd",
@@ -43,9 +44,9 @@ def test_no_communities_user_exists_but_not_linked(
         db.session.add(user)
         db.session.commit()
 
-        update_from_perun_dump(touri("1.json"))
-        update_from_perun_dump(touri("2.json"))
-        update_from_perun_dump(touri("3.json"))
+        update_from_file("1.json")
+        update_from_file("2.json")
+        update_from_file("3.json")
 
         user = User.query.filter_by(username="asdasdasd").one()
         assert user.user_profile["full_name"] == "Mirek Simek"
@@ -53,7 +54,7 @@ def test_no_communities_user_exists_but_not_linked(
 
 
 def test_no_communities_user_linked(app, db, location, search_clear, smart_record):
-    with smart_record("test_no_communities_user_linked.yaml") as recorded:
+    with smart_record("test_no_communities_user_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
             username="asdasdasd",
@@ -65,16 +66,16 @@ def test_no_communities_user_linked(app, db, location, search_clear, smart_recor
         db.session.add(user)
         db.session.commit()
 
-        identity = UserIdentity.create(
+        UserIdentity.create(
             user=user,
             method="e-infra",
-            external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+            external_id="user1@einfra.cesnet.cz",
         )
         db.session.commit()
 
-        update_from_perun_dump(touri("1.json"))
-        update_from_perun_dump(touri("2.json"))
-        update_from_perun_dump(touri("3.json"))
+        update_from_file("1.json")
+        update_from_file("2.json")
+        update_from_file("3.json")
 
         user = User.query.filter_by(username="asdasdasd").one()
         assert user.user_profile["full_name"] == "Miroslav Šimek"
@@ -83,7 +84,7 @@ def test_no_communities_user_linked(app, db, location, search_clear, smart_recor
 
 
 def test_with_communities(app, db, location, search_clear, smart_record):
-    with smart_record("test_with_communities.yaml") as recorded:
+    with smart_record("test_with_communities.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
             username="asdasdasd",
@@ -95,10 +96,10 @@ def test_with_communities(app, db, location, search_clear, smart_record):
         db.session.add(user)
         db.session.commit()
 
-        identity = UserIdentity.create(
+        UserIdentity.create(
             user=user,
             method="e-infra",
-            external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+            external_id="user1@einfra.cesnet.cz",
         )
         db.session.commit()
 
@@ -115,9 +116,9 @@ def test_with_communities(app, db, location, search_clear, smart_record):
         )
         current_communities.service.indexer.refresh()
 
-        update_from_perun_dump(touri("1.json"))
-        update_from_perun_dump(touri("2.json"))
-        update_from_perun_dump(touri("3.json"))
+        update_from_file("1.json")
+        update_from_file("2.json")
+        update_from_file("3.json")
 
         memberships = list(Member.model_cls.query.filter_by(user_id=user.id).all())
         assert len(memberships) == 1
@@ -133,7 +134,7 @@ def test_with_communities(app, db, location, search_clear, smart_record):
         cs.set_user_community_membership(u2, {CommunityRole(community.id, "curator")})
 
         # this should remove the first one
-        update_from_perun_dump(touri("4.json"))
+        update_from_file("4.json")
 
         # check that the first one is gone
         memberships = list(Member.model_cls.query.filter_by(user_id=user.id).all())
@@ -141,7 +142,7 @@ def test_with_communities(app, db, location, search_clear, smart_record):
 
 
 def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
-    with smart_record("test_suspend_user.yaml") as recorded:
+    with smart_record("test_suspend_user.yaml"):
         user = User(
             username="asdasdasd",
             email="ms@cesnet.cz",
@@ -152,14 +153,14 @@ def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
         db.session.add(user)
         db.session.commit()
 
-        identity = UserIdentity.create(
+        UserIdentity.create(
             user=user,
             method="e-infra",
-            external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+            external_id="user1@einfra.cesnet.cz",
         )
         db.session.commit()
 
-        update_from_perun_dump(touri("5.json"))
+        update_from_file("5.json")
 
         # check that the user still exists
         User.query.filter_by(username="asdasdasd").one()

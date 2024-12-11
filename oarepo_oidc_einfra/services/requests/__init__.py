@@ -5,8 +5,4 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
-"""E-INFRA OIDC Auth backend for OARepo."""
-
-from setuptools import setup
-
-setup()
+"""AAI backed requests."""

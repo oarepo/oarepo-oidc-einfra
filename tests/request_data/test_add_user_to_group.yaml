@@ -22,7 +22,13 @@ responses:
       url: "https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/authzResolver/getLoggedUser"
   - response:
       auto_calculate_content_length: false
-      body: "[]"
+      body:
+        '[{"id": "16463", "createdAt": "2024-10-20 19:47:02.469686", "createdBy":
+        "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 19:47:02.469686", "modifiedBy":
+        "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
+        "voId": "4003", "parentGroupId": "16460", "name": "devrepo:test-communities:AAA",
+        "description": "Community AAA", "uuid": "c205599d-d420-4ebf-87dd-7f50fb63ee39",
+        "shortName": "AAA", "beanName": "Group"}]'
       content_type: text/plain
       headers:
         Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -44,12 +50,13 @@ responses:
   - response:
       auto_calculate_content_length: false
       body:
-        '{"id": "16463", "createdAt": "2024-10-20 19:47:02.469686", "createdBy":
-        "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 19:47:02.469686", "modifiedBy":
-        "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid": "143975",
-        "voId": "4003", "parentGroupId": "16460", "name": "devrepo:test-communities:AAA",
-        "description": "Community AAA", "uuid": "c205599d-d420-4ebf-87dd-7f50fb63ee39",
-        "shortName": "AAA", "beanName": "Group"}'
+        '[{"id": "143975", "createdAt": "2024-09-10 10:08:00.782479", "createdBy":
+        "nrp_fa_devrepo@einfra.cesnet.cz", "modifiedAt": "2024-09-10 10:08:00.782479",
+        "modifiedBy": "nrp_fa_devrepo@einfra.cesnet.cz", "createdByUid": "1001004",
+        "modifiedByUid": "1001004", "firstName": "(Service)", "lastName": "nrp-fa-devrepo",
+        "middleName": null, "titleBefore": null, "titleAfter": null, "serviceUser":
+        true, "sponsoredUser": false, "uuid": "11111111-2222-1111-1111-111111111111",
+        "majorSpecificType": "SERVICE", "specificUser": true, "beanName": "User"}]'
       content_type: text/plain
       headers:
         Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -65,10 +72,16 @@ responses:
         X-XSS-Protection: 1; mode=block
       method: POST
       status: 200
-      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/createGroup
+      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
   - response:
       auto_calculate_content_length: false
-      body: "null"
+      body:
+        '[{"id": "1001001", "createdAt": "2012-12-07 13:00:46.6", "createdBy": "Synchronizer",
+        "modifiedAt": "2012-12-07 13:00:46.6", "modifiedBy": "Synchronizer", "createdByUid":
+        null, "modifiedByUid": null, "firstName": "SampleFirstName", "lastName": "SampleLastName",
+        "middleName": null, "titleBefore": null, "titleAfter": null, "serviceUser":
+        false, "sponsoredUser": false, "uuid": "11111111-1111-1111-1111-111111111111",
+        "majorSpecificType": "NORMAL", "specificUser": false, "beanName": "User"}]'
       content_type: text/plain
       headers:
         Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -84,10 +97,16 @@ responses:
         X-XSS-Protection: 1; mode=block
       method: POST
       status: 200
-      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyForm
+      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/usersManager/getUsersByAttributeValue
   - response:
       auto_calculate_content_length: false
-      body: "null"
+      body:
+        '{"id": "1001002", "createdAt": "2023-08-02 08:52:31.011579", "createdBy":
+        "member@cesnet.cz", "modifiedAt": "2023-08-02 08:52:36.047764", "modifiedBy":
+        "member@cesnet.cz", "createdByUid": "1001002", "modifiedByUid": "1001002", "userId":
+        "1001001", "voId": "4003", "status": "VALID", "membershipType": "NOT_DEFINED",
+        "sourceGroupId": null, "sponsored": false, "groupStatus": "VALID", "groupStatuses":
+        {}, "beanName": "Member"}'
       content_type: text/plain
       headers:
         Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -103,10 +122,10 @@ responses:
         X-XSS-Protection: 1; mode=block
       method: POST
       status: 200
-      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/registrarManager/copyMails
+      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/membersManager/getMemberByUser
   - response:
       auto_calculate_content_length: false
-      body: "[]"
+      body: "null"
       content_type: text/plain
       headers:
         Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -122,10 +141,16 @@ responses:
         X-XSS-Protection: 1; mode=block
       method: POST
       status: 200
-      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/getAdmins
+      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addMember
   - response:
       auto_calculate_content_length: false
-      body: "null"
+      body:
+        '{"id": "1001002", "createdAt": "2023-08-02 08:52:31.011579", "createdBy":
+        "member@cesnet.cz", "modifiedAt": "2023-08-02 08:52:36.047764", "modifiedBy":
+        "member@cesnet.cz", "createdByUid": "1001002", "modifiedByUid": "1001002", "userId":
+        "1001001", "voId": "4003", "status": "VALID", "membershipType": "NOT_DEFINED",
+        "sourceGroupId": null, "sponsored": false, "groupStatus": "VALID", "groupStatuses":
+        {}, "beanName": "Member"}'
       content_type: text/plain
       headers:
         Cache-Control: no-cache, no-store, max-age=0, must-revalidate
@@ -141,4 +166,23 @@ responses:
         X-XSS-Protection: 1; mode=block
       method: POST
       status: 200
-      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/addAdmin
+      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/membersManager/getMemberByUser
+  - response:
+      auto_calculate_content_length: false
+      body: "null"
+      content_type: text/plain
+      headers:
+        Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+        Expires: "0"
+        Keep-Alive: timeout=5, max=94
+        Pragma: no-cache
+        Referrer-Policy: no-referrer-when-downgrade
+        Strict-Transport-Security: max-age=63072000
+        Transfer-Encoding: chunked
+        Vary: Accept-Encoding
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: SAMEORIGIN
+        X-XSS-Protection: 1; mode=block
+      method: POST
+      status: 200
+      url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/groupsManager/removeMember

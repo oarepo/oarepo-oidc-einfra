@@ -14,8 +14,7 @@ from invenio_communities.members.records.models import MemberModel
 
 @pytest.mark.skip(reason="This test is intended to be run manually")
 def test_login(app, db, location, search_clear, client, test_ui_pages):
-    """
-    This test shows how to log in a user using the E-Infra OIDC provider.
+    """This test shows how to log in a user using the E-Infra OIDC provider.
     As log-in is a process based on a web browser, the test must be run
     manually at the moment
 
@@ -40,10 +39,10 @@ def test_login(app, db, location, search_clear, client, test_ui_pages):
     db.session.add(user)
     db.session.commit()
 
-    identity = UserIdentity.create(
+    UserIdentity.create(
         user=user,
         method="e-infra",
-        external_id="12ccb0f5d93f3b81d7987863fb687a4b592e9a28@einfra.cesnet.cz",
+        external_id="user1@einfra.cesnet.cz",
     )
     db.session.commit()
 
