@@ -1,0 +1,1319 @@
+{
+  "status": "done",
+  "assets": {
+    "css/bottom_css.1b2e27b61142106979cc.css": {
+      "name": "css/bottom_css.1b2e27b61142106979cc.css",
+      "path": "/invenio/instance/static/dist/css/bottom_css.1b2e27b61142106979cc.css",
+      "publicPath": "/static/dist/css/bottom_css.1b2e27b61142106979cc.css"
+    },
+    "css/bottom_css.78b33add02920b2d01b2.css": {
+      "name": "css/bottom_css.78b33add02920b2d01b2.css",
+      "path": "/invenio/instance/static/dist/css/bottom_css.78b33add02920b2d01b2.css",
+      "publicPath": "/static/dist/css/bottom_css.78b33add02920b2d01b2.css"
+    },
+    "css/oarepo_vocabularies_ui_components.22a6dcb4ec850142e289.css": {
+      "name": "css/oarepo_vocabularies_ui_components.22a6dcb4ec850142e289.css",
+      "path": "/invenio/instance/static/dist/css/oarepo_vocabularies_ui_components.22a6dcb4ec850142e289.css",
+      "publicPath": "/static/dist/css/oarepo_vocabularies_ui_components.22a6dcb4ec850142e289.css"
+    },
+    "css/oarepo_vocabularies_ui_components.fabb3796f93735eab713.css": {
+      "name": "css/oarepo_vocabularies_ui_components.fabb3796f93735eab713.css",
+      "path": "/invenio/instance/static/dist/css/oarepo_vocabularies_ui_components.fabb3796f93735eab713.css",
+      "publicPath": "/static/dist/css/oarepo_vocabularies_ui_components.fabb3796f93735eab713.css"
+    },
+    "css/pdfjs_css.7523441f07ec785e6f0f.css": {
+      "name": "css/pdfjs_css.7523441f07ec785e6f0f.css",
+      "path": "/invenio/instance/static/dist/css/pdfjs_css.7523441f07ec785e6f0f.css",
+      "publicPath": "/static/dist/css/pdfjs_css.7523441f07ec785e6f0f.css"
+    },
+    "css/pdfjs_css.e429d7a8c3723c7764b2.css": {
+      "name": "css/pdfjs_css.e429d7a8c3723c7764b2.css",
+      "path": "/invenio/instance/static/dist/css/pdfjs_css.e429d7a8c3723c7764b2.css",
+      "publicPath": "/static/dist/css/pdfjs_css.e429d7a8c3723c7764b2.css"
+    },
+    "css/prism_css.c5d8ec75707893898080.css": {
+      "name": "css/prism_css.c5d8ec75707893898080.css",
+      "path": "/invenio/instance/static/dist/css/prism_css.c5d8ec75707893898080.css",
+      "publicPath": "/static/dist/css/prism_css.c5d8ec75707893898080.css"
+    },
+    "css/prism_css.d26348f46347b7751296.css": {
+      "name": "css/prism_css.d26348f46347b7751296.css",
+      "path": "/invenio/instance/static/dist/css/prism_css.d26348f46347b7751296.css",
+      "publicPath": "/static/dist/css/prism_css.d26348f46347b7751296.css"
+    },
+    "css/simple_image_css.22066ba3f533514193c2.css": {
+      "name": "css/simple_image_css.22066ba3f533514193c2.css",
+      "path": "/invenio/instance/static/dist/css/simple_image_css.22066ba3f533514193c2.css",
+      "publicPath": "/static/dist/css/simple_image_css.22066ba3f533514193c2.css"
+    },
+    "css/simple_image_css.290dcaa3fef4f2b83552.css": {
+      "name": "css/simple_image_css.290dcaa3fef4f2b83552.css",
+      "path": "/invenio/instance/static/dist/css/simple_image_css.290dcaa3fef4f2b83552.css",
+      "publicPath": "/static/dist/css/simple_image_css.290dcaa3fef4f2b83552.css"
+    },
+    "css/theme-admin.11e5c170f835c367813e.css": {
+      "name": "css/theme-admin.11e5c170f835c367813e.css",
+      "path": "/invenio/instance/static/dist/css/theme-admin.11e5c170f835c367813e.css",
+      "publicPath": "/static/dist/css/theme-admin.11e5c170f835c367813e.css"
+    },
+    "css/theme-admin.a683b9f46174f3bed424.css": {
+      "name": "css/theme-admin.a683b9f46174f3bed424.css",
+      "path": "/invenio/instance/static/dist/css/theme-admin.a683b9f46174f3bed424.css",
+      "publicPath": "/static/dist/css/theme-admin.a683b9f46174f3bed424.css"
+    },
+    "css/vendors~previewer_theme~theme.30d3a0d0ab545555a252.css": {
+      "name": "css/vendors~previewer_theme~theme.30d3a0d0ab545555a252.css",
+      "path": "/invenio/instance/static/dist/css/vendors~previewer_theme~theme.30d3a0d0ab545555a252.css",
+      "publicPath": "/static/dist/css/vendors~previewer_theme~theme.30d3a0d0ab545555a252.css"
+    },
+    "css/vendors~previewer_theme~theme.96782c7b6e34f730c329.css": {
+      "name": "css/vendors~previewer_theme~theme.96782c7b6e34f730c329.css",
+      "path": "/invenio/instance/static/dist/css/vendors~previewer_theme~theme.96782c7b6e34f730c329.css",
+      "publicPath": "/static/dist/css/vendors~previewer_theme~theme.96782c7b6e34f730c329.css"
+    },
+    "css/zip_css.020009a67c87b6f0496f.css": {
+      "name": "css/zip_css.020009a67c87b6f0496f.css",
+      "path": "/invenio/instance/static/dist/css/zip_css.020009a67c87b6f0496f.css",
+      "publicPath": "/static/dist/css/zip_css.020009a67c87b6f0496f.css"
+    },
+    "css/zip_css.3d4504b43b600f573196.css": {
+      "name": "css/zip_css.3d4504b43b600f573196.css",
+      "path": "/invenio/instance/static/dist/css/zip_css.3d4504b43b600f573196.css",
+      "publicPath": "/static/dist/css/zip_css.3d4504b43b600f573196.css"
+    },
+    "fonts/brand-icons.278156e.woff2": {
+      "name": "fonts/brand-icons.278156e.woff2",
+      "path": "/invenio/instance/static/dist/fonts/brand-icons.278156e.woff2",
+      "publicPath": "/static/dist/fonts/brand-icons.278156e.woff2"
+    },
+    "fonts/brand-icons.65a2fb6.ttf": {
+      "name": "fonts/brand-icons.65a2fb6.ttf",
+      "path": "/invenio/instance/static/dist/fonts/brand-icons.65a2fb6.ttf",
+      "publicPath": "/static/dist/fonts/brand-icons.65a2fb6.ttf"
+    },
+    "fonts/brand-icons.cac87dc.woff": {
+      "name": "fonts/brand-icons.cac87dc.woff",
+      "path": "/invenio/instance/static/dist/fonts/brand-icons.cac87dc.woff",
+      "publicPath": "/static/dist/fonts/brand-icons.cac87dc.woff"
+    },
+    "fonts/brand-icons.d68fa3e.eot": {
+      "name": "fonts/brand-icons.d68fa3e.eot",
+      "path": "/invenio/instance/static/dist/fonts/brand-icons.d68fa3e.eot",
+      "publicPath": "/static/dist/fonts/brand-icons.d68fa3e.eot"
+    },
+    "fonts/icons.38c6d8b.woff2": {
+      "name": "fonts/icons.38c6d8b.woff2",
+      "path": "/invenio/instance/static/dist/fonts/icons.38c6d8b.woff2",
+      "publicPath": "/static/dist/fonts/icons.38c6d8b.woff2"
+    },
+    "fonts/icons.425399f.woff": {
+      "name": "fonts/icons.425399f.woff",
+      "path": "/invenio/instance/static/dist/fonts/icons.425399f.woff",
+      "publicPath": "/static/dist/fonts/icons.425399f.woff"
+    },
+    "fonts/icons.a01e3f2.eot": {
+      "name": "fonts/icons.a01e3f2.eot",
+      "path": "/invenio/instance/static/dist/fonts/icons.a01e3f2.eot",
+      "publicPath": "/static/dist/fonts/icons.a01e3f2.eot"
+    },
+    "fonts/icons.c656b8c.ttf": {
+      "name": "fonts/icons.c656b8c.ttf",
+      "path": "/invenio/instance/static/dist/fonts/icons.c656b8c.ttf",
+      "publicPath": "/static/dist/fonts/icons.c656b8c.ttf"
+    },
+    "fonts/Lato-Bold.21b3848.woff2": {
+      "name": "fonts/Lato-Bold.21b3848.woff2",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Bold.21b3848.woff2",
+      "publicPath": "/static/dist/fonts/Lato-Bold.21b3848.woff2"
+    },
+    "fonts/Lato-Bold.825d6d7.eot": {
+      "name": "fonts/Lato-Bold.825d6d7.eot",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Bold.825d6d7.eot",
+      "publicPath": "/static/dist/fonts/Lato-Bold.825d6d7.eot"
+    },
+    "fonts/Lato-Bold.89b6180.woff": {
+      "name": "fonts/Lato-Bold.89b6180.woff",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Bold.89b6180.woff",
+      "publicPath": "/static/dist/fonts/Lato-Bold.89b6180.woff"
+    },
+    "fonts/Lato-Bold.8acc961.ttf": {
+      "name": "fonts/Lato-Bold.8acc961.ttf",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Bold.8acc961.ttf",
+      "publicPath": "/static/dist/fonts/Lato-Bold.8acc961.ttf"
+    },
+    "fonts/Lato-BoldItalic.3e6b998.woff": {
+      "name": "fonts/Lato-BoldItalic.3e6b998.woff",
+      "path": "/invenio/instance/static/dist/fonts/Lato-BoldItalic.3e6b998.woff",
+      "publicPath": "/static/dist/fonts/Lato-BoldItalic.3e6b998.woff"
+    },
+    "fonts/Lato-BoldItalic.50fe8d1.ttf": {
+      "name": "fonts/Lato-BoldItalic.50fe8d1.ttf",
+      "path": "/invenio/instance/static/dist/fonts/Lato-BoldItalic.50fe8d1.ttf",
+      "publicPath": "/static/dist/fonts/Lato-BoldItalic.50fe8d1.ttf"
+    },
+    "fonts/Lato-BoldItalic.add7906.eot": {
+      "name": "fonts/Lato-BoldItalic.add7906.eot",
+      "path": "/invenio/instance/static/dist/fonts/Lato-BoldItalic.add7906.eot",
+      "publicPath": "/static/dist/fonts/Lato-BoldItalic.add7906.eot"
+    },
+    "fonts/Lato-BoldItalic.e48918f.woff2": {
+      "name": "fonts/Lato-BoldItalic.e48918f.woff2",
+      "path": "/invenio/instance/static/dist/fonts/Lato-BoldItalic.e48918f.woff2",
+      "publicPath": "/static/dist/fonts/Lato-BoldItalic.e48918f.woff2"
+    },
+    "fonts/Lato-Italic.2269469.ttf": {
+      "name": "fonts/Lato-Italic.2269469.ttf",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Italic.2269469.ttf",
+      "publicPath": "/static/dist/fonts/Lato-Italic.2269469.ttf"
+    },
+    "fonts/Lato-Italic.2f91a4b.eot": {
+      "name": "fonts/Lato-Italic.2f91a4b.eot",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Italic.2f91a4b.eot",
+      "publicPath": "/static/dist/fonts/Lato-Italic.2f91a4b.eot"
+    },
+    "fonts/Lato-Italic.62a9c83.woff": {
+      "name": "fonts/Lato-Italic.62a9c83.woff",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Italic.62a9c83.woff",
+      "publicPath": "/static/dist/fonts/Lato-Italic.62a9c83.woff"
+    },
+    "fonts/Lato-Italic.bb5de40.woff2": {
+      "name": "fonts/Lato-Italic.bb5de40.woff2",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Italic.bb5de40.woff2",
+      "publicPath": "/static/dist/fonts/Lato-Italic.bb5de40.woff2"
+    },
+    "fonts/Lato-Regular.19df47b.eot": {
+      "name": "fonts/Lato-Regular.19df47b.eot",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Regular.19df47b.eot",
+      "publicPath": "/static/dist/fonts/Lato-Regular.19df47b.eot"
+    },
+    "fonts/Lato-Regular.1d2ca94.woff": {
+      "name": "fonts/Lato-Regular.1d2ca94.woff",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Regular.1d2ca94.woff",
+      "publicPath": "/static/dist/fonts/Lato-Regular.1d2ca94.woff"
+    },
+    "fonts/Lato-Regular.75614cf.woff2": {
+      "name": "fonts/Lato-Regular.75614cf.woff2",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Regular.75614cf.woff2",
+      "publicPath": "/static/dist/fonts/Lato-Regular.75614cf.woff2"
+    },
+    "fonts/Lato-Regular.bb14dc8.ttf": {
+      "name": "fonts/Lato-Regular.bb14dc8.ttf",
+      "path": "/invenio/instance/static/dist/fonts/Lato-Regular.bb14dc8.ttf",
+      "publicPath": "/static/dist/fonts/Lato-Regular.bb14dc8.ttf"
+    },
+    "fonts/outline-icons.5367103.ttf": {
+      "name": "fonts/outline-icons.5367103.ttf",
+      "path": "/invenio/instance/static/dist/fonts/outline-icons.5367103.ttf",
+      "publicPath": "/static/dist/fonts/outline-icons.5367103.ttf"
+    },
+    "fonts/outline-icons.687a499.woff2": {
+      "name": "fonts/outline-icons.687a499.woff2",
+      "path": "/invenio/instance/static/dist/fonts/outline-icons.687a499.woff2",
+      "publicPath": "/static/dist/fonts/outline-icons.687a499.woff2"
+    },
+    "fonts/outline-icons.752905f.eot": {
+      "name": "fonts/outline-icons.752905f.eot",
+      "path": "/invenio/instance/static/dist/fonts/outline-icons.752905f.eot",
+      "publicPath": "/static/dist/fonts/outline-icons.752905f.eot"
+    },
+    "fonts/outline-icons.ddae9b1.woff": {
+      "name": "fonts/outline-icons.ddae9b1.woff",
+      "path": "/invenio/instance/static/dist/fonts/outline-icons.ddae9b1.woff",
+      "publicPath": "/static/dist/fonts/outline-icons.ddae9b1.woff"
+    },
+    "img/brand-icons.6729d29.svg": {
+      "name": "img/brand-icons.6729d29.svg",
+      "path": "/invenio/instance/static/dist/img/brand-icons.6729d29.svg",
+      "publicPath": "/static/dist/img/brand-icons.6729d29.svg"
+    },
+    "img/flags.99f63ae.png": {
+      "name": "img/flags.99f63ae.png",
+      "path": "/invenio/instance/static/dist/img/flags.99f63ae.png",
+      "publicPath": "/static/dist/img/flags.99f63ae.png"
+    },
+    "img/icons.62d9dae.svg": {
+      "name": "img/icons.62d9dae.svg",
+      "path": "/invenio/instance/static/dist/img/icons.62d9dae.svg",
+      "publicPath": "/static/dist/img/icons.62d9dae.svg"
+    },
+    "img/outline-icons.9c4845b.svg": {
+      "name": "img/outline-icons.9c4845b.svg",
+      "path": "/invenio/instance/static/dist/img/outline-icons.9c4845b.svg",
+      "publicPath": "/static/dist/img/outline-icons.9c4845b.svg"
+    },
+    "js/0.f0b23abc5a3b7894b82c.js": {
+      "name": "js/0.f0b23abc5a3b7894b82c.js",
+      "path": "/invenio/instance/static/dist/js/0.f0b23abc5a3b7894b82c.js",
+      "publicPath": "/static/dist/js/0.f0b23abc5a3b7894b82c.js"
+    },
+    "js/adminlte.42a924dd510a5e51b979.js": {
+      "name": "js/adminlte.42a924dd510a5e51b979.js",
+      "path": "/invenio/instance/static/dist/js/adminlte.42a924dd510a5e51b979.js",
+      "publicPath": "/static/dist/js/adminlte.42a924dd510a5e51b979.js"
+    },
+    "js/adminlte.b8dba7c95ea7a702e056.js": {
+      "name": "js/adminlte.b8dba7c95ea7a702e056.js",
+      "path": "/invenio/instance/static/dist/js/adminlte.b8dba7c95ea7a702e056.js",
+      "publicPath": "/static/dist/js/adminlte.b8dba7c95ea7a702e056.js"
+    },
+    "js/base-admin-theme.469b511face6ed650f82.js": {
+      "name": "js/base-admin-theme.469b511face6ed650f82.js",
+      "path": "/invenio/instance/static/dist/js/base-admin-theme.469b511face6ed650f82.js",
+      "publicPath": "/static/dist/js/base-admin-theme.469b511face6ed650f82.js"
+    },
+    "js/base-admin-theme.4b122d5ea696062f654a.js": {
+      "name": "js/base-admin-theme.4b122d5ea696062f654a.js",
+      "path": "/invenio/instance/static/dist/js/base-admin-theme.4b122d5ea696062f654a.js",
+      "publicPath": "/static/dist/js/base-admin-theme.4b122d5ea696062f654a.js"
+    },
+    "js/base.109e805b66010b3ac6f2.js": {
+      "name": "js/base.109e805b66010b3ac6f2.js",
+      "path": "/invenio/instance/static/dist/js/base.109e805b66010b3ac6f2.js",
+      "publicPath": "/static/dist/js/base.109e805b66010b3ac6f2.js"
+    },
+    "js/base.9d47e96f9fb3514286ce.js": {
+      "name": "js/base.9d47e96f9fb3514286ce.js",
+      "path": "/invenio/instance/static/dist/js/base.9d47e96f9fb3514286ce.js",
+      "publicPath": "/static/dist/js/base.9d47e96f9fb3514286ce.js"
+    },
+    "js/bottom_css.559c8ab2c8dd00a6888e.js": {
+      "name": "js/bottom_css.559c8ab2c8dd00a6888e.js",
+      "path": "/invenio/instance/static/dist/js/bottom_css.559c8ab2c8dd00a6888e.js",
+      "publicPath": "/static/dist/js/bottom_css.559c8ab2c8dd00a6888e.js"
+    },
+    "js/bottom_css.c7def77184aad651320f.js": {
+      "name": "js/bottom_css.c7def77184aad651320f.js",
+      "path": "/invenio/instance/static/dist/js/bottom_css.c7def77184aad651320f.js",
+      "publicPath": "/static/dist/js/bottom_css.c7def77184aad651320f.js"
+    },
+    "js/bottom_js.28a4660195d304e6d53e.js": {
+      "name": "js/bottom_js.28a4660195d304e6d53e.js",
+      "path": "/invenio/instance/static/dist/js/bottom_js.28a4660195d304e6d53e.js",
+      "publicPath": "/static/dist/js/bottom_js.28a4660195d304e6d53e.js"
+    },
+    "js/bottom_js.a408d1a120e9055464ac.js": {
+      "name": "js/bottom_js.a408d1a120e9055464ac.js",
+      "path": "/invenio/instance/static/dist/js/bottom_js.a408d1a120e9055464ac.js",
+      "publicPath": "/static/dist/js/bottom_js.a408d1a120e9055464ac.js"
+    },
+    "js/d3_csv.75e5c9e5269671473b80.js": {
+      "name": "js/d3_csv.75e5c9e5269671473b80.js",
+      "path": "/invenio/instance/static/dist/js/d3_csv.75e5c9e5269671473b80.js",
+      "publicPath": "/static/dist/js/d3_csv.75e5c9e5269671473b80.js"
+    },
+    "js/d3_csv.f7e63bb90faea4725332.js": {
+      "name": "js/d3_csv.f7e63bb90faea4725332.js",
+      "path": "/invenio/instance/static/dist/js/d3_csv.f7e63bb90faea4725332.js",
+      "publicPath": "/static/dist/js/d3_csv.f7e63bb90faea4725332.js"
+    },
+    "js/fullscreen_js.e3bb6fe1bc026c6bcc0a.js": {
+      "name": "js/fullscreen_js.e3bb6fe1bc026c6bcc0a.js",
+      "path": "/invenio/instance/static/dist/js/fullscreen_js.e3bb6fe1bc026c6bcc0a.js",
+      "publicPath": "/static/dist/js/fullscreen_js.e3bb6fe1bc026c6bcc0a.js"
+    },
+    "js/i18n_app.0c4c0993bdaa6a4fa94e.js": {
+      "name": "js/i18n_app.0c4c0993bdaa6a4fa94e.js",
+      "path": "/invenio/instance/static/dist/js/i18n_app.0c4c0993bdaa6a4fa94e.js",
+      "publicPath": "/static/dist/js/i18n_app.0c4c0993bdaa6a4fa94e.js"
+    },
+    "js/i18n_app.f9a16803dd05400bd0f2.js": {
+      "name": "js/i18n_app.f9a16803dd05400bd0f2.js",
+      "path": "/invenio/instance/static/dist/js/i18n_app.f9a16803dd05400bd0f2.js",
+      "publicPath": "/static/dist/js/i18n_app.f9a16803dd05400bd0f2.js"
+    },
+    "js/invenio_search_ui_app.3a229e7520cb83507459.js": {
+      "name": "js/invenio_search_ui_app.3a229e7520cb83507459.js",
+      "path": "/invenio/instance/static/dist/js/invenio_search_ui_app.3a229e7520cb83507459.js",
+      "publicPath": "/static/dist/js/invenio_search_ui_app.3a229e7520cb83507459.js"
+    },
+    "js/invenio-administration-create.12b08625af77e0c1e5d2.js": {
+      "name": "js/invenio-administration-create.12b08625af77e0c1e5d2.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-create.12b08625af77e0c1e5d2.js",
+      "publicPath": "/static/dist/js/invenio-administration-create.12b08625af77e0c1e5d2.js"
+    },
+    "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js": {
+      "name": "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "publicPath": "/static/dist/js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js"
+    },
+    "js/invenio-administration-details.4d65c7f63cebb416f887.js": {
+      "name": "js/invenio-administration-details.4d65c7f63cebb416f887.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-details.4d65c7f63cebb416f887.js",
+      "publicPath": "/static/dist/js/invenio-administration-details.4d65c7f63cebb416f887.js"
+    },
+    "js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js": {
+      "name": "js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js",
+      "publicPath": "/static/dist/js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js"
+    },
+    "js/invenio-administration-details~invenio-communities-admin-featured~invenio-communities-admin-search.746e78604f6b773c1a1d.js": {
+      "name": "js/invenio-administration-details~invenio-communities-admin-featured~invenio-communities-admin-search.746e78604f6b773c1a1d.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-details~invenio-communities-admin-featured~invenio-communities-admin-search.746e78604f6b773c1a1d.js",
+      "publicPath": "/static/dist/js/invenio-administration-details~invenio-communities-admin-featured~invenio-communities-admin-search.746e78604f6b773c1a1d.js"
+    },
+    "js/invenio-administration-edit.e004ee5710fb8d22b10d.js": {
+      "name": "js/invenio-administration-edit.e004ee5710fb8d22b10d.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-edit.e004ee5710fb8d22b10d.js",
+      "publicPath": "/static/dist/js/invenio-administration-edit.e004ee5710fb8d22b10d.js"
+    },
+    "js/invenio-administration-search.abe875852d9b3340742a.js": {
+      "name": "js/invenio-administration-search.abe875852d9b3340742a.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-search.abe875852d9b3340742a.js",
+      "publicPath": "/static/dist/js/invenio-administration-search.abe875852d9b3340742a.js"
+    },
+    "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search.8bd20d7547e718fd150c.js": {
+      "name": "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search.8bd20d7547e718fd150c.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search.8bd20d7547e718fd150c.js",
+      "publicPath": "/static/dist/js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search.8bd20d7547e718fd150c.js"
+    },
+    "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js": {
+      "name": "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "path": "/invenio/instance/static/dist/js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "publicPath": "/static/dist/js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js"
+    },
+    "js/invenio-communities-admin-featured.b3183bafa1129ccee058.js": {
+      "name": "js/invenio-communities-admin-featured.b3183bafa1129ccee058.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-admin-featured.b3183bafa1129ccee058.js",
+      "publicPath": "/static/dist/js/invenio-communities-admin-featured.b3183bafa1129ccee058.js"
+    },
+    "js/invenio-communities-admin-featured~invenio-communities-admin-search.34e33317cc55856bdd80.js": {
+      "name": "js/invenio-communities-admin-featured~invenio-communities-admin-search.34e33317cc55856bdd80.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-admin-featured~invenio-communities-admin-search.34e33317cc55856bdd80.js",
+      "publicPath": "/static/dist/js/invenio-communities-admin-featured~invenio-communities-admin-search.34e33317cc55856bdd80.js"
+    },
+    "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js": {
+      "name": "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "publicPath": "/static/dist/js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js"
+    },
+    "js/invenio-communities-admin-search.a861c1c50417e54b78f8.js": {
+      "name": "js/invenio-communities-admin-search.a861c1c50417e54b78f8.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-admin-search.a861c1c50417e54b78f8.js",
+      "publicPath": "/static/dist/js/invenio-communities-admin-search.a861c1c50417e54b78f8.js"
+    },
+    "js/invenio-communities-carousel.37197bcd4b7ff52118a5.js": {
+      "name": "js/invenio-communities-carousel.37197bcd4b7ff52118a5.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-carousel.37197bcd4b7ff52118a5.js",
+      "publicPath": "/static/dist/js/invenio-communities-carousel.37197bcd4b7ff52118a5.js"
+    },
+    "js/invenio-communities-details-search.c911e2f28076f1b5fa96.js": {
+      "name": "js/invenio-communities-details-search.c911e2f28076f1b5fa96.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-details-search.c911e2f28076f1b5fa96.js",
+      "publicPath": "/static/dist/js/invenio-communities-details-search.c911e2f28076f1b5fa96.js"
+    },
+    "js/invenio-communities-featured.856d2ee24ba69bcc5fb1.js": {
+      "name": "js/invenio-communities-featured.856d2ee24ba69bcc5fb1.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-featured.856d2ee24ba69bcc5fb1.js",
+      "publicPath": "/static/dist/js/invenio-communities-featured.856d2ee24ba69bcc5fb1.js"
+    },
+    "js/invenio-communities-frontpage.757287079172672a7b02.js": {
+      "name": "js/invenio-communities-frontpage.757287079172672a7b02.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-frontpage.757287079172672a7b02.js",
+      "publicPath": "/static/dist/js/invenio-communities-frontpage.757287079172672a7b02.js"
+    },
+    "js/invenio-communities-invitations.ef4646bff64a9d376267.js": {
+      "name": "js/invenio-communities-invitations.ef4646bff64a9d376267.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-invitations.ef4646bff64a9d376267.js",
+      "publicPath": "/static/dist/js/invenio-communities-invitations.ef4646bff64a9d376267.js"
+    },
+    "js/invenio-communities-invitations~invenio-communities-members~invenio-communities-members-manager.c589aeec260850c55680.js": {
+      "name": "js/invenio-communities-invitations~invenio-communities-members~invenio-communities-members-manager.c589aeec260850c55680.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-invitations~invenio-communities-members~invenio-communities-members-manager.c589aeec260850c55680.js",
+      "publicPath": "/static/dist/js/invenio-communities-invitations~invenio-communities-members~invenio-communities-members-manager.c589aeec260850c55680.js"
+    },
+    "js/invenio-communities-invitations~invenio-communities-requests.ff051d9573313b766adc.js": {
+      "name": "js/invenio-communities-invitations~invenio-communities-requests.ff051d9573313b766adc.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-invitations~invenio-communities-requests.ff051d9573313b766adc.js",
+      "publicPath": "/static/dist/js/invenio-communities-invitations~invenio-communities-requests.ff051d9573313b766adc.js"
+    },
+    "js/invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.7acd261e6dae4dc01ab9.js": {
+      "name": "js/invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.7acd261e6dae4dc01ab9.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.7acd261e6dae4dc01ab9.js",
+      "publicPath": "/static/dist/js/invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.7acd261e6dae4dc01ab9.js"
+    },
+    "js/invenio-communities-members-manager.3363b397a7dd2b1c3550.js": {
+      "name": "js/invenio-communities-members-manager.3363b397a7dd2b1c3550.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-members-manager.3363b397a7dd2b1c3550.js",
+      "publicPath": "/static/dist/js/invenio-communities-members-manager.3363b397a7dd2b1c3550.js"
+    },
+    "js/invenio-communities-members-public.6e9bc7941e991dbdb2f8.js": {
+      "name": "js/invenio-communities-members-public.6e9bc7941e991dbdb2f8.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-members-public.6e9bc7941e991dbdb2f8.js",
+      "publicPath": "/static/dist/js/invenio-communities-members-public.6e9bc7941e991dbdb2f8.js"
+    },
+    "js/invenio-communities-members.41bc0c3eec186652b95f.js": {
+      "name": "js/invenio-communities-members.41bc0c3eec186652b95f.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-members.41bc0c3eec186652b95f.js",
+      "publicPath": "/static/dist/js/invenio-communities-members.41bc0c3eec186652b95f.js"
+    },
+    "js/invenio-communities-members~invenio-communities-members-manager.d7b3fb52444c0adc7d33.js": {
+      "name": "js/invenio-communities-members~invenio-communities-members-manager.d7b3fb52444c0adc7d33.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-members~invenio-communities-members-manager.d7b3fb52444c0adc7d33.js",
+      "publicPath": "/static/dist/js/invenio-communities-members~invenio-communities-members-manager.d7b3fb52444c0adc7d33.js"
+    },
+    "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-members-public.5f2e82f59b019c1841e6.js": {
+      "name": "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-members-public.5f2e82f59b019c1841e6.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-members-public.5f2e82f59b019c1841e6.js",
+      "publicPath": "/static/dist/js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-members-public.5f2e82f59b019c1841e6.js"
+    },
+    "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js": {
+      "name": "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js",
+      "publicPath": "/static/dist/js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js"
+    },
+    "js/invenio-communities-new.461f7a1b08f9ff46a99e.js": {
+      "name": "js/invenio-communities-new.461f7a1b08f9ff46a99e.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-new.461f7a1b08f9ff46a99e.js",
+      "publicPath": "/static/dist/js/invenio-communities-new.461f7a1b08f9ff46a99e.js"
+    },
+    "js/invenio-communities-new~invenio-communities-privileges~invenio-communities-profile.968d481cabfbf39553ad.js": {
+      "name": "js/invenio-communities-new~invenio-communities-privileges~invenio-communities-profile.968d481cabfbf39553ad.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-new~invenio-communities-privileges~invenio-communities-profile.968d481cabfbf39553ad.js",
+      "publicPath": "/static/dist/js/invenio-communities-new~invenio-communities-privileges~invenio-communities-profile.968d481cabfbf39553ad.js"
+    },
+    "js/invenio-communities-privileges.f10b9e16a55c32215031.js": {
+      "name": "js/invenio-communities-privileges.f10b9e16a55c32215031.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-privileges.f10b9e16a55c32215031.js",
+      "publicPath": "/static/dist/js/invenio-communities-privileges.f10b9e16a55c32215031.js"
+    },
+    "js/invenio-communities-profile.d5c24ea5a8ffd4658d35.js": {
+      "name": "js/invenio-communities-profile.d5c24ea5a8ffd4658d35.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-profile.d5c24ea5a8ffd4658d35.js",
+      "publicPath": "/static/dist/js/invenio-communities-profile.d5c24ea5a8ffd4658d35.js"
+    },
+    "js/invenio-communities-requests.a7e5d7c106912122946b.js": {
+      "name": "js/invenio-communities-requests.a7e5d7c106912122946b.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-requests.a7e5d7c106912122946b.js",
+      "publicPath": "/static/dist/js/invenio-communities-requests.a7e5d7c106912122946b.js"
+    },
+    "js/invenio-communities-search.9ac30fd8c894a16f918b.js": {
+      "name": "js/invenio-communities-search.9ac30fd8c894a16f918b.js",
+      "path": "/invenio/instance/static/dist/js/invenio-communities-search.9ac30fd8c894a16f918b.js",
+      "publicPath": "/static/dist/js/invenio-communities-search.9ac30fd8c894a16f918b.js"
+    },
+    "js/invenio-requests-base.06522baeacd35f179168.js": {
+      "name": "js/invenio-requests-base.06522baeacd35f179168.js",
+      "path": "/invenio/instance/static/dist/js/invenio-requests-base.06522baeacd35f179168.js",
+      "publicPath": "/static/dist/js/invenio-requests-base.06522baeacd35f179168.js"
+    },
+    "js/manifest.4695496aebf9efb0cd82.js": {
+      "name": "js/manifest.4695496aebf9efb0cd82.js",
+      "path": "/invenio/instance/static/dist/js/manifest.4695496aebf9efb0cd82.js",
+      "publicPath": "/static/dist/js/manifest.4695496aebf9efb0cd82.js"
+    },
+    "js/oarepo_ui_forms.b28a0864bf143cb9a055.js": {
+      "name": "js/oarepo_ui_forms.b28a0864bf143cb9a055.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_ui_forms.b28a0864bf143cb9a055.js",
+      "publicPath": "/static/dist/js/oarepo_ui_forms.b28a0864bf143cb9a055.js"
+    },
+    "js/oarepo_ui_forms~oarepo_vocabularies_forms.9ae700f302de2931ba77.js": {
+      "name": "js/oarepo_ui_forms~oarepo_vocabularies_forms.9ae700f302de2931ba77.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_ui_forms~oarepo_vocabularies_forms.9ae700f302de2931ba77.js",
+      "publicPath": "/static/dist/js/oarepo_ui_forms~oarepo_vocabularies_forms.9ae700f302de2931ba77.js"
+    },
+    "js/oarepo_ui_search.ad60aadf85ba3fff286d.js": {
+      "name": "js/oarepo_ui_search.ad60aadf85ba3fff286d.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_ui_search.ad60aadf85ba3fff286d.js",
+      "publicPath": "/static/dist/js/oarepo_ui_search.ad60aadf85ba3fff286d.js"
+    },
+    "js/oarepo_ui_search~oarepo_vocabularies_detail~oarepo_vocabularies_search.56df6f65c43f8b0737e3.js": {
+      "name": "js/oarepo_ui_search~oarepo_vocabularies_detail~oarepo_vocabularies_search.56df6f65c43f8b0737e3.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_ui_search~oarepo_vocabularies_detail~oarepo_vocabularies_search.56df6f65c43f8b0737e3.js",
+      "publicPath": "/static/dist/js/oarepo_ui_search~oarepo_vocabularies_detail~oarepo_vocabularies_search.56df6f65c43f8b0737e3.js"
+    },
+    "js/oarepo_ui.7724d779e1a8a681f30a.js": {
+      "name": "js/oarepo_ui.7724d779e1a8a681f30a.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_ui.7724d779e1a8a681f30a.js",
+      "publicPath": "/static/dist/js/oarepo_ui.7724d779e1a8a681f30a.js"
+    },
+    "js/oarepo_vocabularies_detail.d4cf8fb17558171be139.js": {
+      "name": "js/oarepo_vocabularies_detail.d4cf8fb17558171be139.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_detail.d4cf8fb17558171be139.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_detail.d4cf8fb17558171be139.js"
+    },
+    "js/oarepo_vocabularies_detail~oarepo_vocabularies_search.71bcec28303ca863314b.js": {
+      "name": "js/oarepo_vocabularies_detail~oarepo_vocabularies_search.71bcec28303ca863314b.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_detail~oarepo_vocabularies_search.71bcec28303ca863314b.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_detail~oarepo_vocabularies_search.71bcec28303ca863314b.js"
+    },
+    "js/oarepo_vocabularies_forms.127ff3203acdc2611b74.js": {
+      "name": "js/oarepo_vocabularies_forms.127ff3203acdc2611b74.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.127ff3203acdc2611b74.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.127ff3203acdc2611b74.js"
+    },
+    "js/oarepo_vocabularies_forms.207c2f3bdc23e89f1d7d.js": {
+      "name": "js/oarepo_vocabularies_forms.207c2f3bdc23e89f1d7d.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.207c2f3bdc23e89f1d7d.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.207c2f3bdc23e89f1d7d.js"
+    },
+    "js/oarepo_vocabularies_forms.4edc9ea27840c56b5ab0.js": {
+      "name": "js/oarepo_vocabularies_forms.4edc9ea27840c56b5ab0.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.4edc9ea27840c56b5ab0.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.4edc9ea27840c56b5ab0.js"
+    },
+    "js/oarepo_vocabularies_forms.5c5575fe59e2e1b956c6.js": {
+      "name": "js/oarepo_vocabularies_forms.5c5575fe59e2e1b956c6.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.5c5575fe59e2e1b956c6.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.5c5575fe59e2e1b956c6.js"
+    },
+    "js/oarepo_vocabularies_forms.664a50ee3bf01863db9c.js": {
+      "name": "js/oarepo_vocabularies_forms.664a50ee3bf01863db9c.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.664a50ee3bf01863db9c.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.664a50ee3bf01863db9c.js"
+    },
+    "js/oarepo_vocabularies_forms.6bbfc79fb1a2e55b277c.js": {
+      "name": "js/oarepo_vocabularies_forms.6bbfc79fb1a2e55b277c.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.6bbfc79fb1a2e55b277c.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.6bbfc79fb1a2e55b277c.js"
+    },
+    "js/oarepo_vocabularies_forms.789972720f36780e2ea1.js": {
+      "name": "js/oarepo_vocabularies_forms.789972720f36780e2ea1.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.789972720f36780e2ea1.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.789972720f36780e2ea1.js"
+    },
+    "js/oarepo_vocabularies_forms.7a381c4fd36a4c0a2139.js": {
+      "name": "js/oarepo_vocabularies_forms.7a381c4fd36a4c0a2139.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.7a381c4fd36a4c0a2139.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.7a381c4fd36a4c0a2139.js"
+    },
+    "js/oarepo_vocabularies_forms.7b4d28046d21e87908cd.js": {
+      "name": "js/oarepo_vocabularies_forms.7b4d28046d21e87908cd.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.7b4d28046d21e87908cd.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.7b4d28046d21e87908cd.js"
+    },
+    "js/oarepo_vocabularies_forms.8c8a4ab4d8fe1d65eef9.js": {
+      "name": "js/oarepo_vocabularies_forms.8c8a4ab4d8fe1d65eef9.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.8c8a4ab4d8fe1d65eef9.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.8c8a4ab4d8fe1d65eef9.js"
+    },
+    "js/oarepo_vocabularies_forms.a50bcf4b474e704f7309.js": {
+      "name": "js/oarepo_vocabularies_forms.a50bcf4b474e704f7309.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.a50bcf4b474e704f7309.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.a50bcf4b474e704f7309.js"
+    },
+    "js/oarepo_vocabularies_forms.ac990f7983702c60f67e.js": {
+      "name": "js/oarepo_vocabularies_forms.ac990f7983702c60f67e.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.ac990f7983702c60f67e.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.ac990f7983702c60f67e.js"
+    },
+    "js/oarepo_vocabularies_forms.b5a54cadad8b156c498f.js": {
+      "name": "js/oarepo_vocabularies_forms.b5a54cadad8b156c498f.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.b5a54cadad8b156c498f.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.b5a54cadad8b156c498f.js"
+    },
+    "js/oarepo_vocabularies_forms.c07feac8a96087fe887d.js": {
+      "name": "js/oarepo_vocabularies_forms.c07feac8a96087fe887d.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.c07feac8a96087fe887d.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.c07feac8a96087fe887d.js"
+    },
+    "js/oarepo_vocabularies_forms.c2355e484fe67215446a.js": {
+      "name": "js/oarepo_vocabularies_forms.c2355e484fe67215446a.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.c2355e484fe67215446a.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.c2355e484fe67215446a.js"
+    },
+    "js/oarepo_vocabularies_forms.ce27f236ebe46c7c821a.js": {
+      "name": "js/oarepo_vocabularies_forms.ce27f236ebe46c7c821a.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.ce27f236ebe46c7c821a.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.ce27f236ebe46c7c821a.js"
+    },
+    "js/oarepo_vocabularies_forms.d1b8ac09e17b634c8b3d.js": {
+      "name": "js/oarepo_vocabularies_forms.d1b8ac09e17b634c8b3d.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.d1b8ac09e17b634c8b3d.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.d1b8ac09e17b634c8b3d.js"
+    },
+    "js/oarepo_vocabularies_forms.e0001f00ced33092da3f.js": {
+      "name": "js/oarepo_vocabularies_forms.e0001f00ced33092da3f.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.e0001f00ced33092da3f.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.e0001f00ced33092da3f.js"
+    },
+    "js/oarepo_vocabularies_forms.e75cdac977465ba77131.js": {
+      "name": "js/oarepo_vocabularies_forms.e75cdac977465ba77131.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_forms.e75cdac977465ba77131.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_forms.e75cdac977465ba77131.js"
+    },
+    "js/oarepo_vocabularies_search.3efc909a421d69b44b16.js": {
+      "name": "js/oarepo_vocabularies_search.3efc909a421d69b44b16.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_search.3efc909a421d69b44b16.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_search.3efc909a421d69b44b16.js"
+    },
+    "js/oarepo_vocabularies_ui_components.26409fd60ecb8ccebb18.js": {
+      "name": "js/oarepo_vocabularies_ui_components.26409fd60ecb8ccebb18.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_ui_components.26409fd60ecb8ccebb18.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_ui_components.26409fd60ecb8ccebb18.js"
+    },
+    "js/oarepo_vocabularies_ui_components.de4d3f4261ebc8cbf950.js": {
+      "name": "js/oarepo_vocabularies_ui_components.de4d3f4261ebc8cbf950.js",
+      "path": "/invenio/instance/static/dist/js/oarepo_vocabularies_ui_components.de4d3f4261ebc8cbf950.js",
+      "publicPath": "/static/dist/js/oarepo_vocabularies_ui_components.de4d3f4261ebc8cbf950.js"
+    },
+    "js/open_pdf.2837432f2839645f9914.js": {
+      "name": "js/open_pdf.2837432f2839645f9914.js",
+      "path": "/invenio/instance/static/dist/js/open_pdf.2837432f2839645f9914.js",
+      "publicPath": "/static/dist/js/open_pdf.2837432f2839645f9914.js"
+    },
+    "js/pdfjs_css.c3921995a5cd9553c53e.js": {
+      "name": "js/pdfjs_css.c3921995a5cd9553c53e.js",
+      "path": "/invenio/instance/static/dist/js/pdfjs_css.c3921995a5cd9553c53e.js",
+      "publicPath": "/static/dist/js/pdfjs_css.c3921995a5cd9553c53e.js"
+    },
+    "js/pdfjs_css.c5058d4cb87e7e7e7e45.js": {
+      "name": "js/pdfjs_css.c5058d4cb87e7e7e7e45.js",
+      "path": "/invenio/instance/static/dist/js/pdfjs_css.c5058d4cb87e7e7e7e45.js",
+      "publicPath": "/static/dist/js/pdfjs_css.c5058d4cb87e7e7e7e45.js"
+    },
+    "js/pdfjs_js.a9a7c168e4cbfe05f754.js": {
+      "name": "js/pdfjs_js.a9a7c168e4cbfe05f754.js",
+      "path": "/invenio/instance/static/dist/js/pdfjs_js.a9a7c168e4cbfe05f754.js",
+      "publicPath": "/static/dist/js/pdfjs_js.a9a7c168e4cbfe05f754.js"
+    },
+    "js/previewer_theme.293dd3c431dd27b06f08.js": {
+      "name": "js/previewer_theme.293dd3c431dd27b06f08.js",
+      "path": "/invenio/instance/static/dist/js/previewer_theme.293dd3c431dd27b06f08.js",
+      "publicPath": "/static/dist/js/previewer_theme.293dd3c431dd27b06f08.js"
+    },
+    "js/previewer_theme.af08a70dcfdb468863e1.js": {
+      "name": "js/previewer_theme.af08a70dcfdb468863e1.js",
+      "path": "/invenio/instance/static/dist/js/previewer_theme.af08a70dcfdb468863e1.js",
+      "publicPath": "/static/dist/js/previewer_theme.af08a70dcfdb468863e1.js"
+    },
+    "js/prism_css.22c9656ce42c3a49d582.js": {
+      "name": "js/prism_css.22c9656ce42c3a49d582.js",
+      "path": "/invenio/instance/static/dist/js/prism_css.22c9656ce42c3a49d582.js",
+      "publicPath": "/static/dist/js/prism_css.22c9656ce42c3a49d582.js"
+    },
+    "js/prism_css.f6bf7f8fde5425f1a6dc.js": {
+      "name": "js/prism_css.f6bf7f8fde5425f1a6dc.js",
+      "path": "/invenio/instance/static/dist/js/prism_css.f6bf7f8fde5425f1a6dc.js",
+      "publicPath": "/static/dist/js/prism_css.f6bf7f8fde5425f1a6dc.js"
+    },
+    "js/prism_js.68de206741bf8e0e49b1.js": {
+      "name": "js/prism_js.68de206741bf8e0e49b1.js",
+      "path": "/invenio/instance/static/dist/js/prism_js.68de206741bf8e0e49b1.js",
+      "publicPath": "/static/dist/js/prism_js.68de206741bf8e0e49b1.js"
+    },
+    "js/simple_image_css.561e05d32df67a9df4c4.js": {
+      "name": "js/simple_image_css.561e05d32df67a9df4c4.js",
+      "path": "/invenio/instance/static/dist/js/simple_image_css.561e05d32df67a9df4c4.js",
+      "publicPath": "/static/dist/js/simple_image_css.561e05d32df67a9df4c4.js"
+    },
+    "js/simple_image_css.8d0b56840c279e774976.js": {
+      "name": "js/simple_image_css.8d0b56840c279e774976.js",
+      "path": "/invenio/instance/static/dist/js/simple_image_css.8d0b56840c279e774976.js",
+      "publicPath": "/static/dist/js/simple_image_css.8d0b56840c279e774976.js"
+    },
+    "js/theme-admin.0ff5897140e434b53d40.js": {
+      "name": "js/theme-admin.0ff5897140e434b53d40.js",
+      "path": "/invenio/instance/static/dist/js/theme-admin.0ff5897140e434b53d40.js",
+      "publicPath": "/static/dist/js/theme-admin.0ff5897140e434b53d40.js"
+    },
+    "js/theme-admin.a9c83de7ffd547a8fef7.js": {
+      "name": "js/theme-admin.a9c83de7ffd547a8fef7.js",
+      "path": "/invenio/instance/static/dist/js/theme-admin.a9c83de7ffd547a8fef7.js",
+      "publicPath": "/static/dist/js/theme-admin.a9c83de7ffd547a8fef7.js"
+    },
+    "js/theme.0a1b1fcdbcecfe21bec9.js": {
+      "name": "js/theme.0a1b1fcdbcecfe21bec9.js",
+      "path": "/invenio/instance/static/dist/js/theme.0a1b1fcdbcecfe21bec9.js",
+      "publicPath": "/static/dist/js/theme.0a1b1fcdbcecfe21bec9.js"
+    },
+    "js/theme.7e75449e2458aa35146e.js": {
+      "name": "js/theme.7e75449e2458aa35146e.js",
+      "path": "/invenio/instance/static/dist/js/theme.7e75449e2458aa35146e.js",
+      "publicPath": "/static/dist/js/theme.7e75449e2458aa35146e.js"
+    },
+    "js/vendors~adminlte.0def173073df55d9729d.js": {
+      "name": "js/vendors~adminlte.0def173073df55d9729d.js",
+      "path": "/invenio/instance/static/dist/js/vendors~adminlte.0def173073df55d9729d.js",
+      "publicPath": "/static/dist/js/vendors~adminlte.0def173073df55d9729d.js"
+    },
+    "js/vendors~adminlte.7dbbf26e15359810b482.js": {
+      "name": "js/vendors~adminlte.7dbbf26e15359810b482.js",
+      "path": "/invenio/instance/static/dist/js/vendors~adminlte.7dbbf26e15359810b482.js",
+      "publicPath": "/static/dist/js/vendors~adminlte.7dbbf26e15359810b482.js"
+    },
+    "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js": {
+      "name": "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "path": "/invenio/instance/static/dist/js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "publicPath": "/static/dist/js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js"
+    },
+    "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.e7f1fcc82cb020ad2070.js": {
+      "name": "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.e7f1fcc82cb020ad2070.js",
+      "path": "/invenio/instance/static/dist/js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.e7f1fcc82cb020ad2070.js",
+      "publicPath": "/static/dist/js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.e7f1fcc82cb020ad2070.js"
+    },
+    "js/vendors~d3_csv.9c049b06455aa1f3574a.js": {
+      "name": "js/vendors~d3_csv.9c049b06455aa1f3574a.js",
+      "path": "/invenio/instance/static/dist/js/vendors~d3_csv.9c049b06455aa1f3574a.js",
+      "publicPath": "/static/dist/js/vendors~d3_csv.9c049b06455aa1f3574a.js"
+    },
+    "js/vendors~d3_csv.f5a770bc8e6f5fc3358a.js": {
+      "name": "js/vendors~d3_csv.f5a770bc8e6f5fc3358a.js",
+      "path": "/invenio/instance/static/dist/js/vendors~d3_csv.f5a770bc8e6f5fc3358a.js",
+      "publicPath": "/static/dist/js/vendors~d3_csv.f5a770bc8e6f5fc3358a.js"
+    },
+    "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js": {
+      "name": "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js"
+    },
+    "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js": {
+      "name": "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js"
+    },
+    "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js": {
+      "name": "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js"
+    },
+    "js/vendors~invenio-administration-details.68e4b67a323ee0be345a.js": {
+      "name": "js/vendors~invenio-administration-details.68e4b67a323ee0be345a.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-details.68e4b67a323ee0be345a.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-details.68e4b67a323ee0be345a.js"
+    },
+    "js/vendors~invenio-administration-edit.57623728e2561684210d.js": {
+      "name": "js/vendors~invenio-administration-edit.57623728e2561684210d.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-edit.57623728e2561684210d.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-edit.57623728e2561684210d.js"
+    },
+    "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js": {
+      "name": "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js"
+    },
+    "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js": {
+      "name": "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js"
+    },
+    "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js": {
+      "name": "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js"
+    },
+    "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js": {
+      "name": "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js"
+    },
+    "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js": {
+      "name": "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "publicPath": "/static/dist/js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js"
+    },
+    "js/vendors~invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.71782eb9a729b4a1f6dc.js": {
+      "name": "js/vendors~invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.71782eb9a729b4a1f6dc.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.71782eb9a729b4a1f6dc.js",
+      "publicPath": "/static/dist/js/vendors~invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.71782eb9a729b4a1f6dc.js"
+    },
+    "js/vendors~invenio-communities-invitations~oarepo_ui_forms~oarepo_vocabularies_forms.fcc18fa787a9246039f1.js": {
+      "name": "js/vendors~invenio-communities-invitations~oarepo_ui_forms~oarepo_vocabularies_forms.fcc18fa787a9246039f1.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-communities-invitations~oarepo_ui_forms~oarepo_vocabularies_forms.fcc18fa787a9246039f1.js",
+      "publicPath": "/static/dist/js/vendors~invenio-communities-invitations~oarepo_ui_forms~oarepo_vocabularies_forms.fcc18fa787a9246039f1.js"
+    },
+    "js/vendors~invenio-communities-privileges~invenio-communities-profile.fe62a7845824a9026922.js": {
+      "name": "js/vendors~invenio-communities-privileges~invenio-communities-profile.fe62a7845824a9026922.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-communities-privileges~invenio-communities-profile.fe62a7845824a9026922.js",
+      "publicPath": "/static/dist/js/vendors~invenio-communities-privileges~invenio-communities-profile.fe62a7845824a9026922.js"
+    },
+    "js/vendors~invenio-communities-profile.3a346855744e571fc076.js": {
+      "name": "js/vendors~invenio-communities-profile.3a346855744e571fc076.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-communities-profile.3a346855744e571fc076.js",
+      "publicPath": "/static/dist/js/vendors~invenio-communities-profile.3a346855744e571fc076.js"
+    },
+    "js/vendors~invenio-communities-profile~oarepo_vocabularies_forms.47ce335f4a316a63c91d.js": {
+      "name": "js/vendors~invenio-communities-profile~oarepo_vocabularies_forms.47ce335f4a316a63c91d.js",
+      "path": "/invenio/instance/static/dist/js/vendors~invenio-communities-profile~oarepo_vocabularies_forms.47ce335f4a316a63c91d.js",
+      "publicPath": "/static/dist/js/vendors~invenio-communities-profile~oarepo_vocabularies_forms.47ce335f4a316a63c91d.js"
+    },
+    "js/vendors~oarepo_ui_forms~oarepo_vocabularies_forms.78fa06a269d54eb5d9aa.js": {
+      "name": "js/vendors~oarepo_ui_forms~oarepo_vocabularies_forms.78fa06a269d54eb5d9aa.js",
+      "path": "/invenio/instance/static/dist/js/vendors~oarepo_ui_forms~oarepo_vocabularies_forms.78fa06a269d54eb5d9aa.js",
+      "publicPath": "/static/dist/js/vendors~oarepo_ui_forms~oarepo_vocabularies_forms.78fa06a269d54eb5d9aa.js"
+    },
+    "js/vendors~pdfjs_js.15011b7f4b2e611aa57a.js": {
+      "name": "js/vendors~pdfjs_js.15011b7f4b2e611aa57a.js",
+      "path": "/invenio/instance/static/dist/js/vendors~pdfjs_js.15011b7f4b2e611aa57a.js",
+      "publicPath": "/static/dist/js/vendors~pdfjs_js.15011b7f4b2e611aa57a.js"
+    },
+    "js/vendors~previewer_theme~theme.ba2deb8c39b0bd1f14f3.js": {
+      "name": "js/vendors~previewer_theme~theme.ba2deb8c39b0bd1f14f3.js",
+      "path": "/invenio/instance/static/dist/js/vendors~previewer_theme~theme.ba2deb8c39b0bd1f14f3.js",
+      "publicPath": "/static/dist/js/vendors~previewer_theme~theme.ba2deb8c39b0bd1f14f3.js"
+    },
+    "js/vendors~previewer_theme~theme.ee93338293bbbc6dbfbd.js": {
+      "name": "js/vendors~previewer_theme~theme.ee93338293bbbc6dbfbd.js",
+      "path": "/invenio/instance/static/dist/js/vendors~previewer_theme~theme.ee93338293bbbc6dbfbd.js",
+      "publicPath": "/static/dist/js/vendors~previewer_theme~theme.ee93338293bbbc6dbfbd.js"
+    },
+    "js/vendors~prism_js.6682fd1a890b9218fd52.js": {
+      "name": "js/vendors~prism_js.6682fd1a890b9218fd52.js",
+      "path": "/invenio/instance/static/dist/js/vendors~prism_js.6682fd1a890b9218fd52.js",
+      "publicPath": "/static/dist/js/vendors~prism_js.6682fd1a890b9218fd52.js"
+    },
+    "js/zip_css.01c6b0ff38bdf04e7efb.js": {
+      "name": "js/zip_css.01c6b0ff38bdf04e7efb.js",
+      "path": "/invenio/instance/static/dist/js/zip_css.01c6b0ff38bdf04e7efb.js",
+      "publicPath": "/static/dist/js/zip_css.01c6b0ff38bdf04e7efb.js"
+    },
+    "js/zip_css.e311b442e1e5e4274a29.js": {
+      "name": "js/zip_css.e311b442e1e5e4274a29.js",
+      "path": "/invenio/instance/static/dist/js/zip_css.e311b442e1e5e4274a29.js",
+      "publicPath": "/static/dist/js/zip_css.e311b442e1e5e4274a29.js"
+    }
+  },
+  "chunks": {
+    "adminlte": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "js/vendors~adminlte.7dbbf26e15359810b482.js",
+      "js/adminlte.42a924dd510a5e51b979.js"
+    ],
+    "base": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "js/base.9d47e96f9fb3514286ce.js"
+    ],
+    "base-admin-theme": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "js/base-admin-theme.4b122d5ea696062f654a.js"
+    ],
+    "bottom_css": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "css/bottom_css.1b2e27b61142106979cc.css",
+      "js/bottom_css.c7def77184aad651320f.js"
+    ],
+    "bottom_js": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "js/bottom_js.a408d1a120e9055464ac.js"
+    ],
+    "d3_csv": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "js/vendors~d3_csv.f5a770bc8e6f5fc3358a.js",
+      "js/d3_csv.f7e63bb90faea4725332.js"
+    ],
+    "fullscreen_js": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/fullscreen_js.e3bb6fe1bc026c6bcc0a.js"
+    ],
+    "i18n_app": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "js/i18n_app.0c4c0993bdaa6a4fa94e.js"
+    ],
+    "invenio_search_ui_app": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio_search_ui_app.3a229e7520cb83507459.js"
+    ],
+    "invenio-administration-create": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "js/invenio-administration-create.12b08625af77e0c1e5d2.js"
+    ],
+    "invenio-administration-details": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-details.68e4b67a323ee0be345a.js",
+      "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js",
+      "js/invenio-administration-details~invenio-communities-admin-featured~invenio-communities-admin-search.746e78604f6b773c1a1d.js",
+      "js/invenio-administration-details.4d65c7f63cebb416f887.js"
+    ],
+    "invenio-administration-edit": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-edit.57623728e2561684210d.js",
+      "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "js/invenio-administration-edit.e004ee5710fb8d22b10d.js"
+    ],
+    "invenio-administration-search": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search.8bd20d7547e718fd150c.js",
+      "js/invenio-administration-search.abe875852d9b3340742a.js"
+    ],
+    "invenio-communities-admin-featured": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search.8bd20d7547e718fd150c.js",
+      "js/invenio-administration-details~invenio-communities-admin-featured~invenio-communities-admin-search.746e78604f6b773c1a1d.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search.34e33317cc55856bdd80.js",
+      "js/invenio-communities-admin-featured.b3183bafa1129ccee058.js"
+    ],
+    "invenio-communities-admin-search": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-administration-create~invenio-administration-details~invenio-administration-edit~invenio-adm~c42839fd.9d0557140c360e30d0ad.js",
+      "js/invenio-administration-details~invenio-administration-search~invenio-communities-admin-featured~inve~39dbfc21.6f882ffe91620507a036.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search.8bd20d7547e718fd150c.js",
+      "js/invenio-administration-details~invenio-communities-admin-featured~invenio-communities-admin-search.746e78604f6b773c1a1d.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search.34e33317cc55856bdd80.js",
+      "js/invenio-communities-admin-search.a861c1c50417e54b78f8.js"
+    ],
+    "invenio-communities-carousel": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-communities-carousel.37197bcd4b7ff52118a5.js"
+    ],
+    "invenio-communities-details-search": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-communities-details-search.c911e2f28076f1b5fa96.js"
+    ],
+    "invenio-communities-featured": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-communities-featured.856d2ee24ba69bcc5fb1.js"
+    ],
+    "invenio-communities-frontpage": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/invenio-communities-frontpage.757287079172672a7b02.js"
+    ],
+    "invenio-communities-invitations": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/vendors~invenio-communities-invitations~oarepo_ui_forms~oarepo_vocabularies_forms.fcc18fa787a9246039f1.js",
+      "js/vendors~invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.71782eb9a729b4a1f6dc.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.7acd261e6dae4dc01ab9.js",
+      "js/invenio-communities-invitations~invenio-communities-members~invenio-communities-members-manager.c589aeec260850c55680.js",
+      "js/invenio-communities-invitations~invenio-communities-requests.ff051d9573313b766adc.js",
+      "js/invenio-communities-invitations.ef4646bff64a9d376267.js"
+    ],
+    "invenio-communities-members": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js",
+      "js/invenio-communities-invitations~invenio-communities-members~invenio-communities-members-manager.c589aeec260850c55680.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-members-public.5f2e82f59b019c1841e6.js",
+      "js/invenio-communities-members~invenio-communities-members-manager.d7b3fb52444c0adc7d33.js",
+      "js/invenio-communities-members.41bc0c3eec186652b95f.js"
+    ],
+    "invenio-communities-members-manager": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js",
+      "js/invenio-communities-invitations~invenio-communities-members~invenio-communities-members-manager.c589aeec260850c55680.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-members-public.5f2e82f59b019c1841e6.js",
+      "js/invenio-communities-members~invenio-communities-members-manager.d7b3fb52444c0adc7d33.js",
+      "js/invenio-communities-members-manager.3363b397a7dd2b1c3550.js"
+    ],
+    "invenio-communities-members-public": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-members-public.5f2e82f59b019c1841e6.js",
+      "js/invenio-communities-members-public.6e9bc7941e991dbdb2f8.js"
+    ],
+    "invenio-communities-new": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js",
+      "js/invenio-communities-new~invenio-communities-privileges~invenio-communities-profile.968d481cabfbf39553ad.js",
+      "js/invenio-communities-new.461f7a1b08f9ff46a99e.js"
+    ],
+    "invenio-communities-privileges": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-communities-privileges~invenio-communities-profile.fe62a7845824a9026922.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js",
+      "js/invenio-communities-new~invenio-communities-privileges~invenio-communities-profile.968d481cabfbf39553ad.js",
+      "js/invenio-communities-privileges.f10b9e16a55c32215031.js"
+    ],
+    "invenio-communities-profile": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/vendors~invenio-communities-profile~oarepo_vocabularies_forms.47ce335f4a316a63c91d.js",
+      "js/vendors~invenio-communities-privileges~invenio-communities-profile.fe62a7845824a9026922.js",
+      "js/vendors~invenio-communities-profile.3a346855744e571fc076.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-communities-members~invenio-communities-members-manager~invenio-communities-new~invenio-comm~0e7746b6.aeab749b2980be9f06ed.js",
+      "js/invenio-communities-new~invenio-communities-privileges~invenio-communities-profile.968d481cabfbf39553ad.js",
+      "js/invenio-communities-profile.d5c24ea5a8ffd4658d35.js"
+    ],
+    "invenio-communities-requests": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/vendors~invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.71782eb9a729b4a1f6dc.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.7acd261e6dae4dc01ab9.js",
+      "js/invenio-communities-invitations~invenio-communities-requests.ff051d9573313b766adc.js",
+      "js/invenio-communities-requests.a7e5d7c106912122946b.js"
+    ],
+    "invenio-communities-search": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-communities-admin-featured~invenio-communities-admin-search~invenio-communities-carousel~inv~98c4a9cd.49ab88eedb6b548939bf.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/invenio-communities-search.9ac30fd8c894a16f918b.js"
+    ],
+    "invenio-requests-base": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.71782eb9a729b4a1f6dc.js",
+      "js/invenio-communities-invitations~invenio-communities-requests~invenio-requests-base.7acd261e6dae4dc01ab9.js",
+      "js/invenio-requests-base.06522baeacd35f179168.js"
+    ],
+    "oarepo_ui": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/oarepo_ui.7724d779e1a8a681f30a.js"
+    ],
+    "oarepo_ui_forms": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/vendors~invenio-communities-invitations~oarepo_ui_forms~oarepo_vocabularies_forms.fcc18fa787a9246039f1.js",
+      "js/vendors~oarepo_ui_forms~oarepo_vocabularies_forms.78fa06a269d54eb5d9aa.js",
+      "js/oarepo_ui_forms~oarepo_vocabularies_forms.9ae700f302de2931ba77.js",
+      "js/oarepo_ui_forms.b28a0864bf143cb9a055.js"
+    ],
+    "oarepo_ui_search": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/oarepo_ui_search~oarepo_vocabularies_detail~oarepo_vocabularies_search.56df6f65c43f8b0737e3.js",
+      "js/oarepo_ui_search.ad60aadf85ba3fff286d.js"
+    ],
+    "oarepo_vocabularies_detail": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/oarepo_ui_search~oarepo_vocabularies_detail~oarepo_vocabularies_search.56df6f65c43f8b0737e3.js",
+      "js/oarepo_vocabularies_detail~oarepo_vocabularies_search.71bcec28303ca863314b.js",
+      "js/oarepo_vocabularies_detail.d4cf8fb17558171be139.js"
+    ],
+    "oarepo_vocabularies_forms": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/vendors~invenio-communities-invitations~oarepo_ui_forms~oarepo_vocabularies_forms.fcc18fa787a9246039f1.js",
+      "js/vendors~oarepo_ui_forms~oarepo_vocabularies_forms.78fa06a269d54eb5d9aa.js",
+      "js/vendors~invenio-communities-profile~oarepo_vocabularies_forms.47ce335f4a316a63c91d.js",
+      "js/oarepo_ui_forms~oarepo_vocabularies_forms.9ae700f302de2931ba77.js",
+      "js/oarepo_vocabularies_forms.8c8a4ab4d8fe1d65eef9.js"
+    ],
+    "oarepo_vocabularies_search": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d198f411.e2145fa894f86c01e3d7.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~17a921b5.c30f1f7f67bc72307ecd.js",
+      "js/vendors~invenio-administration-create~invenio-administration-details~invenio-administration-edit~inv~d50aface.d40bc31e78be5cc33cc4.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6e1ad9b9.1f5e2e3dc72f23eb59e0.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~6fd4a4a2.b15ab95e22d760186475.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~fb2c456e.4a44d9e4d96375c30ee9.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-search~invenio-communities-details-s~e903ca29.bf4d2b11f446a22416e3.js",
+      "js/invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-search~in~de8835e7.f105cf5d39a5b32ee139.js",
+      "js/oarepo_ui_search~oarepo_vocabularies_detail~oarepo_vocabularies_search.56df6f65c43f8b0737e3.js",
+      "js/oarepo_vocabularies_detail~oarepo_vocabularies_search.71bcec28303ca863314b.js",
+      "js/oarepo_vocabularies_search.3efc909a421d69b44b16.js"
+    ],
+    "oarepo_vocabularies_ui_components": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "css/oarepo_vocabularies_ui_components.22a6dcb4ec850142e289.css",
+      "js/oarepo_vocabularies_ui_components.de4d3f4261ebc8cbf950.js"
+    ],
+    "open_pdf": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/open_pdf.2837432f2839645f9914.js"
+    ],
+    "pdfjs_css": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "css/pdfjs_css.7523441f07ec785e6f0f.css",
+      "js/pdfjs_css.c5058d4cb87e7e7e7e45.js"
+    ],
+    "pdfjs_js": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~invenio-administration-search~invenio-communities-admin-featured~invenio-communities-admin-s~e806c643.e1e1cdf17c63a9995c88.js",
+      "js/vendors~pdfjs_js.15011b7f4b2e611aa57a.js",
+      "js/pdfjs_js.a9a7c168e4cbfe05f754.js"
+    ],
+    "previewer_theme": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "css/vendors~previewer_theme~theme.96782c7b6e34f730c329.css",
+      "js/vendors~previewer_theme~theme.ba2deb8c39b0bd1f14f3.js",
+      "js/previewer_theme.af08a70dcfdb468863e1.js"
+    ],
+    "prism_css": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "css/prism_css.d26348f46347b7751296.css",
+      "js/prism_css.22c9656ce42c3a49d582.js"
+    ],
+    "prism_js": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~prism_js.6682fd1a890b9218fd52.js",
+      "js/prism_js.68de206741bf8e0e49b1.js"
+    ],
+    "simple_image_css": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "css/simple_image_css.290dcaa3fef4f2b83552.css",
+      "js/simple_image_css.8d0b56840c279e774976.js"
+    ],
+    "theme": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "js/vendors~adminlte~base~base-admin-theme~bottom_js~d3_csv~i18n_app~previewer_theme~theme.88caf9afb6e144d288ae.js",
+      "css/vendors~previewer_theme~theme.96782c7b6e34f730c329.css",
+      "js/vendors~previewer_theme~theme.ba2deb8c39b0bd1f14f3.js",
+      "js/theme.7e75449e2458aa35146e.js"
+    ],
+    "theme-admin": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "css/theme-admin.11e5c170f835c367813e.css",
+      "js/theme-admin.a9c83de7ffd547a8fef7.js"
+    ],
+    "zip_css": [
+      "js/manifest.4695496aebf9efb0cd82.js",
+      "css/zip_css.3d4504b43b600f573196.css",
+      "js/zip_css.01c6b0ff38bdf04e7efb.js"
+    ]
+  },
+  "publicPath": "/static/dist/",
+  "error": "ESLintError",
+  "message": "\n  ✘  http://eslint.org/docs/rules/no-undef  'error' is not defined  \n  js/oarepo_vocabularies_ui/form/api/DepositApiClient.js:98:29\n  \n\n\n✘ 1 problem (1 error, 0 warnings)\n\n\nErrors:\n  1  http://eslint.org/docs/rules/no-undef"
+}

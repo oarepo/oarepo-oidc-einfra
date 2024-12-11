@@ -1,0 +1,38 @@
+{
+   "metadata" : {
+      "facility" : {
+         "attributes" : {},
+         "destinations" : [
+            "perun_exports@accback.du.cesnet.cz:922"
+         ],
+         "facilityName" : "nrp_devel",
+         "facilityUuid" : "8d901e8e-5e9a-4fd6-841e-a67a4423d691"
+      },
+      "version" : "3.0.1"
+   },
+   "resources" : {
+      "e22b54ff-d1c6-4c66-a838-652dc655dc91" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:testing_nrp_devel"
+            ]
+         }
+      }
+   },
+   "users" : {
+      "20a47687-e2db-4a4e-b98a-1c2b7fd72594" : {
+         "allowed_resources" : {
+            "e22b54ff-d1c6-4c66-a838-652dc655dc91" : {
+               "attributes" : {}
+            }
+         },
+         "attributes" : {
+            "urn:perun:user:attribute-def:core:displayName" : "Miroslav Šimek",
+            "urn:perun:user:attribute-def:def:organization" : "CESNET, z. s. p. o.",
+            "urn:perun:user:attribute-def:def:preferredMail" : "Miroslav.Simek@cesnet.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent" : "user1@einfra.cesnet.cz"
+         }
+      }
+   }
+}
+

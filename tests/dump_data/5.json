@@ -1,0 +1,24 @@
+{
+   "metadata" : {
+      "facility" : {
+         "attributes" : {},
+         "destinations" : [
+            "perun_exports@accback.du.cesnet.cz:922"
+         ],
+         "facilityName" : "nrp_devel",
+         "facilityUuid" : "8d901e8e-5e9a-4fd6-841e-a67a4423d691"
+      },
+      "version" : "3.0.1"
+   },
+   "resources" : {
+      "e22b54ff-d1c6-4c66-a838-652dc655dc91" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:testing_nrp_devel"
+            ]
+         }
+      }
+   },
+   "users" : {}
+}
+

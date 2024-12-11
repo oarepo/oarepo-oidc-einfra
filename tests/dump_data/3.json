@@ -1,0 +1,87 @@
+{
+   "metadata" : {
+      "facility" : {
+         "attributes" : {},
+         "destinations" : [
+            "perun_exports@accback.du.cesnet.cz:922"
+         ],
+         "facilityName" : "nrp_devel",
+         "facilityUuid" : "8d901e8e-5e9a-4fd6-841e-a67a4423d691"
+      },
+      "version" : "3.0.1"
+   },
+   "resources" : {
+      "0003a30a-5512-4ff1-ae1c-b13372041459" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:communities:abc:members"
+            ]
+         }
+      },
+      "2077a18f-13d1-4d00-9908-aeeef28e7a56" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : []
+         }
+      },
+      "4c09431a-bb4d-4b9d-9abc-224166165d42" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:communities:AAA"
+            ]
+         }
+      },
+      "b5e649a9-913f-49a3-abd5-b31adc85c01d" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:communities:cuni"
+            ]
+         }
+      },
+      "c3342a80-8c86-420f-948d-f943c1584aa1" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:communities:cuni:role:curator"
+            ]
+         }
+      },
+      "e22b54ff-d1c6-4c66-a838-652dc655dc91" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:testing_nrp_devel"
+            ]
+         }
+      },
+      "f7dedca0-1302-401d-8328-cbdee1180202" : {
+         "attributes" : {
+            "urn:perun:resource:attribute-def:def:capabilities" : [
+               "res:communities:cuni:role:member"
+            ]
+         }
+      }
+   },
+   "users" : {
+      "20a47687-e2db-4a4e-b98a-1c2b7fd72594" : {
+         "allowed_resources" : {
+            "2077a18f-13d1-4d00-9908-aeeef28e7a56" : {
+               "attributes" : {}
+            },
+            "b5e649a9-913f-49a3-abd5-b31adc85c01d" : {
+               "attributes" : {}
+            },
+            "c3342a80-8c86-420f-948d-f943c1584aa1" : {
+               "attributes" : {}
+            },
+            "e22b54ff-d1c6-4c66-a838-652dc655dc91" : {
+               "attributes" : {}
+            }
+         },
+         "attributes" : {
+            "urn:perun:user:attribute-def:core:displayName" : "Miroslav Šimek",
+            "urn:perun:user:attribute-def:def:organization" : "CESNET, z. s. p. o.",
+            "urn:perun:user:attribute-def:def:preferredMail" : "Miroslav.Simek@cesnet.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent" : "user1@einfra.cesnet.cz"
+         }
+      }
+   }
+}
+
