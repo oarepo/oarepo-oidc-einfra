@@ -415,7 +415,7 @@ def create_aai_invitation(request_id: str) -> dict | None:
     encrypted_request_id = encrypt(request_id)
 
     redirect_url = url_for(
-        "oarepo_oidc_einfra.accept_invitation",
+        "oarepo_oidc_einfra_ui.accept_invitation",
         request_id=encrypted_request_id,
         _external=True,
     )
