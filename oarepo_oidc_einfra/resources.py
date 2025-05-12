@@ -15,7 +15,7 @@ import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
 
-from flask import Blueprint, Flask, g, redirect, request
+from flask import Blueprint, Flask, current_app, g, redirect, request
 from flask_login import fresh_login_required, login_required, logout_user
 from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
@@ -166,6 +166,7 @@ class OIDCEInfraAPIResourceConfig(ResourceConfig):
 
     routes = {
         "upload-dump": "/dumps/upload",
+        "notify-dump": "/dumps/notify",
     }
     """Routes for the resource."""
 
@@ -182,6 +183,7 @@ class OIDCEInfraAPIResource(Resource):
         routes = self.config.routes
         return [
             route("POST", routes["upload-dump"], self.upload_dump),
+            route("POST", routes["notify-dump"], self.notify_dump),
         ]
 
     @login_required
@@ -205,6 +207,22 @@ class OIDCEInfraAPIResource(Resource):
 
         dump_path, checksum = store_dump(request.data)
         update_from_perun_dump.delay(dump_path, checksum)
+        return {"status": "ok"}, 201
+
+    @login_required
+    def notify_dump(self) -> tuple[dict, int]:
+        """Upload a dump of the EInfra data.
+
+        The dump will be uploaded to the configured location (EINFRA_DUMP_DATA_URL inside config)
+        and then processed by a celery synchronization task.
+
+        The caller must have the permission to upload the dump (upload-oidc-einfra-dump action
+        that can be assigned via invenio access commandline tool).
+        """
+        if not Permission(upload_dump_action).allows(g.identity):
+            raise PermissionDeniedError()
+
+        update_from_perun_dump.delay(current_app.config["EINFRA_LAST_DUMP_PATH"], None)
         return {"status": "ok"}, 201
 
 
