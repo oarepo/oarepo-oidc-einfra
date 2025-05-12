@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export PIP_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
+export UV_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
+
 PYTHON=python3
 
 set -e
@@ -16,7 +19,7 @@ $PYTHON -m venv $VENV
 source $VENV/bin/activate
 
 pip install -U setuptools pip wheel
-pip install "oarepo[tests]==${OAREPO_VERSION}.*" --extra-index-url https://oarepo.github.io/pypi/packages/simple/
+pip install "oarepo[rdm,tests]==${OAREPO_VERSION}.*"
 pip install -e '.[tests]'
 
 pytest tests
