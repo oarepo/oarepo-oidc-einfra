@@ -211,13 +211,15 @@ class OIDCEInfraAPIResource(Resource):
 
     @login_required
     def notify_dump(self) -> tuple[dict, int]:
-        """Upload a dump of the EInfra data.
+        """Notify that a dump of the EInfra data has been uploaded to the S3 storage.
 
-        The dump will be uploaded to the configured location (EINFRA_DUMP_DATA_URL inside config)
-        and then processed by a celery synchronization task.
+        The dump has already been uploaded to the configured location EINFRA_LAST_DUMP_PATH
+        and the caller is just notifying that it is ready to be processed.
+        The dump will be processed by a celery synchronization task.
 
-        The caller must have the permission to upload the dump (upload-oidc-einfra-dump action
-        that can be assigned via invenio access commandline tool).
+        The caller must have the permission to upload the dump
+        (upload-oidc-einfra-dump action that can be assigned via invenio
+        access commandline tool).
         """
         if not Permission(upload_dump_action).allows(g.identity):
             raise PermissionDeniedError()
