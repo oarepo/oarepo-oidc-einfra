@@ -11,8 +11,9 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+from collections.abc import Iterable
 from functools import cached_property
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING
 
 from flask import current_app
 from invenio_access.permissions import system_identity
@@ -162,7 +163,9 @@ class CommunitySupport:
         for row in db.session.execute(  # type: ignore
             select(
                 [MemberModel.community_id, MemberModel.user_id, MemberModel.role]
-            ).where(MemberModel.user_id.in_(user_ids), MemberModel.active == true())  # type: ignore
+            ).where(
+                MemberModel.user_id.in_(user_ids), MemberModel.active == true()
+            )  # type: ignore
         ):
             if row.user_id not in ret:
                 ret[row.user_id] = set()
@@ -206,7 +209,7 @@ class CommunitySupport:
             )
             hits = list(results.hits)
             if len(hits) == 1:
-                current_communities.service.members.accept_invitation(
+                current_communities.service.members.accept_invite(
                     system_identity, hits[0]["request_id"]
                 )
 
