@@ -91,3 +91,6 @@ EINFRA_USER_PREFERRED_MAIL_ATTRIBUTE = "urn:perun:user:attribute-def:def:preferr
 
 EINFRA_DEFAULT_INVITATION_LANGUAGE = "en"
 """Language of the invitation emails that are sent to the users."""
+
+EINFRA_LAST_DUMP_PATH = "nrp_invenio_export.json"
+"""Path to the last dump file in the S3 bucket."""
