@@ -53,6 +53,13 @@ def get_communities_from_userinfo_token(userinfo_token: dict) -> Set[CommunityRo
                     f"Role {slug_role.role} not found in community roles in urn {urn}"
                 )
                 continue
+            if slug_role.slug not in slug_to_id:
+                # if it is not in slug_to_id, the community for that slug does not exist
+                # yet in invenio - an administrator should create it first.
+                # This might happen if the community is created manually in perun
+                # but is not yet created in invenio
+                continue
+
             aai_groups.add(CommunityRole(slug_to_id[slug_role.slug], slug_role.role))
         except ValueError:
             continue
