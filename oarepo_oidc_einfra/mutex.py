@@ -34,7 +34,11 @@ class CacheMutex:
     """
 
     def __init__(
-        self, key: str, timeout: float = 3600, tries: int = 10, wait_time: float = 120
+        self,
+        key: str,
+        timeout: float = 3600,
+        tries: int = 100,
+        wait_time: float = 10,
     ):
         """Create the mutex.
 
@@ -57,13 +61,18 @@ class CacheMutex:
     def __enter__(self):
         """Acquires the mutex."""
         for _k in range(self.tries):
-            if current_cache.cache.add(self.key, self.value, timeout=self.timeout):
+
+            if (
+                current_cache.cache.add(self.key, self.value, timeout=self.timeout)
                 # sanity check
-                if current_cache.cache.get(self.key) != self.value:
-                    continue
+                and current_cache.cache.get(self.key) == self.value
+            ):
                 return
+
             # add random to desynchronize
-            time.sleep(self.wait_time * 0.9 + self.wait_time * 0.1 * random())
+            wait_time = self.wait_time + self.wait_time * 0.1 * random()
+            time.sleep(wait_time)
+
         raise ValueError(
             f"Could not acquire mutex for {self.tries} times, "
             f"waiting {self.wait_time} seconds each time"
