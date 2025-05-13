@@ -61,15 +61,17 @@ class CacheMutex:
     def __enter__(self):
         """Acquires the mutex."""
         for _k in range(self.tries):
-
+            # try to set the current value. It will succeed only if the key
+            # does not exist in the redis cache
             if (
                 current_cache.cache.add(self.key, self.value, timeout=self.timeout)
-                # sanity check
+                # sanity check - compare what we have in redis with our value
                 and current_cache.cache.get(self.key) == self.value
             ):
                 return
 
             # add random to desynchronize
+            # (if two celery tasks are running at the same time)
             wait_time = self.wait_time + self.wait_time * 0.1 * random()
             time.sleep(wait_time)
 
