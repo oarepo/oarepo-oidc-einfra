@@ -204,6 +204,13 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
         if not ui:
             UserIdentity.create(user, "e-infra", decoded_token["sub"])
 
+        if user.confirmed_at is None:
+            # Set the user as confirmed
+            user.confirmed_at = datetime.datetime.now()
+            with db.session.begin_nested():  # type: ignore
+                db.session.add(user)  # type: ignore
+                db.session.commit()  # type: ignore
+
 
 # During overlay initialization.
 @account_info_received.connect
@@ -286,9 +293,9 @@ def account_info_link_perun_groups(
     if user is None:
         return
 
-    userinfo_token = remote.get(cast(str, remote.base_url) + "userinfo").data
+    userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
     aai_community_roles = get_communities_from_userinfo_token(
-        cast(dict, userinfo_token)
+        cast("dict", userinfo_token)
     )
 
     CommunitySupport.set_user_community_membership(user, aai_community_roles)

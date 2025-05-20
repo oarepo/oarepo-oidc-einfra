@@ -21,6 +21,7 @@ from invenio_requests.customizations.event_types import CommentEventType
 from invenio_requests.proxies import current_events_service, current_requests_service
 from invenio_requests.services.requests.results import RequestItem
 from invenio_users_resources.proxies import current_users_service
+from marshmallow.exceptions import ValidationError
 from oarepo_runtime.i18n import lazy_gettext as _
 
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
@@ -75,11 +76,33 @@ class AAIInvitationComponent(ServiceComponent):
         """
         member = record
 
+        if member.get("type") != "email":
+            return
+
         member_email = member.get("id")
         member_first_name = member.get("first_name")
         member_last_name = member.get("last_name")
 
-        if not member_email:
+        if member_email and "<" in member_email:
+            # email is in the format "John Doe <john.doe@test.com>"
+            # extract the email address and names
+            before_email, email_part = member_email.split("<", maxsplit=1)
+            email_parts = email_part.split(">")
+            if not email_parts or not email_parts[0].strip():
+                raise ValidationError(
+                    "Invalid email format - missing closing '>' or no email found"
+                )
+            member_email = email_parts[0].strip()
+
+            names = before_email.strip().split()
+            names.reverse()
+
+            if names and not member_last_name:
+                member_last_name = names.pop(0)
+            if names and not member_first_name:
+                member_first_name = names.pop(0)
+
+        if not member_email or "@" not in member_email:
             # can not be handled by this component
             return
 
@@ -140,9 +163,9 @@ class AAIInvitationComponent(ServiceComponent):
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
             change_aai_role(
-                cast(str, community.slug),
-                cast(int, record.user_id),
-                cast(str, record.role),
+                cast("str", community.slug),
+                cast("int", record.user_id),
+                cast("str", record.role),
             )
 
     def members_delete(
@@ -175,7 +198,7 @@ class AAIInvitationComponent(ServiceComponent):
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
             remove_aai_user_from_community(
-                cast(str, community.slug), cast(int, record.user_id)
+                cast("str", community.slug), cast("int", record.user_id)
             )
 
     def _add_invitation_message_to_request(
@@ -207,7 +230,7 @@ class AAIInvitationComponent(ServiceComponent):
         :param user_id:         user id
         :param role:            role of the user in the community
         """
-        metadata: dict = cast(dict, community.metadata)
+        metadata: dict = cast("dict", community.metadata)
         title = _('Invitation to join "{community}"').format(
             community=metadata["title"],
         )

@@ -14,16 +14,20 @@ import hashlib
 import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from flask import Blueprint, Flask, current_app, g, redirect, request
-from flask_login import fresh_login_required, login_required, logout_user
+from flask_login import login_required, logout_user
+from flask_login.utils import login_url as make_login_url
 from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
+from flask_security import current_user
 from invenio_access import Permission, action_factory
 from invenio_access.permissions import system_identity
 from invenio_accounts.models import User
 from invenio_cache.proxies import current_cache
 from invenio_communities.members.records.api import Member
+from invenio_communities.proxies import current_communities
 from invenio_db import db
 from invenio_records_resources.resources.errors import PermissionDeniedError
 from invenio_requests.proxies import current_requests_service
@@ -71,7 +75,6 @@ class OIDCEInfraUIResource(Resource):
             route("GET", routes["accept-invitation"], self.accept_invitation),
         ]
 
-    @fresh_login_required
     def accept_invitation(self) -> Response:
         """Accept an invitation to join a community.
 
@@ -95,14 +98,25 @@ class OIDCEInfraUIResource(Resource):
 
         request_id = decrypt(request.view_args["request_id"])
 
-        # force re-authentication
-        if "fresh_login_token" not in request.args:
+        if "fresh_login_token" not in request.args or not current_user.is_authenticated:
             # force logout and redirect to the same page with the fresh_login_token
             # so that the user is logged in again
             logout_user()
+
+            # create a fresh login token that will guarantee that the user is logged in
             fresh_login_token = encrypt("fresh_login_token_" + str(request_id))
-            return redirect(request.url + "?fresh_login_token=" + fresh_login_token)
+
+            # redirect to the login page to go through the login process again
+            redirect_url = make_login_url(
+                current_app.login_manager.login_view,
+                next_url=self.add_query_param(
+                    request.url, "fresh_login_token", fresh_login_token
+                ),
+            )
+
+            return redirect(redirect_url)
         else:
+            # check the fresh login token and raise error if it is not valid
             fresh_login_token = decrypt(request.args["fresh_login_token"])
             if fresh_login_token != "fresh_login_token_" + str(request_id):
                 raise PermissionDenied("Invalid login token")
@@ -115,20 +129,56 @@ class OIDCEInfraUIResource(Resource):
         # the user on the request so that it does not pollute the space
         invitation = Member.get_member_by_request(request_id)
 
+        # sanity check, should always be filled
         if not invitation.model:
             raise ValueError(f"Invitation {invitation} does not have a model.")
 
-        request_user_id = invitation.model.user_id
+        original_request_user_id = invitation.model.user_id
 
-        if str(request_user_id) != str(g.identity.id):
+        if str(original_request_user_id) != str(g.identity.id):
             # switch the user to the actual one, as he has just authenticated and
             # the email address the invitation was sent to is different than the one
             # that has come from the AAI
-            invitation.model.user_id = g.identity.id
-            db.session.add(invitation.model)
+
+            # if the AAI was fast enough, we already have the membership of the user
+            # in the community. Tro to look it up.
+            found_membership = Member.model_cls.query.filter(
+                Member.model_cls.user_id == g.identity.id,
+                Member.model_cls.community_id == invitation.model.community_id,
+                Member.model_cls.role == invitation.model.role,
+            ).one_or_none()
+
+            if found_membership:
+                # if the user is already a member of the community, we need to remove
+                # the invitation. At first remove the request id from the invitation
+                # so that we can move it to the found_membership
+                invitation.model.request_id = None
+                db.session.add(invitation.model)
+                db.session.commit()
+
+                # now delete the invitation from db and from the indexer
+                current_communities.service.members.indexer.delete(invitation)
+                invitation.delete(force=True)
+
+                # add the request to the found membership
+                found_membership.request_id = request_id
+
+                # the accept request needs to have the membership inactive, so deactivate
+                # for a while
+                found_membership.active = False
+
+                db.session.add(found_membership)
+                db.session.commit()
+
+            else:
+                # no found membership, so just replace the user id in the invitation
+                # with the one that has just authenticated
+                invitation.model.user_id = g.identity.id
+                db.session.add(invitation.model)
+                db.session.commit()
 
             # if the user has not been confirmed yet, we can safely delete the user
-            user = User.query.filter(User.id == request_user_id).one()
+            user = User.query.filter(User.id == original_request_user_id).one()
             if not user.confirmed_at:
                 db.session.delete(user)  # type: ignore
             else:
@@ -141,7 +191,7 @@ class OIDCEInfraUIResource(Resource):
                     "is an active user and is not the same as the current user %s, thus the "
                     "invitation was not accepted. This means that we need to check the users if duplicity"
                     "exists and if so, we need to merge them somehow.",
-                    request_user_id,
+                    original_request_user_id,
                     g.identity.id,
                 )
                 raise PermissionDenied(
@@ -153,6 +203,28 @@ class OIDCEInfraUIResource(Resource):
         # and the receiver thus had to be the system_identity.
         current_requests_service.execute_action(system_identity, request_id, "accept")
         return redirect("/")
+
+    @staticmethod
+    def add_query_param(url: str, param_name: str, param_value: str):
+        """Safely add a query parameter to a URL that might already have query parameters."""
+        # Parse the URL into components
+        parsed_url = urlparse(url)
+
+        # Parse existing query parameters into a dictionary
+        query_dict = parse_qs(parsed_url.query)
+
+        # Add or update the parameter
+        query_dict[param_name] = [
+            str(param_value)
+        ]  # Wrap in list to handle multiple values
+
+        # Rebuild the query string
+        new_query = urlencode(query_dict, doseq=True)
+
+        # Reconstruct the URL with the new query
+        new_url = urlunparse(parsed_url._replace(query=new_query))
+
+        return new_url
 
 
 class OIDCEInfraAPIResourceConfig(ResourceConfig):

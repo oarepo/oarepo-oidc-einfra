@@ -67,3 +67,5 @@ target/
 
 .perun_passwd
 .perun_constants.yaml
+
+.vscode/
