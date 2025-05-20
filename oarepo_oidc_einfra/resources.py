@@ -14,6 +14,7 @@ import hashlib
 import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
+from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from flask import Blueprint, Flask, current_app, g, redirect, request
 from flask_login import login_required, logout_user
@@ -108,7 +109,9 @@ class OIDCEInfraUIResource(Resource):
             # redirect to the login page to go through the login process again
             redirect_url = make_login_url(
                 current_app.login_manager.login_view,
-                next_url=request.url + "?fresh_login_token=" + fresh_login_token,
+                next_url=self.add_query_param(
+                    request.url, "fresh_login_token", fresh_login_token
+                ),
             )
 
             return redirect(redirect_url)
@@ -200,6 +203,28 @@ class OIDCEInfraUIResource(Resource):
         # and the receiver thus had to be the system_identity.
         current_requests_service.execute_action(system_identity, request_id, "accept")
         return redirect("/")
+
+    @staticmethod
+    def add_query_param(url: str, param_name: str, param_value: str):
+        """Safely add a query parameter to a URL that might already have query parameters."""
+        # Parse the URL into components
+        parsed_url = urlparse(url)
+
+        # Parse existing query parameters into a dictionary
+        query_dict = parse_qs(parsed_url.query)
+
+        # Add or update the parameter
+        query_dict[param_name] = [
+            str(param_value)
+        ]  # Wrap in list to handle multiple values
+
+        # Rebuild the query string
+        new_query = urlencode(query_dict, doseq=True)
+
+        # Reconstruct the URL with the new query
+        new_url = urlunparse(parsed_url._replace(query=new_query))
+
+        return new_url
 
 
 class OIDCEInfraAPIResourceConfig(ResourceConfig):
