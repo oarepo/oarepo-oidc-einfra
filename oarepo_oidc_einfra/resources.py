@@ -133,9 +133,9 @@ class OIDCEInfraUIResource(Resource):
         if not invitation.model:
             raise ValueError(f"Invitation {invitation} does not have a model.")
 
-        request_user_id = invitation.model.user_id
+        original_request_user_id = invitation.model.user_id
 
-        if str(request_user_id) != str(g.identity.id):
+        if str(original_request_user_id) != str(g.identity.id):
             # switch the user to the actual one, as he has just authenticated and
             # the email address the invitation was sent to is different than the one
             # that has come from the AAI
@@ -178,7 +178,7 @@ class OIDCEInfraUIResource(Resource):
                 db.session.commit()
 
             # if the user has not been confirmed yet, we can safely delete the user
-            user = User.query.filter(User.id == request_user_id).one()
+            user = User.query.filter(User.id == original_request_user_id).one()
             if not user.confirmed_at:
                 db.session.delete(user)  # type: ignore
             else:
@@ -191,7 +191,7 @@ class OIDCEInfraUIResource(Resource):
                     "is an active user and is not the same as the current user %s, thus the "
                     "invitation was not accepted. This means that we need to check the users if duplicity"
                     "exists and if so, we need to merge them somehow.",
-                    request_user_id,
+                    original_request_user_id,
                     g.identity.id,
                 )
                 raise PermissionDenied(
