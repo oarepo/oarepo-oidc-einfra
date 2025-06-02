@@ -15,6 +15,7 @@ from collections import defaultdict
 from collections.abc import Iterable
 from functools import cached_property
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 from flask import current_app
 from invenio_access.permissions import system_identity
