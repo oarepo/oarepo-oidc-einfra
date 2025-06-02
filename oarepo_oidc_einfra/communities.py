@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+from collections import defaultdict
 from collections.abc import Iterable
 from functools import cached_property
 from typing import TYPE_CHECKING
@@ -22,9 +23,7 @@ from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.models import MemberModel
 from invenio_communities.proxies import current_communities
 from invenio_db import db
-from marshmallow import ValidationError
 from sqlalchemy import select
-from sqlalchemy.sql.expression import true
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -117,26 +116,92 @@ class CommunitySupport:
         for v in new_community_roles:
             assert isinstance(v, CommunityRole)
 
-        for community_role in new_community_roles - current_community_roles:
-            cls._add_user_community_membership(community_role, user)
+        # find if any community memberships are duplicated and if so,
+        # keep only the one with the highest priority
+        cls._remove_duplicate_roles(new_community_roles, user)
 
+        # provide breadcrumbs for glitchtip
         log.info("Current community roles %s", current_community_roles)
         log.info("New community roles %s", new_community_roles)
 
-        community_ids = {
-            r.community_id for r in current_community_roles - new_community_roles
-        }
-        for community_id in community_ids:
+        for community_role in current_community_roles - new_community_roles:
             try:
-                cls._remove_user_community_membership(community_id, user)
-            except ValidationError as e:
-                # This is a case when the user is the last member of a community - in this case he can not be removed
+                cls._remove_user_community_membership(community_role.community_id, user)
+            except Exception as e:
+                # This is a case when the user is the last member of a community -
+                # in this case he can not be removed. This should happen only
+                # for community owners, as they are the last members of a community.
+                # In this case we just log the error and continue.
                 log.error(
-                    f"Failed to remove user {user.id} from community {community_id}: {e}"
+                    "Failed to remove user %s from community %s: "
+                    "current_community_roles=%s new_community_roles=%s: "
+                    "Exception: %s",
+                    user.id,
+                    community_role,
+                    current_community_roles,
+                    new_community_roles,
+                    e,
+                )
+
+        for community_role in new_community_roles - current_community_roles:
+            try:
+                # note: this takes care of the case when there is an existing
+                # invitation request for the user in the community
+                # and the user has already accepted it inside AAI
+                cls._add_user_community_membership(community_role, user)
+            except Exception as e:
+                # If unexpected error occurs, rather than failing the whole login
+                # process, we log the error and continue. User will not be added
+                # to the community, but at least they can log in.
+                # The error will be recorded to glitchtip and can be investigated later.
+                log.error(
+                    "Failed to add user %s to community %s with role %s: "
+                    "current_community_roles=%s new_community_roles=%s: "
+                    "Exception: %s",
+                    user.id,
+                    community_role.community_id,
+                    community_role.role,
+                    current_community_roles,
+                    new_community_roles,
+                    e,
                 )
 
     @classmethod
-    def get_user_community_membership(cls, user: User) -> set[CommunityRole]:
+    def _remove_duplicate_roles(
+        cls, new_community_roles: set[CommunityRole], user: User
+    ) -> None:
+        roles_by_community_id = defaultdict[UUID, set[CommunityRole]](set)
+        for community_role in new_community_roles:
+            roles_by_community_id[community_role.community_id].add(community_role)
+
+        for community_id, roles in roles_by_community_id.items():
+            if len(roles) > 1:
+                # get roles and their priorities, 0 is the highest priority
+                community_roles_with_priorities = {
+                    role: idx
+                    for idx, role in enumerate(current_app.config["COMMUNITIES_ROLES"])
+                }
+                # sort roles by their priority, highest priority first
+                sorted_roles: list[CommunityRole] = sorted(
+                    roles,
+                    key=lambda r: community_roles_with_priorities[r.role],
+                    reverse=True,
+                )
+                log.error(
+                    "User %s has multiple roles in community %s: %s. Will keep only %s",
+                    user.id,
+                    community_id,
+                    sorted_roles,
+                    sorted_roles[0],
+                )
+                for role in sorted_roles[1:]:
+                    # remove all but the highest priority role
+                    new_community_roles.remove(role)
+
+    @classmethod
+    def get_user_community_membership(
+        cls, user: User, active: bool = True
+    ) -> set[CommunityRole]:
         """Get user's actual community roles.
 
         :param user: User object
@@ -144,7 +209,7 @@ class CommunitySupport:
         ret = set()
         for row in db.session.execute(  # type: ignore
             select([MemberModel.community_id, MemberModel.role]).where(
-                MemberModel.user_id == user.id, MemberModel.active == true()
+                MemberModel.user_id == user.id, MemberModel.active == active
             )
         ):
             ret.add(CommunityRole(row.community_id, row.role))
@@ -153,7 +218,7 @@ class CommunitySupport:
 
     @classmethod
     def get_user_list_community_membership(
-        cls, user_ids: Iterable[int]
+        cls, user_ids: Iterable[int], active: bool = True
     ) -> dict[int, set[CommunityRole]]:
         """Get community roles of a list of users.
 
@@ -164,7 +229,7 @@ class CommunitySupport:
             select(
                 [MemberModel.community_id, MemberModel.user_id, MemberModel.role]
             ).where(
-                MemberModel.user_id.in_(user_ids), MemberModel.active == true()
+                MemberModel.user_id.in_(user_ids), MemberModel.active == active
             )  # type: ignore
         ):
             if row.user_id not in ret:
