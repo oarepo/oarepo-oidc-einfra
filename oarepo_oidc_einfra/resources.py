@@ -24,7 +24,6 @@ from flask_resources import Resource, ResourceConfig, route
 from flask_security import current_user
 from invenio_access import Permission, action_factory
 from invenio_access.permissions import system_identity
-from invenio_accounts.models import User
 from invenio_cache.proxies import current_cache
 from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
@@ -177,26 +176,13 @@ class OIDCEInfraUIResource(Resource):
                 db.session.add(invitation.model)
                 db.session.commit()
 
-            # if the user has not been confirmed yet, we can safely delete the user
-            user = User.query.filter(User.id == original_request_user_id).one()
-            if not user.confirmed_at:
-                db.session.delete(user)  # type: ignore
-            else:
-                # otherwise the user is trying to exist in two different identities,
-                # which is a problem. Can not be handled automatically and needs
-                # to be resolved manually. Logging error here will put it to glitchtip
-                # and user is instructed to contact the administrator.
-                log.error(
-                    "Invitation check failed: The user for which the invitation was sent (%s) "
-                    "is an active user and is not the same as the current user %s, thus the "
-                    "invitation was not accepted. This means that we need to check the users if duplicity"
-                    "exists and if so, we need to merge them somehow.",
-                    original_request_user_id,
-                    g.identity.id,
-                )
-                raise PermissionDenied(
-                    "Invitation link invalid. Please contact the administrator to resolve this issue."
-                )
+            # note: we are not deleting the original user here (even if the current user's
+            # email is different than the one that was used to create the request) as there
+            # might be several requests for different communities for the same user and
+            # deleting the user would prevent accepting the other requests.
+
+            # This does not cause any risk, as the user is not enabled in the system.
+            # Later on, we can provide a cleanup task that will remove such obsolete users
 
         # accept the invitation. This has to be accepted with system_identity, because
         # the user instance has not been known at the time of the request creation (just the email address)
