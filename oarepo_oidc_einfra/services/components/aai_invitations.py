@@ -6,7 +6,6 @@
 # details.
 #
 """AAI (perun) membership handling."""
-
 from typing import cast
 
 from flask import current_app
@@ -15,6 +14,7 @@ from invenio_accounts.models import User
 from invenio_communities.communities.records.api import Community
 from invenio_communities.members.records.api import Member
 from invenio_communities.members.services.service import invite_expires_at
+from invenio_db import db
 from invenio_records_resources.services.records.components.base import ServiceComponent
 from invenio_records_resources.services.uow import Operation, UnitOfWork
 from invenio_requests.customizations.event_types import CommentEventType
@@ -280,11 +280,14 @@ class AAIInvitationComponent(ServiceComponent):
 
         user = current_users_service.create(
             system_identity,
-            {
-                "email": member_email,
-            },
+            {"email": member_email},
         )
-        user._user.user_profile = {"full_name": member_full_name}
-        user._user.commit()
+
+        u = db.session.query(User).get(user["id"])
+        if not u.user_profile or "full_name" not in u.user_profile:
+            u.user_profile = {"full_name": member_full_name}
+            db.session.add(u)
+            db.session.commit()
+            # indexing is done in the post_commit hook
 
         return user["id"]
