@@ -12,10 +12,11 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+from collections.abc import Iterable
 from datetime import date, timedelta
 from io import BytesIO
 from itertools import chain, islice
-from typing import TYPE_CHECKING, Iterable, Literal
+from typing import TYPE_CHECKING, Literal
 
 from celery import shared_task
 from flask import current_app, url_for
@@ -411,6 +412,7 @@ def create_aai_invitation(request_id: str) -> dict | None:
             f"More than one group for capability {capability} found inside Perun, "
             f"so can not send invitation to its associated group."
         )
+        return None
 
     encrypted_request_id = encrypt(request_id)
 
@@ -431,7 +433,7 @@ def create_aai_invitation(request_id: str) -> dict | None:
         expiration_date = request.expires_at.date()  # type: ignore
 
     user = User.query.filter_by(id=invitation.model.user_id).one()
-    return perun_api.send_invitation(
+    perun_response = perun_api.send_invitation(
         vo_id=current_einfra_oidc.repository_vo_id,
         group_id=groups[0]["id"],
         email=user.email,
@@ -440,6 +442,15 @@ def create_aai_invitation(request_id: str) -> dict | None:
         expiration=expiration_date.isoformat(),
         redirect_url=redirect_url,
     )
+
+    # set the AAI id in the request payload so we can later use it to check if the
+    # invitation was accepted or not (in case accept invitation endpoint is not called)
+    request.payload = {
+        **(request.payload or {}),
+        "aai_id": perun_response["id"],
+    }
+    request.commit()
+    return perun_response
 
 
 @shared_task
