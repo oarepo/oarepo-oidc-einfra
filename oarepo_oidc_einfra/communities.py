@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
     from invenio_accounts.models import User
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("perun.communities")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -122,8 +122,10 @@ class CommunitySupport:
         cls._remove_duplicate_roles(new_community_roles, user)
 
         # provide breadcrumbs for glitchtip
-        log.info("Current community roles %s", current_community_roles)
-        log.info("New community roles %s", new_community_roles)
+        log.info(
+            "Current community roles for user %s: %s", user.id, current_community_roles
+        )
+        log.info("New community roles for user %s: %s", user.id, new_community_roles)
 
         for community_role in current_community_roles - new_community_roles:
             try:
@@ -253,10 +255,23 @@ class CommunitySupport:
             "role": community_role.role,
             "members": [{"type": "user", "id": str(user.id)}],
         }
+        log.info(
+            "Adding user %s to community %s with role %s",
+            user.id,
+            community_role.community_id,
+            community_role.role,
+        )
         try:
-            return current_communities.service.members.add(
+            ret = current_communities.service.members.add(
                 system_identity, community_role.community_id, data
             )
+            log.info(
+                "User %s added to community %s with role %s",
+                user.id,
+                community_role.community_id,
+                community_role.role,
+            )
+            return ret
         except AlreadyMemberError:
             # We are here because
             #
@@ -268,6 +283,11 @@ class CommunitySupport:
             #
             # We need to get the associated invitation request and accept it here,
             # thus the membership will become active.
+            log.info(
+                "User %s is already a member of community %s, trying to accept existing invitation",
+                user.id,
+                community_role.community_id,
+            )
             results = current_communities.service.members.search_invitations(
                 system_identity,
                 community_role.community_id,
@@ -275,8 +295,17 @@ class CommunitySupport:
             )
             hits = list(results.hits)
             if len(hits) == 1:
+                log.info("Found existing invitation for user %s, accepting it", user.id)
                 current_communities.service.members.accept_invite(
                     system_identity, hits[0]["request_id"]
+                )
+            else:
+                log.error(
+                    "User %s is already a member of community %s, but no unique invitation found. "
+                    "Hits: %s",
+                    user.id,
+                    community_role.community_id,
+                    hits,
                 )
 
     @classmethod
@@ -288,4 +317,5 @@ class CommunitySupport:
         :return:
         """
         data = {"members": [{"type": "user", "id": str(user.id)}]}
+        log.info("Removing user %s from community %s", user.id, community_id)
         current_communities.service.members.delete(system_identity, community_id, data)
