@@ -91,17 +91,17 @@ class EInfraOIDCApp:
     @property
     def repository_vo_id(self) -> int:
         """Get the repository VO ID."""
-        return current_app.config["EINFRA_REPOSITORY_VO_ID"]
+        return int(current_app.config["EINFRA_REPOSITORY_VO_ID"])
 
     @property
     def repository_facility_id(self) -> int:
         """Get the repository facility ID."""
-        return current_app.config["EINFRA_REPOSITORY_FACILITY_ID"]
+        return int(current_app.config["EINFRA_REPOSITORY_FACILITY_ID"])
 
     @property
     def communities_group_id(self) -> int:
         """Get the communities group ID."""
-        return current_app.config["EINFRA_COMMUNITIES_GROUP_ID"]
+        return int(current_app.config["EINFRA_COMMUNITIES_GROUP_ID"])
 
     @cached_property
     def capabilities_attribute_id(self) -> int:
