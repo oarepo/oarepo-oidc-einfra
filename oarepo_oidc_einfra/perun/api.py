@@ -89,10 +89,22 @@ class PerunLowLevelAPI:
         :param method:      the method to call
         :param payload:     the json payload to send
         """
+        log.info(
+            "Perun call %s.%s with payload %s",
+            manager,
+            method,
+            payload,
+        )
         resp = self._session.post(
             f"{self._base_url}/krb/rpc/json/{manager}/{method}",
             auth=self._auth,
             json=payload,
+        )
+        log.info(
+            "Perun call %s.%s returned status code %s",
+            manager,
+            method,
+            resp.status_code,
         )
 
         if resp.status_code == 404:
@@ -106,7 +118,14 @@ class PerunLowLevelAPI:
 
         if resp.status_code < 200 or resp.status_code >= 300:
             raise Exception(f"Perun call failed: {resp.text}")
-        return resp.json()
+        response = resp.json()
+        log.info(
+            "Perun call %s.%s response %s",
+            manager,
+            method,
+            response,
+        )
+        return response
 
     def create_group(
         self,
