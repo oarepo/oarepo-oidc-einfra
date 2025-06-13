@@ -445,8 +445,8 @@ def create_aai_invitation(request_id: str) -> dict | None:
 
     # set the AAI id in the request payload so we can later use it to check if the
     # invitation was accepted or not (in case accept invitation endpoint is not called)
-    request.payload = {
-        **(request.payload or {}),
+    request["payload"] = {
+        **(request.get("payload", None) or {}),
         "aai_id": perun_response["id"],
     }
     request.commit()
