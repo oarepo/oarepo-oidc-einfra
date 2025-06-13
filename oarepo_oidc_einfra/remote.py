@@ -144,6 +144,8 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
             "email": decoded_token.get("email"),
             "profile": {
                 "full_name": decoded_token.get("name"),
+                "locale": decoded_token.get("locale"),
+                "timezone": decoded_token.get("zoneinfo"),
             },
         },
     }
@@ -160,6 +162,8 @@ def account_info(remote: OAuthRemoteApp, resp: dict) -> dict:
                 'email': 'Email address',
                 'profile': {
                     'full_name': 'Full Name',
+                    'locale': 'en',
+                    'timezone': 'Europe/Prague',
                 },
             }
         }
@@ -192,6 +196,8 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
     with db.session.begin_nested():  # type: ignore
         token.remote_account.extra_data = {
             "full_name": decoded_token["name"],
+            "locale": decoded_token.get("locale"),
+            "timezone": decoded_token.get("zoneinfo"),
         }
 
         user = token.remote_account.user
@@ -236,12 +242,23 @@ def autocreate_user(
         "affiliations": "",
         "full_name": account_info["user"]["profile"]["full_name"],
     }
+    user_preferences = {
+        "visibility": "public",
+        "locale": account_info["user"]["profile"].get("locale", None),
+        "timezone": account_info["user"]["profile"].get("timezone", None),
+    }
+    user_preferences = {k: v for k, v in user_preferences.items() if v is not None}
 
     user_identity = UserIdentity.query.filter_by(id=id, method=method).one_or_none()
     if not user_identity:
         user = User.query.filter(User.email == email).one_or_none()
         if not user:
-            user = User(email=email, active=True, user_profile=user_profile)
+            user = User(
+                email=email,
+                active=True,
+                user_profile=user_profile,
+                preferences=user_preferences,
+            )
 
             """
             Workaround note:
@@ -266,6 +283,7 @@ def autocreate_user(
 
         user_identity.user.email = email
         user_identity.user.user_profile = user_profile
+        user_identity.user.preferences = user_preferences
 
         with db.session.begin_nested():  # type: ignore
             db.session.add(user_identity.user)  # type: ignore
