@@ -1,0 +1,25 @@
+#
+msgid ""
+msgstr ""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:32
+msgid "E-Infra AAI"
+msgstr "E-Infra AAI"
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:33
+msgid "E-Infra authentication and authorization service."
+msgstr "E-infra autentizační a autorizační služba"
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:234
+#, python-brace-format
+msgid "Invitation to join \"{community}\""
+msgstr "Pozvánka ke vstupu do \"{community}\""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:237
+#, python-brace-format
+msgid "You have been invited as {role} of {community}."
+msgstr "Byl(a) jste pozván(a) jako {role} komunity {community}."
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/requests/invitation.py:19
+msgid "AAI Community invitation"
+msgstr "Pozvánka do komunity v AAI"

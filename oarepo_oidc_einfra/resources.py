@@ -134,6 +134,7 @@ class OIDCEInfraUIResource(Resource):
 
         original_request_user_id = invitation.model.user_id
 
+        found_membership = None
         if str(original_request_user_id) != str(g.identity.id):
             # switch the user to the actual one, as he has just authenticated and
             # the email address the invitation was sent to is different than the one
@@ -187,7 +188,20 @@ class OIDCEInfraUIResource(Resource):
         # accept the invitation. This has to be accepted with system_identity, because
         # the user instance has not been known at the time of the request creation (just the email address)
         # and the receiver thus had to be the system_identity.
-        current_requests_service.execute_action(system_identity, request_id, "accept")
+
+        try:
+            # If the user is not already a member, we need to add them
+            current_requests_service.execute_action(
+                system_identity, request_id, "accept"
+            )
+        except:
+            # if there was an error, it will be resolved in the next synchronization,
+            # so just log it to glitchtip
+            log.error(
+                "Failed to accept the invitation request %s for user %s",
+                request_id,
+                g.identity.id,
+            )
         return redirect("/")
 
     @staticmethod
