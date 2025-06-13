@@ -14,6 +14,7 @@ import jwt
 from flask_oauthlib.client import OAuthRemoteApp
 from invenio_accounts.models import User, UserIdentity
 from invenio_db import db
+from invenio_i18n import lazy_gettext as _
 from invenio_oauthclient import current_oauthclient
 from invenio_oauthclient.contrib.settings import OAuthSettingsHelper
 from invenio_oauthclient.handlers.token import token_getter
@@ -28,8 +29,8 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
     def __init__(
         self,
         *,
-        title: str = "E-Infra AAI",
-        description: str = "E-Infra authentication and authorization service.",
+        title: str = _("E-Infra AAI"),
+        description: str = _("E-Infra authentication and authorization service."),
         base_url: str = "https://login.e-infra.cz/oidc/",
         app_key: str = "EINFRA",
         icon: str | None = None,
