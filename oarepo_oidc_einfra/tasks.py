@@ -450,6 +450,7 @@ def create_aai_invitation(request_id: str) -> dict | None:
         "aai_id": str(perun_response["id"]),
     }
     request.commit()
+    db.session.commit()
     return perun_response
 
 
