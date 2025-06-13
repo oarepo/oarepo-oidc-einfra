@@ -19,7 +19,7 @@ include .editorconfig
 include .tx/config
 prune docs/_build
 recursive-include .github/workflows *.yml
-recursive-include cesnet_openid_remote/translations *.po *.pot *.mo
+recursive-include oarepo_oidc_einfra/translations *.po *.pot *.mo
 include *.rst
 include *.sh
 include *.txt
@@ -31,7 +31,7 @@ recursive-exclude tests *.json
 recursive-exclude examples *.db
 recursive-exclude examples *.sh
 include *.yml
-recursive-include cesnet_openid_remote *.py
+recursive-include oarepo_oidc_einfra *.py
 recursive-exclude tests *
 recursive-exclude examples *
 recursive-exclude .github *
