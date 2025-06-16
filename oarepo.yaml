@@ -1,0 +1,7 @@
+i18n:
+  babel_output_translations: oarepo_oidc_einfra/translations
+  babel_source_paths:
+    - oarepo_oidc_einfra/
+  languages:
+    - cs
+    - en

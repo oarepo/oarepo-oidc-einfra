@@ -447,9 +447,10 @@ def create_aai_invitation(request_id: str) -> dict | None:
     # invitation was accepted or not (in case accept invitation endpoint is not called)
     request["payload"] = {
         **(request.get("payload", None) or {}),
-        "aai_id": perun_response["id"],
+        "aai_id": str(perun_response["id"]),
     }
     request.commit()
+    db.session.commit()
     return perun_response
 
 

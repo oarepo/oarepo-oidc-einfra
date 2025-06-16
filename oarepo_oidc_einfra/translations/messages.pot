@@ -1,0 +1,41 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-06-16 09:01+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:32
+msgid "E-Infra AAI"
+msgstr ""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:33
+msgid "E-Infra authentication and authorization service."
+msgstr ""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:234
+#, python-brace-format
+msgid "Invitation to join \"{community}\""
+msgstr ""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:237
+#, python-brace-format
+msgid "You have been invited as {role} of {community}."
+msgstr ""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/requests/invitation.py:19
+msgid "AAI Community invitation"
+msgstr ""
+
