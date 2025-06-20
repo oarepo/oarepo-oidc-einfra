@@ -21,6 +21,8 @@ from invenio_oauthclient.handlers.token import token_getter
 from invenio_oauthclient.models import RemoteToken
 from invenio_oauthclient.oauth import oauth_get_user
 from invenio_oauthclient.signals import account_info_received
+from invenio_users_resources.proxies import current_users_service
+from invenio_users_resources.services.users.tasks import reindex_users
 
 
 class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
@@ -270,9 +272,7 @@ def autocreate_user(
             """
             user.confirmed_at = datetime.datetime.now()
 
-            with db.session.begin_nested():  # type: ignore
-                db.session.add(user)  # type: ignore
-                db.session.commit()  # type: ignore
+            commit_and_reindex_user(user)
 
         with db.session.begin_nested():  # type: ignore
             UserIdentity.create(user=user, method=method, external_id=id)
@@ -285,9 +285,21 @@ def autocreate_user(
         user_identity.user.user_profile = user_profile
         user_identity.user.preferences = user_preferences
 
-        with db.session.begin_nested():  # type: ignore
-            db.session.add(user_identity.user)  # type: ignore
-            db.session.commit()  # type: ignore
+        commit_and_reindex_user(user_identity.user)
+
+
+def commit_and_reindex_user(user: User) -> None:
+    """Commit the user changes and reindex the user."""
+    with db.session.begin_nested():  # type: ignore
+        db.session.add(user)  # type: ignore
+        db.session.commit()  # type: ignore
+    # Reindex the user. This is done automatically inside the commit above but
+    # in a background task. If there are a lot of tasks on the background queue,
+    # it can take a long time before the user is reindexed and his profile is updated,
+    # leading to "Deleted user" misleading labels in the UI.
+    # So we reindex the user immediately.
+    reindex_users([user.id])  # type: ignore
+    current_users_service.indexer.refresh()
 
 
 def account_info_link_perun_groups(
