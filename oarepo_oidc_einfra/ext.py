@@ -9,10 +9,12 @@
 
 import threading
 from functools import cached_property
+from typing import Callable
 
 import boto3
 import botocore.client
 from flask import Flask, current_app
+from invenio_base.utils import obj_or_import_string
 from invenio_communities.communities.services.components import (
     DefaultCommunityComponents,
 )
@@ -202,3 +204,13 @@ class EInfraOIDCApp:
                 ],
                 endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
             )
+
+    @cached_property
+    def role_transformer(self) -> Callable | None:
+        """Get the role transformer function."""
+        role_transformer = current_app.config.get(
+            "EINFRA_COMMUNITIES_ROLES_TRANSFORMER", None
+        )
+        if role_transformer:
+            return obj_or_import_string(role_transformer)
+        return None

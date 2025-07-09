@@ -26,6 +26,8 @@ from invenio_communities.proxies import current_communities
 from invenio_db import db
 from sqlalchemy import select
 
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
+
 if TYPE_CHECKING:
     from uuid import UUID
 
@@ -116,6 +118,18 @@ class CommunitySupport:
 
         for v in new_community_roles:
             assert isinstance(v, CommunityRole)
+
+        # The role transformer is a function that can be used to transform the roles
+        # before they are set for the user. It can be used to implement custom logic,
+        # such as filtering out certain roles or changing the role names.
+        #
+        # Example: make everyone who logs in as a member of the generic community
+        # This can not be implemented on the AAI side as "members" group in AAI
+        # can not be assigned a resource with capabilities.
+        if current_einfra_oidc.role_transformer:
+            current_einfra_oidc.role_transformer(
+                user, current_community_roles, new_community_roles
+            )
 
         # find if any community memberships are duplicated and if so,
         # keep only the one with the highest priority
