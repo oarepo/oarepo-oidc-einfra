@@ -8,6 +8,7 @@
 """E-Infra OIDC Remote Auth backend for NRP."""
 
 import datetime
+import logging
 from typing import cast
 
 import jwt
@@ -24,6 +25,8 @@ from invenio_oauthclient.oauth import oauth_get_user
 from invenio_oauthclient.signals import account_info_received
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.services.users.tasks import reindex_users
+
+perun_log = logging.getLogger("oarepo_oidc_einfra.perun.remote")
 
 
 def find_locale(locale: str | None) -> str:
@@ -155,6 +158,7 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
         audience=remote.consumer_key,  # type: ignore
         algorithms=["RS256"],
     )
+    perun_log.info("Decoded id token: %s", decoded_token)
 
     return {
         "external_id": decoded_token["sub"],
@@ -258,6 +262,13 @@ def autocreate_user(
 
     assert account_info is not None
 
+    perun_log.info(
+        "Autocreating user for remote app %s with account info: %s",
+        remote,
+        account_info,
+    )
+    perun_log.info("Perun raw message: %s", response)
+
     email = account_info["user"]["email"].lower()
     id, method = account_info["external_id"], account_info["external_method"]
     user_profile = {
@@ -345,6 +356,7 @@ def account_info_link_perun_groups(
         return
 
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
+    perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
     aai_community_roles = get_communities_from_userinfo_token(
         cast("dict", userinfo_token)
     )
