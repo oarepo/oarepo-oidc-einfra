@@ -8,9 +8,11 @@
 """E-Infra OIDC Remote Auth backend for NRP."""
 
 import datetime
+import logging
 from typing import cast
 
 import jwt
+from flask import current_app
 from flask_oauthlib.client import OAuthRemoteApp
 from invenio_accounts.models import User, UserIdentity
 from invenio_db import db
@@ -23,6 +25,24 @@ from invenio_oauthclient.oauth import oauth_get_user
 from invenio_oauthclient.signals import account_info_received
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.services.users.tasks import reindex_users
+
+perun_log = logging.getLogger("oarepo_oidc_einfra.perun.remote")
+
+
+def find_locale(locale: str | None) -> str:
+    """Find the locale in the list of supported locales.
+
+    If locale is None or unsupported, return the default locale.
+
+    :param locale: The locale to find.
+    :return: The found locale or the default one if not found.
+    """
+    if locale:
+        for supported_locale in current_app.config["I18N_LANGUAGES"]:
+            if supported_locale[0] == locale or supported_locale[0].startswith(locale):
+                return supported_locale[0]
+
+    return current_app.config["BABEL_DEFAULT_LOCALE"]
 
 
 class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
@@ -138,6 +158,7 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
         audience=remote.consumer_key,  # type: ignore
         algorithms=["RS256"],
     )
+    perun_log.info("Decoded id token: %s", decoded_token)
 
     return {
         "external_id": decoded_token["sub"],
@@ -146,7 +167,7 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
             "email": decoded_token.get("email"),
             "profile": {
                 "full_name": decoded_token.get("name"),
-                "locale": decoded_token.get("locale"),
+                "locale": find_locale(decoded_token.get("locale")),
                 "timezone": decoded_token.get("zoneinfo"),
             },
         },
@@ -198,7 +219,7 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
     with db.session.begin_nested():  # type: ignore
         token.remote_account.extra_data = {
             "full_name": decoded_token["name"],
-            "locale": decoded_token.get("locale"),
+            "locale": find_locale(decoded_token.get("locale")),
             "timezone": decoded_token.get("zoneinfo"),
         }
 
@@ -236,7 +257,17 @@ def autocreate_user(
     :param response: access response from the remote server
     :param account_info: account info from the remote server
     """
+    if remote.name != "e-infra":
+        return
+
     assert account_info is not None
+
+    perun_log.info(
+        "Autocreating user for remote app %s with account info: %s",
+        remote,
+        account_info,
+    )
+    perun_log.info("Perun raw message: %s", response)
 
     email = account_info["user"]["email"].lower()
     id, method = account_info["external_id"], account_info["external_method"]
@@ -325,6 +356,7 @@ def account_info_link_perun_groups(
         return
 
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
+    perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
     aai_community_roles = get_communities_from_userinfo_token(
         cast("dict", userinfo_token)
     )
