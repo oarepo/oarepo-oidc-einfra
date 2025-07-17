@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-06-16 09:01+0200\n"
+"POT-Creation-Date: 2025-07-17 09:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,20 +17,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:32
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/communities.py:337
+msgid ""
+"We could not add you to the community at this time. Please log out of the"
+" repository, wait a few minutes and log in again. If you will not become "
+"a member of the community, please contact the support."
+msgstr ""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:56
 msgid "E-Infra AAI"
 msgstr ""
 
-#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:33
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/remote.py:57
 msgid "E-Infra authentication and authorization service."
 msgstr ""
 
-#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:234
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/resources.py:158
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/resources.py:239
+msgid ""
+"There was an error processing your invitation to a community. Please log "
+"out of the repository, wait a couple of minutes and log in again. If you "
+"will not become a member of the community, please contact the support."
+msgstr ""
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:246
 #, python-brace-format
 msgid "Invitation to join \"{community}\""
 msgstr ""
 
-#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:237
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/components/aai_invitations.py:249
 #, python-brace-format
 msgid "You have been invited as {role} of {community}."
 msgstr ""
