@@ -23,3 +23,24 @@ msgstr "Byl(a) jste pozván(a) jako {role} komunity {community}."
 #: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/services/requests/invitation.py:19
 msgid "AAI Community invitation"
 msgstr "Pozvánka do komunity v E-Infra"
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/communities.py:337
+msgid ""
+"We could not add you to the community at this time. Please log out of the "
+"repository, wait a few minutes and log in again. If you will not become a "
+"member of the community, please contact the support."
+msgstr ""
+"V tomto okamžiku Vás nemůžeme přidat do komunity. Prosíme, odhlaste se z "
+"repozitáře, počkejte pár minut a zase se přihlaste. Pokud stále nebudete "
+"součástí komunity, kontaktujte uživatelskou podporu."
+
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/resources.py:158
+#: /Users/m/w/cesnet/oidc-einfra/oarepo_oidc_einfra/resources.py:239
+msgid ""
+"There was an error processing your invitation to a community. Please log out"
+" of the repository, wait a couple of minutes and log in again. If you will "
+"not become a member of the community, please contact the support."
+msgstr ""
+"Došlo k chybě při zpracování přihlášky dokomunity. Prosíme, odhlaste se z "
+"repozitáře, počkejte pár minut a zase se přihlaste. Pokud stále nebudete "
+"součástí komunity, kontaktujte uživatelskou podporu."

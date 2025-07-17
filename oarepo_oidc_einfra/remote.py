@@ -26,6 +26,8 @@ from invenio_oauthclient.signals import account_info_received
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.services.users.tasks import reindex_users
 
+from oarepo_oidc_einfra.proxies import synchronization_disabled
+
 perun_log = logging.getLogger("oarepo_oidc_einfra.perun.remote")
 
 
@@ -361,7 +363,13 @@ def account_info_link_perun_groups(
         cast("dict", userinfo_token)
     )
 
-    CommunitySupport.set_user_community_membership(user, aai_community_roles)
+    # disabling synchronization as we already have the latest state from Perun
+    previously_disabled = synchronization_disabled.set(True)
+    try:
+        # setting the user community membership based on the Perun groups
+        CommunitySupport.set_user_community_membership(user, aai_community_roles)
+    finally:
+        synchronization_disabled.reset(previously_disabled)
 
 
 account_info_received.connect(account_info_link_perun_groups)

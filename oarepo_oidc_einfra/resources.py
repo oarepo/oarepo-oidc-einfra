@@ -16,7 +16,7 @@ from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Optional
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-from flask import Blueprint, Flask, current_app, g, redirect, request
+from flask import Blueprint, Flask, current_app, flash, g, redirect, request
 from flask_login import login_required, logout_user
 from flask_login.utils import login_url as make_login_url
 from flask_principal import PermissionDenied
@@ -24,13 +24,16 @@ from flask_resources import Resource, ResourceConfig, route
 from flask_security import current_user
 from invenio_access import Permission, action_factory
 from invenio_access.permissions import system_identity
+from invenio_accounts.models import User
 from invenio_cache.proxies import current_cache
 from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
 from invenio_db import db
+from invenio_i18n import gettext as _
 from invenio_records_resources.resources.errors import PermissionDeniedError
-from invenio_requests.proxies import current_requests_service
-from invenio_requests.records.api import Request
+from invenio_requests.customizations import CommentEventType
+from invenio_requests.proxies import current_events_service, current_requests_service
+from invenio_requests.records.api import Request, RequestEventFormat
 
 from oarepo_oidc_einfra.encryption import decrypt, encrypt
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
@@ -134,21 +137,36 @@ class OIDCEInfraUIResource(Resource):
 
         original_request_user_id = invitation.model.user_id
 
-        found_membership = None
+        # AAI should have created a membership during the synchronization in login process
+        found_membership = Member.model_cls.query.filter(
+            Member.model_cls.user_id == g.identity.id,
+            Member.model_cls.community_id == invitation.model.community_id,
+            Member.model_cls.role == invitation.model.role,
+            Member.model_cls.active.is_(True),
+        ).one_or_none()
+
+        if not found_membership:
+            log.error(
+                "User %s accepted an invitation to community %s, but no membership was found. Request ID: %s, Invitation ID: %s",
+                g.identity.id,
+                invitation.model.community_id,
+                invitation_request.id,
+                invitation.id,
+            )
+            flash(
+                _(
+                    "There was an error processing your invitation to a community. "
+                    "Please log out of the repository, wait a couple of minutes and log in again. "
+                    "If you will not become a member of the community, please contact the support."
+                ),
+                "error",
+            )
+            return redirect("/")
+
         if str(original_request_user_id) != str(g.identity.id):
-            # switch the user to the actual one, as he has just authenticated and
-            # the email address the invitation was sent to is different than the one
-            # that has come from the AAI
-
-            # if the AAI was fast enough, we already have the membership of the user
-            # in the community. Tro to look it up.
-            found_membership = Member.model_cls.query.filter(
-                Member.model_cls.user_id == g.identity.id,
-                Member.model_cls.community_id == invitation.model.community_id,
-                Member.model_cls.role == invitation.model.role,
-            ).one_or_none()
-
-            if found_membership:
+            # the authenticated user's email is different than the one that the invitation was sent to.
+            # we need to store this information in the invitation model as a comment.
+            try:
                 # if the user is already a member of the community, we need to remove
                 # the invitation. At first remove the request id from the invitation
                 # so that we can move it to the found_membership
@@ -156,52 +174,83 @@ class OIDCEInfraUIResource(Resource):
                 db.session.add(invitation.model)
                 db.session.commit()
 
-                # now delete the invitation from db and from the indexer
+                # now delete the invitation (that is, instance of a Member) from db and from the indexer
                 current_communities.service.members.indexer.delete(invitation)
                 invitation.delete(force=True)
 
                 # add the request to the found membership
                 found_membership.request_id = request_id
 
-                # the accept request needs to have the membership inactive, so deactivate
-                # for a while
-                found_membership.active = False
-
+                # commit the found membership with the request id
                 db.session.add(found_membership)
                 db.session.commit()
 
-            else:
-                # no found membership, so just replace the user id in the invitation
-                # with the one that has just authenticated
-                invitation.model.user_id = g.identity.id
-                db.session.add(invitation.model)
-                db.session.commit()
+                # reindex the found membership to have the request id in the index
+                current_communities.service.members.indexer.index(
+                    Member.get_record(found_membership.id)
+                )
 
-            # note: we are not deleting the original user here (even if the current user's
-            # email is different than the one that was used to create the request) as there
-            # might be several requests for different communities for the same user and
-            # deleting the user would prevent accepting the other requests.
+                # add a comment to the found membership
+                actual_user = (
+                    db.session.query(User).filter_by(id=g.identity.id).one_or_none()
+                )
+                if actual_user and actual_user.email:
+                    actual_user_email = actual_user.email
+                else:
+                    actual_user_email = f"unknown email for user id {g.identity.id}"
 
-            # This does not cause any risk, as the user is not enabled in the system.
-            # Later on, we can provide a cleanup task that will remove such obsolete users
+                invitation_user = (
+                    db.session.query(User)
+                    .filter_by(id=original_request_user_id)
+                    .one_or_none()
+                )
 
-        # accept the invitation. This has to be accepted with system_identity, because
-        # the user instance has not been known at the time of the request creation (just the email address)
-        # and the receiver thus had to be the system_identity.
+                if invitation_user and invitation_user.email:
+                    invitation_user_email = invitation_user.email
+                else:
+                    invitation_user_email = (
+                        f"unknown email for user id {original_request_user_id}"
+                    )
+                current_events_service.create(
+                    system_identity,
+                    invitation_request.id,
+                    {
+                        "type": CommentEventType.type_id,
+                        "payload": {
+                            "content": (
+                                "The user accepted the invitation, "
+                                f"but their email address ({actual_user_email}) is different "
+                                f"than the one that the invitation was sent to ({invitation_user_email}). "
+                                "The request has been moved to the existing membership."
+                            ),
+                            "format": RequestEventFormat.HTML.value,
+                        },
+                    },
+                    CommentEventType,
+                )
+            except Exception as e:
+                log.error(
+                    "Error while accepting invitation for user %s: %s",
+                    g.identity.id,
+                    e,
+                )
+                flash(
+                    _(
+                        "There was an error processing your invitation to a community. "
+                        "Please log out of the repository, wait a couple of minutes and log in again. "
+                        "If you will not become a member of the community, please contact the support."
+                    ),
+                    "error",
+                )
+                return redirect("/")
 
-        try:
-            # If the user is not already a member, we need to add them
-            current_requests_service.execute_action(
-                system_identity, request_id, "accept"
-            )
-        except:
-            # if there was an error, it will be resolved in the next synchronization,
-            # so just log it to glitchtip
-            log.error(
-                "Failed to accept the invitation request %s for user %s",
-                request_id,
-                g.identity.id,
-            )
+        # mark the request as accepted. Note: we are not running the accept action
+        # here as we already have the membership created
+        invitation_request.status = "accepted"
+        invitation_request.commit()
+        db.session.commit()
+        current_requests_service.indexer.index(invitation_request)
+
         return redirect("/")
 
     @staticmethod
