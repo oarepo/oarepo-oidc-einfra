@@ -17,13 +17,14 @@ from functools import cached_property
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from flask import current_app
+from flask import current_app, flash
 from invenio_access.permissions import system_identity
 from invenio_communities.communities.records.api import Community
 from invenio_communities.members.errors import AlreadyMemberError
 from invenio_communities.members.records.models import MemberModel
 from invenio_communities.proxies import current_communities
 from invenio_db import db
+from invenio_i18n import gettext as _
 from sqlalchemy import select
 
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
@@ -195,14 +196,13 @@ class CommunitySupport:
             if len(roles) > 1:
                 # get roles and their priorities, 0 is the highest priority
                 community_roles_with_priorities = {
-                    role: idx
+                    role["name"]: idx
                     for idx, role in enumerate(current_app.config["COMMUNITIES_ROLES"])
                 }
                 # sort roles by their priority, highest priority first
                 sorted_roles: list[CommunityRole] = sorted(
                     roles,
                     key=lambda r: community_roles_with_priorities[r.role],
-                    reverse=True,
                 )
                 log.error(
                     "User %s has multiple roles in community %s: %s. Will keep only %s",
@@ -302,24 +302,43 @@ class CommunitySupport:
                 user.id,
                 community_role.community_id,
             )
-            results = current_communities.service.members.search_invitations(
-                system_identity,
-                community_role.community_id,
-                params={"user.id": str(user.id)},
-            )
-            hits = list(results.hits)
-            if len(hits) == 1:
-                log.info("Found existing invitation for user %s, accepting it", user.id)
-                current_communities.service.members.accept_invite(
-                    system_identity, hits[0]["request_id"]
+            user_invitations_to_community = (
+                db.session.query(MemberModel)
+                .filter(
+                    MemberModel.user_id == user.id,
+                    MemberModel.community_id == community_role.community_id,
                 )
+                .all()
+            )
+            if len(user_invitations_to_community) == 1:
+                if not user_invitations_to_community[0].active:
+                    log.info(
+                        "Found existing invitation for user %s, accepting it", user.id
+                    )
+                    current_communities.service.members.accept_invite(
+                        system_identity, user_invitations_to_community[0].request_id
+                    )
+                else:
+                    log.info(
+                        "User %s is already a member of community %s, no action needed",
+                        user.id,
+                        community_role.community_id,
+                    )
             else:
                 log.error(
                     "User %s is already a member of community %s, but no unique invitation found. "
                     "Hits: %s",
                     user.id,
                     community_role.community_id,
-                    hits,
+                    user_invitations_to_community,
+                )
+                flash(
+                    _(
+                        "We could not add you to the community at this time. "
+                        "Please log out of the repository, wait a few minutes and log in again. "
+                        "If you will not become a member of the community, please contact the support."
+                    ),
+                    "error",
                 )
 
     @classmethod
@@ -332,4 +351,14 @@ class CommunitySupport:
         """
         data = {"members": [{"type": "user", "id": str(user.id)}]}
         log.info("Removing user %s from community %s", user.id, community_id)
-        current_communities.service.members.delete(system_identity, community_id, data)
+        try:
+            current_communities.service.members.delete(
+                system_identity, community_id, data
+            )
+        except Exception as e:
+            log.error(
+                "Failed to remove user %s from community %s: %s",
+                user.id,
+                community_id,
+                e,
+            )
