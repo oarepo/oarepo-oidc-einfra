@@ -24,7 +24,7 @@ from invenio_users_resources.proxies import current_users_service
 from marshmallow.exceptions import ValidationError
 from oarepo_runtime.i18n import lazy_gettext as _
 
-from oarepo_oidc_einfra.proxies import current_einfra_oidc
+from oarepo_oidc_einfra.proxies import current_einfra_oidc, synchronization_disabled
 from oarepo_oidc_einfra.services.requests.invitation import AAICommunityInvitation
 
 
@@ -74,6 +74,10 @@ class AAIInvitationComponent(ServiceComponent):
         :param message:         message to be sent to the member
         :param kwargs:          additional arguments (not used)
         """
+        if synchronization_disabled.get():
+            # synchronization is disabled, do not create an invitation
+            return
+
         member = record
 
         if member.get("type") != "email":
@@ -150,6 +154,10 @@ class AAIInvitationComponent(ServiceComponent):
         :param community:       community record in which the member is being updated
         :param kwargs:          additional arguments (not used)
         """
+        if synchronization_disabled.get():
+            # synchronization is disabled, do not create an invitation
+            return
+
         from oarepo_oidc_einfra.tasks import change_aai_role
 
         if not record.user_id:
@@ -185,6 +193,10 @@ class AAIInvitationComponent(ServiceComponent):
         :param community:       community record from which the member is being removed
         :param kwargs:          additional arguments (not used)
         """
+        if synchronization_disabled.get():
+            # synchronization is disabled, do not create an invitation
+            return
+
         from oarepo_oidc_einfra.tasks import remove_aai_user_from_community
 
         if not record.user_id:
