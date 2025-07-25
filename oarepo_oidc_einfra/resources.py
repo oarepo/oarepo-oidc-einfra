@@ -311,8 +311,8 @@ class OIDCEInfraAPIResource(Resource):
     def upload_dump(self) -> tuple[dict, int]:
         """Upload a dump of the EInfra data.
 
-        The dump will be uploaded to the configured location (EINFRA_DUMP_DATA_URL inside config)
-        and then processed by a celery synchronization task.
+        The dump will be uploaded to the configured location and then processed
+        by a celery synchronization task.
 
         The caller must have the permission to upload the dump (upload-oidc-einfra-dump action
         that can be assigned via invenio access commandline tool).

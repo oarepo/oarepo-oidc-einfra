@@ -23,9 +23,6 @@ EINFRA_ENTITLEMENT_NAMESPACES = {"geant"}
 EINFRA_ENTITLEMENT_PREFIX = "cesnet.cz"
 """Parts of the entitlement URN name that represent communities."""
 
-EINFRA_DUMP_DATA_URL = "s3://einfra-dump-bucket"
-"""A place where the e-infra dump data will be stored when uploaded."""
-
 EINFRA_API_URL = "https://perun-api.e-infra.cz"
 """URL of the E-INFRA Perun API."""
 

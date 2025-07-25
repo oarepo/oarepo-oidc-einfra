@@ -13,19 +13,21 @@ import hashlib
 import json
 import logging
 from collections.abc import Iterable
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from io import BytesIO
 from itertools import chain, islice
 from typing import TYPE_CHECKING, Literal
 
 from celery import shared_task
 from flask import current_app, url_for
-from invenio_accounts.models import User
+from flask_security.datastore import UserDatastore
+from invenio_accounts.models import User, UserIdentity
 from invenio_cache.proxies import current_cache
 from invenio_communities.communities.records.api import Community
 from invenio_communities.members.records.api import Member
 from invenio_db import db
 from invenio_requests.records.api import Request
+from werkzeug.local import LocalProxy
 
 from oarepo_oidc_einfra.communities import CommunityRole, CommunitySupport
 from oarepo_oidc_einfra.encryption import encrypt
@@ -71,6 +73,7 @@ def synchronize_community_to_perun(community_id: str) -> None:
     """
     community: Community = Community.pid.resolve(community_id)  # type: ignore
     slug = community.slug
+    log.info("Synchronizing community %s to Perun", slug)
     roles = current_app.config["COMMUNITIES_ROLES"]
 
     api = current_einfra_oidc.perun_api()
@@ -153,15 +156,51 @@ def map_community_or_role(
 @shared_task
 def synchronize_all_communities_to_perun() -> None:
     """Check and repair community mapping within perun."""
+    log.info("Synchronizing all communities to Perun")
     for community_model in Community.model_cls.query.all():
         synchronize_community_to_perun(str(community_model.id))
+
+
+def get_latest_perun_dump_path() -> str:
+    """Get the path to the latest perun dump file in the S3 bucket."""
+    # locate the last dump in the s3
+    client = current_einfra_oidc.dump_boto3_client
+
+    all_keys: list[tuple[str, datetime]] = []
+
+    continuation_token = None
+    while True:
+        kwargs = {"Bucket": current_einfra_oidc.dump_s3_bucket}
+        if continuation_token:
+            kwargs["ContinuationToken"] = continuation_token
+        response = client.list_objects_v2(**kwargs)
+
+        for obj in response.get("Contents", []):
+            if obj["Key"].endswith(".json"):
+                all_keys.append((obj["Key"], obj["LastModified"]))
+
+        if "NextContinuationToken" not in response:
+            break
+        continuation_token = response["NextContinuationToken"]
+
+    if not all_keys:
+        raise ValueError("No perun dump files found in the S3 bucket.")
+
+    last_dump_path, _max_timestamp = max(all_keys, key=lambda x: x[1])
+
+    log.info(
+        "Last perun dump is at path %s with timestamp %s",
+        last_dump_path,
+        _max_timestamp,
+    )
+    return last_dump_path
 
 
 @shared_task
 @mutex("EINFRA_SYNC_MUTEX")
 def update_from_perun_dump(
-    dump_path: str,
-    checksum: str | None,
+    dump_path: str | None = None,
+    checksum: str | None = None,
     fix_communities_in_perun: bool = True,
     check_dump_in_cache: bool = True,
 ) -> None:
@@ -178,10 +217,24 @@ def update_from_perun_dump(
     :param fix_communities_in_perun     if some local communities were not propagated to perun, propagate them
     :param check_dump_in_cache:    if the dump path is already in the cache, do not process it again
     """
+    log.info(
+        "Updating from perun dump %s with checksum %s",
+        dump_path,
+        checksum,
+    )
+    if not dump_path:
+        dump_path = get_latest_perun_dump_path()
+        log.info("Using dump path %s", dump_path)
+
     if check_dump_in_cache:
         cache_dump_path = current_cache.cache.get("EINFRA_LAST_DUMP_PATH")
         if cache_dump_path and cache_dump_path != dump_path:
             # already have a new dump path, no need to process this one
+            log.info(
+                "Should process file %s from cache, but the dump path "
+                "has already changed, so skipping processing.",
+                dump_path,
+            )
             return
     client = current_einfra_oidc.dump_boto3_client
 
@@ -384,6 +437,13 @@ def create_aai_invitation(request_id: str) -> dict | None:
     else:
         raise ValueError("AAI Invitation Request does not have a topic.")
 
+    log.info(
+        "Creating AAI invitation for user %s, community %s, role %s",
+        invitation.model.user_id,
+        topic.slug,
+        invitation_role,
+    )
+
     capability = get_perun_capability_from_invenio_role(topic.slug, invitation_role)
     resource = perun_api.get_resource_by_capability(
         vo_id=current_einfra_oidc.repository_vo_id,
@@ -462,6 +522,12 @@ def change_aai_role(community_slug: str, user_id: int, new_role: str) -> None:
     :param user_id:         user id     (internal)
     :param new_role:        new role name
     """
+    log.info(
+        "Changing AAI role for user %s in community %s to %s",
+        user_id,
+        community_slug,
+        new_role,
+    )
     remove_aai_user_from_community(community_slug, user_id)
     add_aai_role(community_slug, user_id, new_role)
 
@@ -473,6 +539,11 @@ def remove_aai_user_from_community(community_slug: str, user_id: int) -> None:
     :param community_slug:  community slug
     :param user_id:         user id
     """
+    log.info(
+        "Removing AAI user %s from community %s",
+        user_id,
+        community_slug,
+    )
     for role in CommunitySupport().role_names:
         aai_group_op("remove_user_from_group", community_slug, user_id, role)
 
@@ -485,6 +556,12 @@ def add_aai_role(community_slug: str, user_id: int, role: str) -> None:
     :param user_id:         user id
     :param role:            role name
     """
+    log.info(
+        "Adding AAI user %s to community %s with role %s",
+        user_id,
+        community_slug,
+        role,
+    )
     aai_group_op("add_user_to_group", community_slug, user_id, role)
 
 
@@ -542,3 +619,77 @@ def aai_group_op(
             )
         except:
             log.error(f"Error while performing {op} on group {group} for user {user}")
+
+
+@shared_task
+def add_einfra_user_task(email: str, einfra_id: str) -> None:
+    """Add a user to the system if it does not exist and link it with the EInfra identity."""
+    log.info(
+        "Adding EInfra user with email %s and EInfra ID %s",
+        email,
+        einfra_id,
+    )
+    _datastore: UserDatastore = LocalProxy(  # type: ignore
+        lambda: current_app.extensions["security"].datastore
+    )
+
+    email = email.lower()
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        kwargs = {
+            "email": email,
+            "password": None,
+            "active": True,
+            "confirmed_at": datetime.now(UTC),
+        }
+        _datastore.create_user(**kwargs)
+        db.session.commit()  # type: ignore
+
+        user = User.query.filter_by(email=email).one()
+
+    identity = UserIdentity.query.filter_by(
+        method="e-infra", id=einfra_id, id_user=user.id
+    ).first()
+    if not identity:
+        UserIdentity.create(
+            user=user,
+            method="e-infra",
+            external_id=einfra_id,
+        )
+        db.session.commit()  # type: ignore
+
+
+@shared_task
+def import_perun_users_from_dump(dump_path: str | None = None) -> None:
+    """Import users from the perun dump file.
+
+    :param dump_path:  path to the perun dump file
+    """
+    log.info("Importing users from perun dump %s", dump_path)
+
+    if not dump_path:
+        dump_path = get_latest_perun_dump_path()
+        log.info("Using dump path %s", dump_path)
+
+    client = current_einfra_oidc.dump_boto3_client
+
+    with BytesIO() as obj:
+        client.download_fileobj(
+            Bucket=current_einfra_oidc.dump_s3_bucket,
+            Key=dump_path,
+            Fileobj=obj,
+        )
+        obj.seek(0)
+        data = json.loads(obj.getvalue().decode("utf-8"))
+
+    for user_data in data["users"].values():
+        einfra_id = user_data["attributes"].get(
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
+        )
+        email = user_data["attributes"].get(
+            "urn:perun:user:attribute-def:def:preferredMail"
+        )
+        if not email or not einfra_id:
+            continue
+        print("Importing user", email, einfra_id)
+        add_einfra_user_task(email, einfra_id)
