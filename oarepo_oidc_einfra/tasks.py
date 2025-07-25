@@ -625,7 +625,7 @@ def aai_group_op(
 def add_einfra_user_task(email: str, einfra_id: str) -> None:
     """Add a user to the system if it does not exist and link it with the EInfra identity."""
     log.info(
-        "Adding EInfra user with email %s and EInfra ID %s",
+        "Checking EInfra user with email %s and EInfra ID %s",
         email,
         einfra_id,
     )
@@ -646,6 +646,7 @@ def add_einfra_user_task(email: str, einfra_id: str) -> None:
         db.session.commit()  # type: ignore
 
         user = User.query.filter_by(email=email).one()
+        log.info("    Created new user %s with email %s", user, email)
 
     identity = UserIdentity.query.filter_by(
         method="e-infra", id=einfra_id, id_user=user.id
@@ -657,6 +658,11 @@ def add_einfra_user_task(email: str, einfra_id: str) -> None:
             external_id=einfra_id,
         )
         db.session.commit()  # type: ignore
+        log.info(
+            "    Created new identity for user %s with EInfra ID %s",
+            user,
+            einfra_id,
+        )
 
 
 @shared_task
@@ -691,5 +697,4 @@ def import_perun_users_from_dump(dump_path: str | None = None) -> None:
         )
         if not email or not einfra_id:
             continue
-        log.info("Importing user %s with EInfra ID %s", email, einfra_id)
         add_einfra_user_task(email, einfra_id)
