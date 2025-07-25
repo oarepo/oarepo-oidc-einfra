@@ -7,34 +7,24 @@
 #
 """EInfra terminal commands."""
 
-import json
-import logging
-from datetime import UTC, datetime
-from io import BytesIO
-from typing import TYPE_CHECKING
 
 import click
-from flask import current_app
 from flask.cli import with_appcontext
 from invenio_access.permissions import system_identity
-from invenio_accounts.models import User, UserIdentity
+from invenio_accounts.models import User
 from invenio_communities.communities.records.models import CommunityMetadata
 from invenio_communities.members.records.models import MemberModel
 from invenio_communities.proxies import current_communities
-from invenio_db import db
-from werkzeug.local import LocalProxy
 
 from oarepo_oidc_einfra.mutex import CacheMutex
-from oarepo_oidc_einfra.proxies import current_einfra_oidc
 from oarepo_oidc_einfra.resources import store_dump
 from oarepo_oidc_einfra.tasks import (
+    add_einfra_user_task,
     create_aai_invitation,
+    import_perun_users_from_dump,
     synchronize_community_to_perun,
     update_from_perun_dump,
 )
-
-if TYPE_CHECKING:
-    from flask_security.datastore import UserDatastore
 
 
 @click.group()
@@ -42,55 +32,26 @@ def einfra() -> None:
     """EInfra commands."""
 
 
-@einfra.command("upload_dump")
-@click.argument("dump_file")
+@einfra.command("update_membership")
+@click.argument("dump_file", required=False)
 @with_appcontext
-def upload_dump(dump_file: str) -> None:
+def update_membership_from_file(dump_file: str | None) -> None:
     """Upload a dump file to s3 and process it.
+
+    Note: this command does not create new users, it only updates existing ones.
 
     :param dump_file: Path to the dump file on the local filesystem to import.
     """
-    click.echo(f"Importing dump file {dump_file}")
+    if dump_file:
+        click.echo(f"Importing dump file {dump_file}")
 
-    with open(dump_file, "rb") as f:
-        path, checksum = store_dump(f.read())
-
-    update_from_perun_dump.delay(path, checksum)
-
-
-@einfra.command("update_from_dump")
-@click.argument("dump-path")
-@click.option("--on-background/--on-foreground", default=False)
-@click.option("--fix-communities-in-perun/--no-fix-communities-in-perun", default=True)
-@click.option("--checksum", default=None)
-@with_appcontext
-def update_from_dump(
-    dump_path: str,
-    on_background: bool,
-    fix_communities_in_perun: bool,
-    checksum: str | None = None,
-) -> None:
-    """Update the data from the last imported dump.
-
-    :param dump_name: Name of the dump to update from.
-    :param on_background: Whether to run the task in the background.
-    :param fix_communities_in_perun: Whether to fix communities in Perun.
-    """
-    # set python logger to show info from PerunSynchronizationTask
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger("PerunSynchronizationTask")
-    logger.setLevel(logging.INFO)
-
-    if on_background:
-        update_from_perun_dump.delay(
-            dump_path, fix_communities_in_perun=fix_communities_in_perun
-        )
+        with open(dump_file, "rb") as f:
+            path, checksum = store_dump(f.read())
     else:
-        update_from_perun_dump(
-            dump_path=dump_path,
-            checksum=checksum,
-            fix_communities_in_perun=fix_communities_in_perun,
-        )
+        path = None
+        checksum = None
+
+    update_from_perun_dump(path, checksum)
 
 
 @einfra.command("add_einfra_user")
@@ -99,7 +60,7 @@ def update_from_dump(
 @with_appcontext
 def add_einfra_user(email: str, einfra_id: str) -> None:
     """Add a user to the system if it does not exist and link it with the EInfra identity."""
-    _add_einfra_user(email, einfra_id)
+    add_einfra_user_task(email, einfra_id)
 
 
 @einfra.command("clear_import_mutex")
@@ -109,70 +70,18 @@ def clear_import_mutex() -> None:
     CacheMutex("EINFRA_SYNC_MUTEX").force_clear()
 
 
-def _add_einfra_user(email: str, einfra_id: str) -> None:
-    """Add a user to the system if it does not exist and link it with the EInfra identity."""
-    _datastore: UserDatastore = LocalProxy(  # type: ignore
-        lambda: current_app.extensions["security"].datastore
-    )
-
-    email = email.lower()
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        kwargs = {
-            "email": email,
-            "password": None,
-            "active": True,
-            "confirmed_at": datetime.now(UTC),
-        }
-        _datastore.create_user(**kwargs)
-        db.session.commit()  # type: ignore
-
-        user = User.query.filter_by(email=email).one()
-
-    identity = UserIdentity.query.filter_by(
-        method="e-infra", id=einfra_id, id_user=user.id
-    ).first()
-    if not identity:
-        UserIdentity.create(
-            user=user,
-            method="e-infra",
-            external_id=einfra_id,
-        )
-        db.session.commit()  # type: ignore
-
-
-@einfra.command("import_dump_users")
-@click.argument("dump_path")
+@einfra.command("import_users")
+@click.argument("dump_path", required=False)
 @with_appcontext
-def import_dump_users(dump_path: str) -> None:
+def import_perun_users(dump_path: str | None) -> None:
     """Import users from a dump file.
 
     :param dump_path: Path to the dump file in the S3 bucket.
+    If not provided, it will use the last dump path.
 
     Note: this cli command is usually not used in the application, it is here for testing purposes.
     """
-    client = current_einfra_oidc.dump_boto3_client
-
-    with BytesIO() as obj:
-        client.download_fileobj(
-            Bucket=current_einfra_oidc.dump_s3_bucket,
-            Key=dump_path,
-            Fileobj=obj,
-        )
-        obj.seek(0)
-        data = json.loads(obj.getvalue().decode("utf-8"))
-
-    for user_data in data["users"].values():
-        einfra_id = user_data["attributes"].get(
-            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
-        )
-        email = user_data["attributes"].get(
-            "urn:perun:user:attribute-def:def:preferredMail"
-        )
-        if not email or not einfra_id:
-            continue
-        print("Importing user", email, einfra_id)
-        _add_einfra_user(email, einfra_id)
+    import_perun_users_from_dump(dump_path)
 
 
 @einfra.command("synchronize_community")
