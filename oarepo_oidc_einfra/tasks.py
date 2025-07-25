@@ -691,5 +691,5 @@ def import_perun_users_from_dump(dump_path: str | None = None) -> None:
         )
         if not email or not einfra_id:
             continue
-        print("Importing user", email, einfra_id)
+        log.info("Importing user %s with EInfra ID %s", email, einfra_id)
         add_einfra_user_task(email, einfra_id)

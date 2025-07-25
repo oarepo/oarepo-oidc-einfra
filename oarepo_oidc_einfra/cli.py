@@ -35,7 +35,7 @@ def einfra() -> None:
 @einfra.command("update_membership")
 @click.argument("dump_file", required=False)
 @with_appcontext
-def update_membership_from_file(dump_file: str) -> None:
+def update_membership_from_file(dump_file: str | None) -> None:
     """Upload a dump file to s3 and process it.
 
     Note: this command does not create new users, it only updates existing ones.
@@ -73,7 +73,7 @@ def clear_import_mutex() -> None:
 @einfra.command("import_users")
 @click.argument("dump_path", required=False)
 @with_appcontext
-def import_perun_users(dump_path: str) -> None:
+def import_perun_users(dump_path: str | None) -> None:
     """Import users from a dump file.
 
     :param dump_path: Path to the dump file in the S3 bucket.
