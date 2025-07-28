@@ -30,6 +30,8 @@ from oarepo_oidc_einfra.proxies import synchronization_disabled
 
 perun_log = logging.getLogger("oarepo_oidc_einfra.perun.remote")
 
+BACKEND_NAME = "e-infra"
+
 
 def find_locale(locale: str | None) -> str:
     """Find the locale in the list of supported locales.
@@ -210,6 +212,9 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
     :param token: The token value.
     :param resp: The response.
     """
+    if remote.name != BACKEND_NAME:
+        return
+
     decoded_token = jwt.decode(
         resp["id_token"],
         options={"verify_signature": True},
@@ -231,10 +236,10 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
 
         # If there is no user identity for this user and group, create it
         ui = UserIdentity.query.filter_by(
-            user=user, method="e-infra", id=decoded_token["sub"]
+            user=user, method=BACKEND_NAME, id=decoded_token["sub"]
         ).one_or_none()
         if not ui:
-            UserIdentity.create(user, "e-infra", decoded_token["sub"])
+            UserIdentity.create(user, BACKEND_NAME, decoded_token["sub"])
 
         if user.confirmed_at is None:
             # Set the user as confirmed
@@ -259,7 +264,7 @@ def autocreate_user(
     :param response: access response from the remote server
     :param account_info: account info from the remote server
     """
-    if remote.name != "e-infra":
+    if remote.name != BACKEND_NAME:
         return
 
     assert account_info is not None
@@ -344,6 +349,9 @@ def account_info_link_perun_groups(
     :param account_info: The account info of the current user
     :param kwargs: Additional arguments (not used)
     """
+    if remote.name != BACKEND_NAME:
+        return
+
     # make the import local to avoud circular imports
     from oarepo_oidc_einfra.communities import CommunitySupport
     from oarepo_oidc_einfra.perun import get_communities_from_userinfo_token
