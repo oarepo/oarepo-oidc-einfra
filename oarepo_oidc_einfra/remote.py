@@ -333,8 +333,14 @@ def autocreate_user(
         assert user_identity.user is not None
 
         user_identity.user.email = email
-        user_identity.user.user_profile = user_profile
-        user_identity.user.preferences = user_preferences
+        user_identity.user.user_profile = {
+            **user_identity.user.user_profile,
+            **user_profile,
+        }
+        user_identity.user.preferences = {
+            **user_identity.user.preferences,
+            **user_preferences,
+        }
 
         commit_and_reindex_user(user_identity.user)
 
