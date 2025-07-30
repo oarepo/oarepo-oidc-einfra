@@ -162,12 +162,22 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
         audience=remote.consumer_key,  # type: ignore
         algorithms=["RS256"],
     )
+
     perun_log.info("Decoded id token: %s", decoded_token)
+
+    # convert hexa@e-infra.cz to e-infra-cz-hexa to be a valid username
+    username_parts = decoded_token["sub"].replace(".", "-").split("@")
+    username = (
+        username_parts[1] + "-" + username_parts[0]
+        if len(username_parts) > 1
+        else decoded_token["sub"]
+    )
 
     return {
         "external_id": decoded_token["sub"],
         "external_method": remote.name,
         "user": {
+            "username": username,
             "email": decoded_token.get("email"),
             "profile": {
                 "full_name": decoded_token.get("name"),
@@ -287,13 +297,16 @@ def autocreate_user(
         "locale": account_info["user"]["profile"].get("locale", None),
         "timezone": account_info["user"]["profile"].get("timezone", None),
     }
+    username = account_info["user"]["username"]
+
     user_preferences = {k: v for k, v in user_preferences.items() if v is not None}
 
     user_identity = UserIdentity.query.filter_by(id=id, method=method).one_or_none()
     if not user_identity:
-        user = User.query.filter(User.email == email).one_or_none()
+        user = User.query.filter(User.username == username).one_or_none()
         if not user:
             user = User(
+                username=username,
                 email=email,
                 active=True,
                 user_profile=user_profile,
