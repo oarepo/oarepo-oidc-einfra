@@ -11,9 +11,9 @@ import logging
 import os
 import shutil
 import sys
+from collections.abc import Generator
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Generator
 
 import pytest
 import yaml
@@ -42,7 +42,7 @@ def app_config(app_config):
     app_config["EINFRA_COMMUNITY_SYNCHRONIZATION"] = False
     app_config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"] = False
 
-    app_config["EINFRA_API_URL"] = "https://perun-api.acc.aai.e-infra.cz"
+    app_config["EINFRA_API_URL"] = "https://perun-api.acc.aai.e-infra.cz/krb"
     app_config["COMMUNITIES_ROLES"] = [
         dict(
             name="curator",

@@ -96,7 +96,7 @@ class PerunLowLevelAPI:
             payload,
         )
         resp = self._session.post(
-            f"{self._base_url}/krb/rpc/json/{manager}/{method}",
+            f"{self._base_url}/rpc/json/{manager}/{method}",
             auth=self._auth,
             json=payload,
         )
