@@ -304,6 +304,9 @@ def autocreate_user(
     user_identity = UserIdentity.query.filter_by(id=id, method=method).one_or_none()
     if not user_identity:
         user = User.query.filter(User.username == username).one_or_none()
+        # if not user, try to find user by the email address (invenio has unique on that as well)
+        if not user:
+            user = User.query.filter(User.email == email).one_or_none()
         if not user:
             user = User(
                 username=username,
@@ -325,6 +328,7 @@ def autocreate_user(
 
             commit_and_reindex_user(user)
 
+        # connect the user and identity
         with db.session.begin_nested():  # type: ignore
             UserIdentity.create(user=user, method=method, external_id=id)
             db.session.commit()  # type: ignore
