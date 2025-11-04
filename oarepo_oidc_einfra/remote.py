@@ -58,7 +58,7 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
         title: str = _("E-Infra AAI"),
         description: str = _("E-Infra authentication and authorization service."),
         base_url: str = "https://login.e-infra.cz/oidc/",
-        app_key: str = BACKEND_NAME,
+        app_key: str = "EINFRA",
         icon: str | None = None,
         access_token_url: str | None = None,
         authorize_url: str | None = None,
