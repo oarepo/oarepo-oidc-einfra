@@ -20,6 +20,7 @@ include .tx/config
 prune docs/_build
 recursive-include .github/workflows *.yml
 recursive-include oarepo_oidc_einfra/translations *.po *.pot *.mo
+recursive-include oarepo_oidc_einfra *.html
 include *.rst
 include *.sh
 include *.txt
