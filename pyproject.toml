@@ -17,8 +17,6 @@ dependencies = [
     "tqdm",
 ]
 
-[project.urls]
-Homepage = "https://github.com/oarepo/oarepo-oidc-einfra"
 
 [project.optional-dependencies]
 dev = [
