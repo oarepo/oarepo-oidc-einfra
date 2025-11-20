@@ -8,6 +8,7 @@ dynamic = ["version"]
 description = "E-infra OIDC Auth backend for OARepo"
 readme = "README.md"
 license = "MIT"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "oarepo[rdm,tests]>=14,<15",
     "oarepo-runtime",
@@ -15,6 +16,9 @@ dependencies = [
     "urnparse",
     "tqdm",
 ]
+
+[project.urls]
+Homepage = "https://github.com/oarepo/oarepo-oidc-einfra"
 
 [project.optional-dependencies]
 dev = [
