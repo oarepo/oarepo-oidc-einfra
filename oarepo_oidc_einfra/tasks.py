@@ -12,15 +12,13 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from collections.abc import Iterable
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from io import BytesIO
 from itertools import chain, islice
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, cast
 
 from celery import shared_task
 from flask import current_app, url_for
-from flask_security.datastore import UserDatastore
 from invenio_accounts.models import User, UserIdentity
 from invenio_cache.proxies import current_cache
 from invenio_communities.communities.records.api import Community
@@ -41,9 +39,14 @@ from oarepo_oidc_einfra.perun.mapping import (
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from uuid import UUID
 
+    from flask_security.datastore import UserDatastore
+    from invenio_communities.members.records.models import MemberModel
+
     from oarepo_oidc_einfra.perun import PerunLowLevelAPI
+
 
 log = logging.getLogger("PerunSynchronizationTask")
 
@@ -71,20 +74,19 @@ def synchronize_community_to_perun(community_id: str) -> None:
       +-- Community:{slug}    - capab. res:communities:{slug}, assigned community group
         +-- Community:{slug}:{role_name}  - capab. res:communities:{slug}:role:{role_name}, assigned role group
     """
-    community: Community = Community.pid.resolve(community_id)  # type: ignore
+    community = cast("Community", Community.pid.resolve(community_id))
     slug = community.slug
     log.info("Synchronizing community %s to Perun", slug)
     roles = current_app.config["COMMUNITIES_ROLES"]
 
     api = current_einfra_oidc.perun_api()
 
-    group, resource = map_community_or_role(
+    group, _resource = map_community_or_role(
         api,
         parent_id=current_einfra_oidc.communities_group_id,
         parent_vo=current_einfra_oidc.repository_vo_id,
         name=f"Community {slug}",
-        description=community.metadata.get("description")  # type: ignore
-        or f"Group for community {slug}",
+        description=community.metadata.get("description") or f"Group for community {slug}",
         resource_name=f"Community:{slug}",
         resource_description=f"Resource for community {slug}",
         resource_capabilities=[f"res:communities:{slug}"],
@@ -107,7 +109,7 @@ def synchronize_community_to_perun(community_id: str) -> None:
         )
 
 
-def map_community_or_role(
+def map_community_or_role(  # noqa PLR0913 too-many-arguments used to be consistent with the rest of the code
     api: PerunLowLevelAPI,
     *,
     parent_id: int,
@@ -132,7 +134,7 @@ def map_community_or_role(
     :return:        (group json, resource json)
     """
     # generate group for community
-    group, group_created, admin_added = api.create_group(
+    group, _group_created, _admin_added = api.create_group(
         name=name,
         description=description,
         parent_group_id=parent_id,
@@ -140,7 +142,7 @@ def map_community_or_role(
     )
 
     # add the synchronization resource
-    resource, resource_created = api.create_resource_with_group_and_capabilities(
+    resource, _resource_created = api.create_resource_with_group_and_capabilities(
         vo_id=current_einfra_oidc.repository_vo_id,
         facility_id=current_einfra_oidc.repository_facility_id,
         group_id=group["id"],
@@ -157,7 +159,7 @@ def map_community_or_role(
 def synchronize_all_communities_to_perun() -> None:
     """Check and repair community mapping within perun."""
     log.info("Synchronizing all communities to Perun")
-    for community_model in Community.model_cls.query.all():
+    for community_model in db.session.query(Community.model_cls).all():
         synchronize_community_to_perun(str(community_model.id))
 
 
@@ -175,9 +177,9 @@ def get_latest_perun_dump_path() -> str:
             kwargs["ContinuationToken"] = continuation_token
         response = client.list_objects_v2(**kwargs)
 
-        for obj in response.get("Contents", []):
-            if obj["Key"].endswith(".json"):
-                all_keys.append((obj["Key"], obj["LastModified"]))
+        all_keys.extend(
+            (obj["Key"], obj["LastModified"]) for obj in response.get("Contents", []) if obj["Key"].endswith(".json")
+        )
 
         if "NextContinuationToken" not in response:
             break
@@ -231,8 +233,7 @@ def update_from_perun_dump(
         if cache_dump_path and cache_dump_path != dump_path:
             # already have a new dump path, no need to process this one
             log.info(
-                "Should process file %s from cache, but the dump path "
-                "has already changed, so skipping processing.",
+                "Should process file %s from cache, but the dump path has already changed, so skipping processing.",
                 dump_path,
             )
             return
@@ -249,20 +250,14 @@ def update_from_perun_dump(
         if checksum is not None:
             value_checksum = hashlib.sha256(value).hexdigest()
             if value_checksum != checksum:
-                log.error(
-                    "Checksum of the downloaded dump does not match the expected checksum."
-                )
+                log.error("Checksum of the downloaded dump does not match the expected checksum.")
                 return
         data = json.loads(value.decode("utf-8"))
     community_support = CommunitySupport()
-    dump = PerunDumpData(
-        data, community_support.slug_to_id, community_support.role_names
-    )
+    dump = PerunDumpData(data, community_support.slug_to_id, community_support.role_names)
 
     if fix_communities_in_perun:
-        synchronize_communities_to_perun(
-            community_support.all_community_roles, dump.aai_community_roles
-        )
+        synchronize_communities_to_perun(community_support.all_community_roles, dump.aai_community_roles)
 
     synchronize_users_from_perun(dump, community_support)
 
@@ -278,13 +273,10 @@ def synchronize_communities_to_perun(
     """
     if repository_community_roles - aai_community_roles:
         log.info(
-            "Some community roles are not mapped "
-            f"to any resource: {repository_community_roles - aai_community_roles}"
+            "Some community roles are not mapped to any resource: %s",
+            repository_community_roles - aai_community_roles,
         )
-        communities_not_in_perun = {
-            str(cr.community_id)
-            for cr in repository_community_roles - aai_community_roles
-        }
+        communities_not_in_perun = {str(cr.community_id) for cr in repository_community_roles - aai_community_roles}
         for community_id in communities_not_in_perun:
             synchronize_community_to_perun(community_id)
 
@@ -300,9 +292,7 @@ def chunks[T](iterable: Iterable[T], size: int = 10) -> Iterable[chain[T]]:
         yield chain([first], islice(iterator, size - 1))
 
 
-def synchronize_users_from_perun(
-    dump: PerunDumpData, community_support: CommunitySupport
-) -> None:
+def synchronize_users_from_perun(dump: PerunDumpData, community_support: CommunitySupport) -> None:
     """Synchronize users from perun dump to the database.
 
     :param dump:                 perun dump data
@@ -321,41 +311,27 @@ def synchronize_users_from_perun(
             continue
 
         # bulk get users from the database
-        local_users = (
-            db.session.query(User)  # type: ignore
-            .filter(User.id.in_(local_user_id_to_einfra_id.keys()))
-            .all()
-        )
+        local_users = db.session.query(User).filter(User.id.in_(local_user_id_to_einfra_id.keys())).all()
 
         # bulk get communities for the users
-        local_community_roles_by_user_id = (
-            community_support.get_user_list_community_membership(
-                local_user_id_to_einfra_id.keys()
-            )
+        local_community_roles_by_user_id = community_support.get_user_list_community_membership(
+            local_user_id_to_einfra_id.keys()
         )
 
         for user in local_users:
             aai_user = aai_user_chunk_by_einfra_id[local_user_id_to_einfra_id[user.id]]
             log.info("Setting user %s with roles %s", user, aai_user.roles)
-            update_user_metadata(
-                user, aai_user.full_name, aai_user.email, aai_user.organization
-            )
+            update_user_metadata(user, aai_user.full_name, aai_user.email, aai_user.organization)
 
-            new_community_roles = filter_community_roles(
-                community_support, aai_user.roles
-            )
+            new_community_roles = filter_community_roles(community_support, aai_user.roles)
 
             community_support.set_user_community_membership(
                 user,
                 new_community_roles=new_community_roles,
-                current_community_roles=local_community_roles_by_user_id.get(
-                    user.id, set()
-                ),
+                current_community_roles=local_community_roles_by_user_id.get(user.id, set()),
             )
 
-        for unknown_user in set(aai_user_chunk_by_einfra_id.keys()) - set(
-            local_user_id_to_einfra_id.values()
-        ):
+        for unknown_user in set(aai_user_chunk_by_einfra_id.keys()) - set(local_user_id_to_einfra_id.values()):
             log.info(
                 "User with einfra id %s not yet found in the local database",
                 unknown_user,
@@ -381,17 +357,13 @@ def filter_community_roles(
     for community_role in aai_roles:
         if community_role.community_id not in new_community_roles or (
             community_support.role_priority(community_role.role)
-            > community_support.role_priority(
-                new_community_roles[community_role.community_id].role
-            )
+            > community_support.role_priority(new_community_roles[community_role.community_id].role)
         ):
             new_community_roles[community_role.community_id] = community_role
     return set(new_community_roles.values())
 
 
-def update_user_metadata(
-    user: User, full_name: str, email: str, organization: str
-) -> None:
+def update_user_metadata(user: User, full_name: str, email: str, organization: str) -> None:
     """Update user metadata in the database.
 
     If the data is the same, nothing is updated.
@@ -402,11 +374,12 @@ def update_user_metadata(
     :param organization: organization
     """
     save = False
-    user_profile = user.user_profile
-    if full_name != user.user_profile.get("full_name"):
+    original_user_profile = user.user_profile or {}
+    user_profile = user.user_profile or {}
+    if full_name != original_user_profile.get("full_name"):
         user_profile["full_name"] = full_name
         save = True
-    if organization != user.user_profile.get("affiliations"):
+    if organization != original_user_profile.get("affiliations"):
         user_profile["affiliations"] = organization
         save = True
     email = email.lower()
@@ -414,9 +387,9 @@ def update_user_metadata(
         user.email = email
         save = True
     if save:
-        user.user_profile = {**user_profile}
-        db.session.add(user)  # type: ignore - we might need to install sqlalchemy[mypy]
-        db.session.commit()  # type: ignore
+        user.user_profile = {**(user_profile or {})}
+        db.session.add(user)
+        db.session.commit()
 
 
 @shared_task
@@ -430,16 +403,17 @@ def create_aai_invitation(request_id: str) -> dict | None:
 
     request = Request.get_record(request_id)
     invitation = Member.get_member_by_request(request_id)
-    invitation_role: str = invitation.role  # type: ignore
+    invitation_model: MemberModel = cast("MemberModel", invitation.model)
+    invitation_role: str = invitation.role
 
     if request.topic:
-        topic = request.topic.resolve()  # type: ignore
+        topic = request.topic.resolve()
     else:
         raise ValueError("AAI Invitation Request does not have a topic.")
 
     log.info(
         "Creating AAI invitation for user %s, community %s, role %s",
-        invitation.model.user_id,
+        invitation_model.user_id,
         topic.slug,
         invitation_role,
     )
@@ -451,26 +425,21 @@ def create_aai_invitation(request_id: str) -> dict | None:
         capability=capability,
     )
     if not resource:
-        raise ValueError(
-            f"Resource for capability {capability} not found inside Perun."
-        )
+        raise ValueError(f"Resource for capability {capability} not found inside Perun.")
     groups = perun_api.get_resource_groups(resource_id=resource["id"])
-    groups = [
-        group
-        for group in groups
-        if group["voId"] == current_einfra_oidc.repository_vo_id
-    ]
+    groups = [group for group in groups if group["voId"] == current_einfra_oidc.repository_vo_id]
 
     if not groups:
         log.error(
-            f"Resource for capability {capability} not found inside Perun, "
-            f"so can not send invitation to its associated group."
+            "Resource for capability %s not found inside Perun, so can not send invitation to its associated group.",
+            capability,
         )
         return None
     if len(groups) > 1:
         log.error(
-            f"More than one group for capability {capability} found inside Perun, "
-            f"so can not send invitation to its associated group."
+            "More than one group for capability %s found inside Perun, "
+            "so can not send invitation to its associated group.",
+            capability,
         )
         return None
 
@@ -484,20 +453,20 @@ def create_aai_invitation(request_id: str) -> dict | None:
     if redirect_url.startswith("http://"):
         redirect_url = redirect_url.replace("http://", "https://", 1)
 
-    if not invitation.model:
+    if not invitation_model:
         raise ValueError(f"Invitation {invitation} does not have a model.")
 
     if request.expires_at is None:
-        expiration_date = date.today() + timedelta(days=7)
+        expiration_date = datetime.now(UTC).date() + timedelta(days=7)
     else:
-        expiration_date = request.expires_at.date()  # type: ignore
+        expiration_date = request.expires_at.date()
 
-    user = User.query.filter_by(id=invitation.model.user_id).one()
+    user = User.query.filter_by(id=invitation_model.user_id).one()
     perun_response = perun_api.send_invitation(
         vo_id=current_einfra_oidc.repository_vo_id,
         group_id=groups[0]["id"],
         email=user.email,
-        fullName=user.user_profile.get("full_name", user.email),
+        full_name=user.user_profile.get("full_name", user.email),
         language=current_einfra_oidc.default_language,
         expiration=expiration_date.isoformat(),
         redirect_url=redirect_url,
@@ -593,8 +562,9 @@ def aai_group_op(
     )
     if resource is None:
         log.error(
-            f"Resource for {community_slug} and role {role} not found inside Perun, "
-            f"so can not remove user from its associated group."
+            "Resource for %s and role %s not found inside Perun, so can not remove user from its associated group.",
+            community_slug,
+            role,
         )
         return
 
@@ -604,8 +574,8 @@ def aai_group_op(
     )
     if user is None:
         log.error(
-            f"User with einfra id {einfra_id} not found inside Perun, "
-            f"so can not remove user from its associated group."
+            "User with einfra id %s not found inside Perun, so can not remove user from its associated group.",
+            einfra_id,
         )
         return
 
@@ -617,8 +587,8 @@ def aai_group_op(
                 user_id=user["id"],
                 group_id=group["id"],
             )
-        except:
-            log.error(f"Error while performing {op} on group {group} for user {user}")
+        except:  # noqa: E722 # we want to log all exceptions
+            log.exception("Error while performing %s on group %s for user %s", op, group, user)
 
 
 @shared_task
@@ -629,9 +599,7 @@ def add_einfra_user_task(email: str, einfra_id: str) -> None:
         email,
         einfra_id,
     )
-    _datastore: UserDatastore = LocalProxy(  # type: ignore
-        lambda: current_app.extensions["security"].datastore
-    )
+    _datastore: UserDatastore = LocalProxy(lambda: current_app.extensions["security"].datastore)  # type: ignore[reportAssignmentType]
 
     email = email.lower()
     user = User.query.filter_by(email=email).first()
@@ -643,21 +611,19 @@ def add_einfra_user_task(email: str, einfra_id: str) -> None:
             "confirmed_at": datetime.now(UTC),
         }
         _datastore.create_user(**kwargs)
-        db.session.commit()  # type: ignore
+        db.session.commit()
 
         user = User.query.filter_by(email=email).one()
         log.info("    Created new user %s with email %s", user, email)
 
-    identity = UserIdentity.query.filter_by(
-        method="e-infra", id=einfra_id, id_user=user.id
-    ).first()
+    identity = UserIdentity.query.filter_by(method="e-infra", id=einfra_id, id_user=user.id).first()
     if not identity:
         UserIdentity.create(
             user=user,
             method="e-infra",
             external_id=einfra_id,
         )
-        db.session.commit()  # type: ignore
+        db.session.commit()
         log.info(
             "    Created new identity for user %s with EInfra ID %s",
             user,
@@ -689,12 +655,8 @@ def import_perun_users_from_dump(dump_path: str | None = None) -> None:
         data = json.loads(obj.getvalue().decode("utf-8"))
 
     for user_data in data["users"].values():
-        einfra_id = user_data["attributes"].get(
-            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
-        )
-        email = user_data["attributes"].get(
-            "urn:perun:user:attribute-def:def:preferredMail"
-        )
+        einfra_id = user_data["attributes"].get("urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent")
+        email = user_data["attributes"].get("urn:perun:user:attribute-def:def:preferredMail")
         if not email or not einfra_id:
             continue
         add_einfra_user_task(email, einfra_id)

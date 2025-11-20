@@ -12,14 +12,19 @@ you need to implement a distributed lock instead of this simple implementation t
 a mutex that works in all cases of disaster scenarios.
 """
 
+from __future__ import annotations
+
 import functools
 import secrets
 import threading
 import time
 from random import random
-from typing import Callable
+from typing import TYPE_CHECKING
 
 from invenio_cache import current_cache
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class CacheMutex:
@@ -72,13 +77,12 @@ class CacheMutex:
 
             # add random to desynchronize
             # (if two celery tasks are running at the same time)
-            wait_time = self.wait_time + self.wait_time * 0.1 * random()
+            wait_time = (
+                self.wait_time + self.wait_time * 0.1 * random()  # noqa S311 simple random is ok here
+            )
             time.sleep(wait_time)
 
-        raise ValueError(
-            f"Could not acquire mutex for {self.tries} times, "
-            f"waiting {self.wait_time} seconds each time"
-        )
+        raise ValueError(f"Could not acquire mutex for {self.tries} times, waiting {self.wait_time} seconds each time")
 
     def __exit__(self, exc_type, exc_value, traceback):  # noqa
         """Releases the mutex."""
@@ -97,9 +101,7 @@ mutex_thread_local = threading.local()
 """make the mutex below reentrant within the same thread"""
 
 
-def mutex(
-    key: str, timeout: float = 3600, tries: int = 10, wait_time: float = 120
-) -> Callable:
+def mutex(key: str, timeout: float = 3600, tries: int = 10, wait_time: float = 120) -> Callable:
     """Create a mutex for a function.
 
     :param key: The key inside cache where the mutex data are stored.

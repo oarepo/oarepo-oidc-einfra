@@ -7,15 +7,22 @@
 #
 """Dump data from the PERUN."""
 
+from __future__ import annotations
+
 import dataclasses
 import logging
 from collections import defaultdict
 from functools import cached_property
-from typing import Dict, Iterable, List, Set
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 from oarepo_oidc_einfra.communities import CommunityRole
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
+
+from .mapping import COMMUNITY_CAPABILITY_PARTS_COUNT
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+    from uuid import UUID
 
 log = logging.getLogger("perun.dump_data")
 
@@ -28,7 +35,7 @@ class AAIUser:
     email: str
     full_name: str
     organization: str
-    roles: Set[CommunityRole]
+    roles: set[CommunityRole]
 
 
 class PerunDumpData:
@@ -37,8 +44,8 @@ class PerunDumpData:
     def __init__(
         self,
         dump_data: dict,
-        community_slug_to_id: Dict[str, UUID],
-        community_role_names: Set[str],
+        community_slug_to_id: dict[str, UUID],
+        community_role_names: set[str],
     ):
         """Create an instance of the data.
 
@@ -51,7 +58,7 @@ class PerunDumpData:
         self.community_role_names = community_role_names
 
     @cached_property
-    def aai_community_roles(self) -> Set[CommunityRole]:
+    def aai_community_roles(self) -> set[CommunityRole]:
         """Return all community roles from the dump.
 
         :return: set of community roles known to perun
@@ -62,7 +69,7 @@ class PerunDumpData:
         return aai_community_roles
 
     @cached_property
-    def resource_to_community_roles(self) -> Dict[str, List[CommunityRole]]:
+    def resource_to_community_roles(self) -> dict[str, list[CommunityRole]]:
         """Returns a mapping of resource id to community roles.
 
         :return:    for each Perun resource, mapping to associated community roles
@@ -71,19 +78,14 @@ class PerunDumpData:
         for r_id, r in self.dump_data["resources"].items():
             # data look like
             # "0003a30a-5512-4ff1-ae1c-b13372041459" : {
-            #   "attributes" : {
+            #   attributes" : {
             #       "urn:perun:resource:attribute-def:def:capabilities" : [
-            #           "res:communities:abc:role:members"
-            #       ]
-            #   }
-            # },
-            capabilities = r.get("attributes", {}).get(
-                current_einfra_oidc.capabilities_attribute_name, []
-            )
+            #           res:communities:abc:role:members"
+            capabilities = r.get("attributes", {}).get(current_einfra_oidc.capabilities_attribute_name, [])
             for capability in capabilities:
                 parts = capability.split(":")
                 if (
-                    len(parts) == 5
+                    len(parts) == COMMUNITY_CAPABILITY_PARTS_COUNT
                     and parts[0] == "res"
                     and parts[1] == "communities"
                     and parts[3] == "role"
@@ -92,15 +94,14 @@ class PerunDumpData:
                     role = parts[4]
                     if community_slug not in self.slug_to_id:
                         log.error(
-                            f"Community from PERUN {community_slug} not found in the repository"
+                            "Community from PERUN %s not found in the repository",
+                            community_slug,
                         )
                         continue
                     if role not in self.community_role_names:
-                        log.error(f"Role from PERUN {role} not found in the repository")
+                        log.error("Role from PERUN %s not found in the repository", role)
                         continue
-                    community_role = CommunityRole(
-                        self.slug_to_id[community_slug], role
-                    )
+                    community_role = CommunityRole(self.slug_to_id[community_slug], role)
                     resources[r_id].append(community_role)
 
         return resources
@@ -114,15 +115,9 @@ class PerunDumpData:
             einfra_id = u["attributes"].get(
                 current_einfra_oidc.einfra_user_id_dump_attribute,
             )
-            full_name = u["attributes"].get(
-                current_einfra_oidc.user_display_name_attribute
-            )
-            organization = u["attributes"].get(
-                current_einfra_oidc.user_organization_attribute
-            )
-            email = u["attributes"].get(
-                current_einfra_oidc.user_preferred_mail_attribute
-            )
+            full_name = u["attributes"].get(current_einfra_oidc.user_display_name_attribute)
+            organization = u["attributes"].get(current_einfra_oidc.user_organization_attribute)
+            email = u["attributes"].get(current_einfra_oidc.user_preferred_mail_attribute)
             yield AAIUser(
                 einfra_id=einfra_id,
                 email=email,
@@ -131,9 +126,7 @@ class PerunDumpData:
                 roles=self._get_roles_for_resources(u.get("allowed_resources", {})),
             )
 
-    def _get_roles_for_resources(
-        self, allowed_resources: Iterable[str]
-    ) -> Set[CommunityRole]:
+    def _get_roles_for_resources(self, allowed_resources: Iterable[str]) -> set[CommunityRole]:
         """Return community roles for an iterable of allowed resources.
 
         :param allowed_resources:       iterable of resource ids

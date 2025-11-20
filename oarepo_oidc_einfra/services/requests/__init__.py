@@ -6,3 +6,5 @@
 # details.
 #
 """AAI backed requests."""
+
+from __future__ import annotations

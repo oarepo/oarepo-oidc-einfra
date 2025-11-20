@@ -6,26 +6,31 @@
 # details.
 #
 """AAI (perun) membership handling."""
-from typing import cast
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, cast, override
 
 from flask import current_app
 from invenio_access.permissions import Identity, system_identity
 from invenio_accounts.models import User
-from invenio_communities.communities.records.api import Community
-from invenio_communities.members.records.api import Member
 from invenio_communities.members.services.service import invite_expires_at
 from invenio_db import db
+from invenio_db.uow import Operation, UnitOfWork
+from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.components.base import ServiceComponent
-from invenio_records_resources.services.uow import Operation, UnitOfWork
 from invenio_requests.customizations.event_types import CommentEventType
 from invenio_requests.proxies import current_events_service, current_requests_service
-from invenio_requests.services.requests.results import RequestItem
 from invenio_users_resources.proxies import current_users_service
 from marshmallow.exceptions import ValidationError
-from oarepo_runtime.i18n import lazy_gettext as _
 
 from oarepo_oidc_einfra.proxies import current_einfra_oidc, synchronization_disabled
 from oarepo_oidc_einfra.services.requests.invitation import AAICommunityInvitation
+
+if TYPE_CHECKING:
+    from invenio_communities.communities.records.api import Community
+    from invenio_communities.members.records.api import Member
+    from invenio_requests.services.requests.results import RequestItem
 
 
 class CreateAAIInvitationOp(Operation):
@@ -38,28 +43,29 @@ class CreateAAIInvitationOp(Operation):
         """
         self.membership_request_id = membership_request_id
 
+    @override
     def on_post_commit(self, uow: UnitOfWork) -> None:
         """Create an invitation in AAI."""
         from oarepo_oidc_einfra.tasks import create_aai_invitation
 
         if current_einfra_oidc.invitation_synchronization_enabled:
-            create_aai_invitation.delay(self.membership_request_id)
+            create_aai_invitation.delay(self.membership_request_id)  # type: ignore[reportFunctionMemberAccess]
 
 
 class AAIInvitationComponent(ServiceComponent):
     """Community AAI component that creates invitations within Perun AAI."""
 
-    def members_invite(
+    def members_invite(  # noqa PLR0913 component api
         self,
         identity: Identity,
         *,
         record: Member,
         community: Community,
-        errors: dict,
+        errors: dict,  # noqa ARG002 component api
         role: str,
         visible: bool,
         message: str,
-        **kwargs: dict,
+        **kwargs: dict,  # noqa ARG002 component api
     ) -> None:
         """Invite a new member to a community.
 
@@ -93,9 +99,7 @@ class AAIInvitationComponent(ServiceComponent):
             before_email, email_part = member_email.split("<", maxsplit=1)
             email_parts = email_part.split(">")
             if not email_parts or not email_parts[0].strip():
-                raise ValidationError(
-                    "Invalid email format - missing closing '>' or no email found"
-                )
+                raise ValidationError("Invalid email format - missing closing '>' or no email found")
             member_email = email_parts[0].strip()
 
             names = before_email.strip().split()
@@ -110,20 +114,16 @@ class AAIInvitationComponent(ServiceComponent):
             # can not be handled by this component
             return
 
-        user_id = self._get_invitation_user(
-            member_email, member_first_name, member_last_name
-        )
+        user_id = self._get_invitation_user(member_email, member_first_name, member_last_name)
 
-        request_item = self._create_invitation_request(
-            identity, community, user_id, role
-        )
+        request_item = self._create_invitation_request(community, user_id, role)
 
         # message was provided.
         if message:
             self._add_invitation_message_to_request(identity, request_item, message)
 
         # Create an inactive member entry linked to the request.
-        self.service._add_factory(
+        self.service._add_factory(  # noqa SLF001 no public api to do this # type: ignore[reportAttributeAccessIssue]
             identity,
             community,
             role,
@@ -139,11 +139,11 @@ class AAIInvitationComponent(ServiceComponent):
 
     def members_update(
         self,
-        identity: Identity,
+        identity: Identity,  # noqa ARG002 component api
         *,
         record: Member,
         community: Community,
-        **kwargs: dict,
+        **kwargs: dict,  # noqa ARG002 component api
     ) -> None:
         """Update a member in AAI.
 
@@ -178,11 +178,11 @@ class AAIInvitationComponent(ServiceComponent):
 
     def members_delete(
         self,
-        identity: Identity,
+        identity: Identity,  # noqa ARG002 component api
         *,
         record: Member,
         community: Community,
-        **kwargs: dict,
+        **kwargs: dict,  # noqa ARG002 component api
     ) -> None:
         """Remove a member from AAI.
 
@@ -209,13 +209,9 @@ class AAIInvitationComponent(ServiceComponent):
             # a situation where the changes were performed locally but not
             # propagated to AAI. Then in the next login/sync the changes
             # would be reverted.
-            remove_aai_user_from_community(
-                cast("str", community.slug), cast("int", record.user_id)
-            )
+            remove_aai_user_from_community(cast("str", community.slug), cast("int", record.user_id))
 
-    def _add_invitation_message_to_request(
-        self, identity: Identity, request_item: RequestItem, message: str
-    ) -> None:
+    def _add_invitation_message_to_request(self, identity: Identity, request_item: RequestItem, message: str) -> None:
         """Add a message to the invitation request.
 
         :param identity:        identity of the user adding message to the request
@@ -232,9 +228,7 @@ class AAIInvitationComponent(ServiceComponent):
             notify=False,
         )
 
-    def _create_invitation_request(
-        self, identity: Identity, community: Community, user_id: int, role: str
-    ) -> RequestItem:
+    def _create_invitation_request(self, community: Community, user_id: int, role: str) -> RequestItem:
         """Create an invitation request in the repository.
 
         :param identity:        identity of the user creating the request
@@ -250,7 +244,7 @@ class AAIInvitationComponent(ServiceComponent):
             role=role.title, community=metadata["title"]
         )
 
-        request_item = current_requests_service.create(
+        return current_requests_service.create(
             system_identity,
             {"title": title, "description": description, "user": user_id},
             AAICommunityInvitation,
@@ -260,7 +254,6 @@ class AAIInvitationComponent(ServiceComponent):
             expires_at=invite_expires_at(),
             uow=self.uow,
         )
-        return request_item
 
     def _get_invitation_user(
         self,
@@ -281,10 +274,7 @@ class AAIInvitationComponent(ServiceComponent):
             return u.id
 
         if member_last_name:
-            if member_first_name:
-                member_full_name = f"{member_first_name} {member_last_name}"
-            else:
-                member_full_name = member_last_name
+            member_full_name = f"{member_first_name} {member_last_name}" if member_first_name else member_last_name
         elif member_first_name:
             member_full_name = member_first_name
         else:
@@ -296,7 +286,7 @@ class AAIInvitationComponent(ServiceComponent):
         )
 
         u = db.session.query(User).get(user["id"])
-        if not u.user_profile or "full_name" not in u.user_profile:
+        if u and (not u.user_profile or "full_name" not in u.user_profile):
             u.user_profile = {"full_name": member_full_name}
             db.session.add(u)
             db.session.commit()

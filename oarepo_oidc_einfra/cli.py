@@ -7,6 +7,9 @@
 #
 """EInfra terminal commands."""
 
+from __future__ import annotations
+
+from pathlib import Path
 
 import click
 from flask.cli import with_appcontext
@@ -15,6 +18,7 @@ from invenio_accounts.models import User
 from invenio_communities.communities.records.models import CommunityMetadata
 from invenio_communities.members.records.models import MemberModel
 from invenio_communities.proxies import current_communities
+from invenio_db import db
 
 from oarepo_oidc_einfra.mutex import CacheMutex
 from oarepo_oidc_einfra.resources import store_dump
@@ -45,7 +49,7 @@ def update_membership_from_file(dump_file: str | None) -> None:
     if dump_file:
         click.echo(f"Importing dump file {dump_file}")
 
-        with open(dump_file, "rb") as f:
+        with Path(dump_file).open("rb") as f:
             path, checksum = store_dump(f.read())
     else:
         path = None
@@ -99,7 +103,7 @@ def synchronize_all_communities() -> None:
     """Re-synchronize all communities to Perun."""
     from tqdm import tqdm
 
-    community_list = CommunityMetadata.query.all()
+    community_list = db.session.query(CommunityMetadata).all()
     for community in tqdm(community_list):
         synchronize_community_to_perun(str(community.id))
 
@@ -114,10 +118,8 @@ def resend_invitation(community_slug: str, email: str) -> None:
     :param community_slug: Slug of the community.
     :param email: Email of the user.
     """
-    community = CommunityMetadata.query.filter_by(slug=community_slug).one()
-    user = User.query.filter_by(email=email).one()
-    member = MemberModel.query.filter_by(
-        user_id=user.id, community_id=community.id
-    ).one()
+    community = db.session.query(CommunityMetadata).filter_by(slug=community_slug).one()
+    user = db.session.query(User).filter_by(email=email).one()
+    member = db.session.query(MemberModel).filter_by(user_id=user.id, community_id=community.id).one()
     request_id = member.request_id
     create_aai_invitation(str(request_id))

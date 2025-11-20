@@ -5,6 +5,8 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+from __future__ import annotations
+
 import pytest
 from invenio_access.models import ActionUsers
 from invenio_accounts.models import User

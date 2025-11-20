@@ -5,3 +5,6 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+"""Init for tests package."""
+
+from __future__ import annotations

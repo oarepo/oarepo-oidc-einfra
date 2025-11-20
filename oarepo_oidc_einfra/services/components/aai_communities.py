@@ -7,14 +7,19 @@
 #
 """AAI (perun) communities mapping."""
 
-import re
+from __future__ import annotations
 
-from invenio_access.permissions import Identity
-from invenio_communities.communities.records.api import Community
+import re
+from typing import TYPE_CHECKING, override
+
+from invenio_db.uow import Operation, UnitOfWork
 from invenio_records_resources.services.records.components.base import ServiceComponent
-from invenio_records_resources.services.uow import Operation, UnitOfWork
 
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
+
+if TYPE_CHECKING:
+    from invenio_access.permissions import Identity
+    from invenio_communities.communities.records.api import Community
 
 
 class PropagateToAAIOp(Operation):
@@ -24,6 +29,7 @@ class PropagateToAAIOp(Operation):
         """Create a new operation."""
         self.community = community
 
+    @override
     def on_post_commit(self, uow: UnitOfWork) -> None:
         """Propagate the community to AAI.
 
@@ -31,12 +37,13 @@ class PropagateToAAIOp(Operation):
         """
         from oarepo_oidc_einfra.tasks import synchronize_community_to_perun
 
-        synchronize_community_to_perun.delay(str(self.community.id))
+        synchronize_community_to_perun.delay(str(self.community.id))  # type: ignore[reportFunctionMemberAccess]
 
 
 class CommunityAAIComponent(ServiceComponent):
     """Community AAI component that propagates the community to Perun."""
 
+    @override
     def create(
         self,
         identity: Identity,
@@ -56,18 +63,18 @@ class CommunityAAIComponent(ServiceComponent):
         :param kwargs: additional arguments
         """
         # propagate the community to AAI
-        assert data is not None
+        if data is None:
+            raise ValueError("Missing data for community creation")
 
         if "slug" not in data:
             raise ValueError("Missing slug in community data")
         if not re.match("^[a-z0-9-]+$", data["slug"]):
-            raise ValueError(
-                "Invalid slug, only lowercase letters, numbers and hyphens are allowed"
-            )
+            raise ValueError("Invalid slug, only lowercase letters, numbers and hyphens are allowed")
 
         if current_einfra_oidc.synchronization_enabled:
             self.uow.register(PropagateToAAIOp(record))
 
+    @override
     def update(
         self,
         identity: Identity,
@@ -85,13 +92,14 @@ class CommunityAAIComponent(ServiceComponent):
         :param data: data to be updated
         :param kwargs: additional arguments
         """
-        assert data is not None
-        assert record is not None
+        if data is None:
+            raise ValueError("Missing data for community update")
+
+        if record is None:
+            raise ValueError("Missing record for community update")
 
         if record.slug != data["slug"]:
-            raise ValueError(
-                "Cannot change the slug of the community as it is used in AAI"
-            )
+            raise ValueError("Cannot change the slug of the community as it is used in AAI")
 
     def delete(self, identity: Identity, *, record: Community, **kwargs: dict) -> None:
         """Delete handler.

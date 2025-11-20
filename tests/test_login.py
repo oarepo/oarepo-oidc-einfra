@@ -5,6 +5,8 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+from __future__ import annotations
+
 import pytest
 from invenio_access.permissions import system_identity
 from invenio_accounts.models import User, UserIdentity
@@ -14,7 +16,9 @@ from invenio_communities.members.records.models import MemberModel
 
 @pytest.mark.skip(reason="This test is intended to be run manually")
 def test_login(app, db, location, search_clear, client, test_ui_pages):
-    """This test shows how to log in a user using the E-Infra OIDC provider.
+    """Test login via E-INFRA OIDC.
+
+    This test shows how to log in a user using the E-Infra OIDC provider.
     As log-in is a process based on a web browser, the test must be run
     manually at the moment
 
@@ -33,7 +37,7 @@ def test_login(app, db, location, search_clear, client, test_ui_pages):
         username="asdasdasd",
         email=my_original_email,
         active=True,
-        password="1234",
+        password="1234",  # noqa S106 # this password is ok for testing
         user_profile={"full_name": "Mirek Simek"},
     )
     db.session.add(user)
@@ -65,10 +69,10 @@ def test_login(app, db, location, search_clear, client, test_ui_pages):
     resp = client.get("/oauth/login/e-infra/", base_url="https://127.0.0.1:5000/")
     assert resp.status_code == 302
     location = resp.headers["Location"]
-    print(
+    print(  # noqa T201
         "Open your browser and go to the following location. Log-in there and copy the final URL here"
     )
-    print(location)
+    print(location)  # noqa T201
     redirect_url = input("Paste the final URL here: ")
     redirect_url = redirect_url.strip()
     redirect_url = redirect_url[len("https://127.0.0.1:5000") :]
@@ -76,7 +80,6 @@ def test_login(app, db, location, search_clear, client, test_ui_pages):
     resp = client.get(redirect_url, base_url="https://127.0.0.1:5000/")
     assert resp.status_code == 302
     location = resp.headers["Location"]
-    print(location)
 
     # check that the user has the correct community roles
     member_list = MemberModel.query.filter_by(user_id=user.id).all()

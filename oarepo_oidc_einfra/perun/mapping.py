@@ -7,8 +7,9 @@
 #
 """Mapping between perun capabilities and Invenio roles."""
 
+from __future__ import annotations
+
 import dataclasses
-from typing import Dict, Optional
 
 from invenio_accounts.models import UserIdentity
 from invenio_db import db
@@ -36,6 +37,10 @@ class SlugCommunityRole:
     """Role name."""
 
 
+# res:communities:{slug}:role:{role}
+COMMUNITY_CAPABILITY_PARTS_COUNT = 5
+
+
 def get_invenio_role_from_capability(capability: str | list) -> SlugCommunityRole:
     """Get the Invenio role from the capability.
 
@@ -45,7 +50,7 @@ def get_invenio_role_from_capability(capability: str | list) -> SlugCommunityRol
     parts = capability.split(":") if isinstance(capability, str) else capability
 
     if (
-        len(parts) == 5
+        len(parts) == COMMUNITY_CAPABILITY_PARTS_COUNT
         and parts[0] == "res"
         and parts[1] == "communities"
         and parts[3] == "role"
@@ -54,21 +59,19 @@ def get_invenio_role_from_capability(capability: str | list) -> SlugCommunityRol
     raise ValueError(f"Not an invenio role capability: {capability}")
 
 
-def get_user_einfra_id(user_id: int) -> Optional[str]:
+def get_user_einfra_id(user_id: int) -> str | None:
     """Get e-infra identity for user with given id.
 
     :param user_id:     user id
     :return:            e-infra identity or None if user has no e-infra identity associated
     """
-    user_identity = UserIdentity.query.filter_by(
-        id_user=user_id, method="e-infra"
-    ).one_or_none()
-    if user_identity:
-        return user_identity.id
+    user_identity = UserIdentity.query.filter_by(id_user=user_id, method="e-infra").one_or_none()
+    if user_identity and user_identity.id:
+        return str(user_identity.id)
     return None
 
 
-def einfra_to_local_users_map() -> Dict[str, int]:
+def einfra_to_local_users_map() -> dict[str, int]:
     """Return a mapping of e-infra id to user id for local users.
 
      Only users that have e-infra identity and logged at least once with it re returned
@@ -76,11 +79,7 @@ def einfra_to_local_users_map() -> Dict[str, int]:
     :return:                    a mapping of e-infra id to user id
     """
     local_users = {}
-    rows = db.session.execute(  # type: ignore
-        select(UserIdentity.id, UserIdentity.id_user).where(
-            UserIdentity.method == "e-infra"
-        )
-    )
+    rows = db.session.execute(select(UserIdentity.id, UserIdentity.id_user).where(UserIdentity.method == "e-infra"))
     for row in rows:
         einfra_id = row[0]
         user_id = row[1]

@@ -7,9 +7,11 @@
 #
 """E-Infra OIDC Remote Auth backend for NRP."""
 
+from __future__ import annotations
+
 import datetime
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import jwt
 from flask import current_app
@@ -20,13 +22,17 @@ from invenio_i18n import lazy_gettext as _
 from invenio_oauthclient import current_oauthclient
 from invenio_oauthclient.contrib.settings import OAuthSettingsHelper
 from invenio_oauthclient.handlers.token import token_getter
-from invenio_oauthclient.models import RemoteToken
 from invenio_oauthclient.oauth import oauth_get_user
 from invenio_oauthclient.signals import account_info_received
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.services.users.tasks import reindex_users
 
 from oarepo_oidc_einfra.proxies import synchronization_disabled
+
+if TYPE_CHECKING:
+    from flask_oauthlib.client import OAuthRemoteApp
+    from invenio_oauthclient.models import RemoteToken
+
 
 perun_log = logging.getLogger("oarepo_oidc_einfra.perun.remote")
 
@@ -44,25 +50,25 @@ def find_locale(locale: str | None) -> str:
     if locale:
         for supported_locale in current_app.config["I18N_LANGUAGES"]:
             if supported_locale[0] == locale or supported_locale[0].startswith(locale):
-                return supported_locale[0]
+                return cast("str", supported_locale[0])
 
-    return current_app.config["BABEL_DEFAULT_LOCALE"]
+    return cast("str", current_app.config["BABEL_DEFAULT_LOCALE"])
 
 
 class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
     """E-Infra OIDC Remote Auth backend for NRP."""
 
-    def __init__(
+    def __init__(  # noqa PLR0193 interface requirement
         self,
         *,
-        title: str = _("E-Infra AAI"),
-        description: str = _("E-Infra authentication and authorization service."),
+        title: str = _("E-Infra AAI"),  # type: ignore[reportArgumentType]
+        description: str = _("E-Infra authentication and authorization service."),  # type: ignore[reportArgumentType]
         base_url: str = "https://login.e-infra.cz/oidc/",
         app_key: str = "EINFRA",
         icon: str | None = None,
         access_token_url: str | None = None,
         authorize_url: str | None = None,
-        access_token_method: str = "POST",
+        access_token_method: str = "POST",  # noqa S107 not a password
         request_token_params: dict | None = None,
         request_token_url: str | None = None,
         precedence_mask: str | None = None,
@@ -72,16 +78,7 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
     ):
         """Initialize the E-Infra OIDC Remote Auth backend for NRP."""
         request_token_params = request_token_params or {
-            "scope": " ".join(
-                [
-                    "openid",
-                    "profile",
-                    "email",
-                    "eduperson_entitlement",
-                    "isCesnetEligibleLastSeen",
-                    "organization",
-                ]
-            )
+            "scope": "openid profile email eduperson_entitlement isCesnetEligibleLastSeen organization",
         }
 
         access_token_url = access_token_url or f"{base_url}token"
@@ -103,32 +100,32 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
             signup_options=signup_options,
             logout_url=logout_url,
             content_type=content_type,
-            **kwargs,
+            **kwargs,  # type: ignore[reportArgumentType]
         )
 
-        self._handlers = dict(
-            authorized_handler="invenio_oauthclient.handlers:authorized_signup_handler",
-            signup_handler=dict(
-                info="oarepo_oidc_einfra.remote:account_info",
-                info_serializer="oarepo_oidc_einfra.remote:account_info_serializer",
-                setup="oarepo_oidc_einfra.remote:account_setup",
-                view="invenio_oauthclient.handlers:signup_handler",
-            ),
-        )
+        self._handlers = {
+            "authorized_handler": "invenio_oauthclient.handlers:authorized_signup_handler",
+            "signup_handler": {
+                "info": "oarepo_oidc_einfra.remote:account_info",
+                "info_serializer": "oarepo_oidc_einfra.remote:account_info_serializer",
+                "setup": "oarepo_oidc_einfra.remote:account_setup",
+                "view": "invenio_oauthclient.handlers:signup_handler",
+            },
+        }
 
-        self._rest_handlers = dict(
-            authorized_handler="invenio_oauthclient.handlers.rest:authorized_signup_handler",
-            signup_handler=dict(
-                info="oarepo_oidc_einfra.remote:account_info",
-                info_serializer="oarepo_oidc_einfra.remote:account_info_serializer",
-                setup="oarepo_oidc_einfra.remote:account_setup",
-                view="invenio_oauthclient.handlers.rest:signup_handler",
-            ),
-            response_handler="invenio_oauthclient.handlers.rest:default_remote_response_handler",
-            authorized_redirect_url="/",
-            signup_redirect_url="/",
-            error_redirect_url="/",
-        )
+        self._rest_handlers = {
+            "authorized_handler": "invenio_oauthclient.handlers.rest:authorized_signup_handler",
+            "signup_handler": {
+                "info": "oarepo_oidc_einfra.remote:account_info",
+                "info_serializer": "oarepo_oidc_einfra.remote:account_info_serializer",
+                "setup": "oarepo_oidc_einfra.remote:account_setup",
+                "view": "invenio_oauthclient.handlers.rest:signup_handler",
+            },
+            "response_handler": "invenio_oauthclient.handlers.rest:default_remote_response_handler",
+            "authorized_redirect_url": "/",
+            "signup_redirect_url": "/",
+            "error_redirect_url": "/",
+        }
 
     def get_handlers(self) -> dict:
         """Return CESNET auth handlers."""
@@ -158,8 +155,8 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
     decoded_token = jwt.decode(
         resp["id_token"],
         options={"verify_signature": True},
-        key=remote.rsa_key,  # type: ignore
-        audience=remote.consumer_key,  # type: ignore
+        key=remote.rsa_key,  # type: ignore[reportArgumentType]
+        audience=remote.consumer_key,  # type: ignore[reportArgumentType]
         algorithms=["RS256"],
     )
 
@@ -167,11 +164,7 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
 
     # convert hexa@e-infra.cz to e-infra-cz-hexa to be a valid username
     username_parts = decoded_token["sub"].replace(".", "-").split("@")
-    username = (
-        username_parts[1] + "-" + username_parts[0]
-        if len(username_parts) > 1
-        else decoded_token["sub"]
-    )
+    username = username_parts[1] + "-" + username_parts[0] if len(username_parts) > 1 else decoded_token["sub"]
 
     return {
         "external_id": decoded_token["sub"],
@@ -210,9 +203,7 @@ def account_info(remote: OAuthRemoteApp, resp: dict) -> dict:
     :returns: A dictionary with the user information.
     """
     handlers = current_oauthclient.signup_handlers[remote.name]
-    handler_resp = handlers["info_serializer"](resp)
-
-    return handler_resp
+    return cast("dict", handlers["info_serializer"](resp))
 
 
 def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> None:
@@ -229,12 +220,12 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
         resp["id_token"],
         options={"verify_signature": True},
         algorithms=["RS256"],
-        key=remote.rsa_key,  # type: ignore
-        audience=remote.consumer_key,  # type: ignore
+        key=remote.rsa_key,  # type: ignore[reportArgumentType]
+        audience=remote.consumer_key,  # type: ignore[reportArgumentType]
     )
 
-    with db.session.begin_nested():  # type: ignore
-        token.remote_account.extra_data = {
+    with db.session.begin_nested():
+        token.remote_account.extra_data = {  # type: ignore[reportAttributeAccessIssue]
             "full_name": decoded_token["name"],
             "locale": find_locale(decoded_token.get("locale")),
             "timezone": decoded_token.get("zoneinfo"),
@@ -245,25 +236,23 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
         # Create user <-> external id link.
 
         # If there is no user identity for this user and group, create it
-        ui = UserIdentity.query.filter_by(
-            user=user, method=BACKEND_NAME, id=decoded_token["sub"]
-        ).one_or_none()
+        ui = UserIdentity.query.filter_by(user=user, method=BACKEND_NAME, id=decoded_token["sub"]).one_or_none()
         if not ui:
             UserIdentity.create(user, BACKEND_NAME, decoded_token["sub"])
 
         if user.confirmed_at is None:
             # Set the user as confirmed
-            user.confirmed_at = datetime.datetime.now()
-            with db.session.begin_nested():  # type: ignore
-                db.session.add(user)  # type: ignore
-                db.session.commit()  # type: ignore
+            user.confirmed_at = datetime.datetime.now(datetime.UTC)
+            with db.session.begin_nested():
+                db.session.add(user)
+                db.session.commit()
 
 
 # During overlay initialization.
 @account_info_received.connect
 def autocreate_user(
     remote: OAuthRemoteApp,
-    token: RemoteToken | None = None,
+    token: RemoteToken | None = None,  # noqa ARG001 interface requirement
     response: dict | None = None,
     account_info: dict | None = None,
 ) -> None:
@@ -277,7 +266,8 @@ def autocreate_user(
     if remote.name != BACKEND_NAME:
         return
 
-    assert account_info is not None
+    if account_info is None:
+        raise ValueError("account_info is required")
 
     perun_log.info(
         "Autocreating user for remote app %s with account info: %s",
@@ -287,7 +277,7 @@ def autocreate_user(
     perun_log.info("Perun raw message: %s", response)
 
     email = account_info["user"]["email"].lower()
-    id, method = account_info["external_id"], account_info["external_method"]
+    external_id, method = account_info["external_id"], account_info["external_method"]
     user_profile = {
         "affiliations": "",
         "full_name": account_info["user"]["profile"]["full_name"],
@@ -301,7 +291,7 @@ def autocreate_user(
 
     user_preferences = {k: v for k, v in user_preferences.items() if v is not None}
 
-    user_identity = UserIdentity.query.filter_by(id=id, method=method).one_or_none()
+    user_identity = UserIdentity.query.filter_by(id=external_id, method=method).one_or_none()
     if not user_identity:
         user = User.query.filter(User.username == username).one_or_none()
         # if not user, try to find user by the email address (invenio has unique on that as well)
@@ -324,17 +314,18 @@ def autocreate_user(
             the config variable SECURITY_CONFIRMABLE is set to True.
             Without setting 'confirmed_at' to some value, it is impossible to log in.
             """
-            user.confirmed_at = datetime.datetime.now()
+            user.confirmed_at = datetime.datetime.now(datetime.UTC)
 
             commit_and_reindex_user(user)
 
         # connect the user and identity
-        with db.session.begin_nested():  # type: ignore
-            UserIdentity.create(user=user, method=method, external_id=id)
-            db.session.commit()  # type: ignore
+        with db.session.begin_nested():
+            UserIdentity.create(user=user, method=method, external_id=external_id)
+            db.session.commit()
 
     else:
-        assert user_identity.user is not None
+        if user_identity.user is None:
+            raise RuntimeError(f"UserIdentity {user_identity} has no associated user!")
 
         user_identity.user.email = email
         user_identity.user.user_profile = {
@@ -351,20 +342,23 @@ def autocreate_user(
 
 def commit_and_reindex_user(user: User) -> None:
     """Commit the user changes and reindex the user."""
-    with db.session.begin_nested():  # type: ignore
-        db.session.add(user)  # type: ignore
-        db.session.commit()  # type: ignore
+    with db.session.begin_nested():
+        db.session.add(user)
+        db.session.commit()
     # Reindex the user. This is done automatically inside the commit above but
     # in a background task. If there are a lot of tasks on the background queue,
     # it can take a long time before the user is reindexed and his profile is updated,
     # leading to "Deleted user" misleading labels in the UI.
     # So we reindex the user immediately.
-    reindex_users([user.id])  # type: ignore
+    reindex_users([user.id])
     current_users_service.indexer.refresh()
 
 
 def account_info_link_perun_groups(
-    remote: OAuthRemoteApp, *, account_info: dict, **kwargs: dict
+    remote: OAuthRemoteApp,
+    *,
+    account_info: dict,
+    **kwargs: dict,  # noqa ARG001 interface requirement
 ) -> None:
     """Set local user community membership based on the Perun groups retrieved from the userinfo token.
 
@@ -379,10 +373,17 @@ def account_info_link_perun_groups(
     from oarepo_oidc_einfra.communities import CommunitySupport
     from oarepo_oidc_einfra.perun import get_communities_from_userinfo_token
 
-    user = oauth_get_user(
-        remote.consumer_key,
-        account_info=account_info,
-        access_token=token_getter(remote)[0],  # type: ignore
+    tokens = token_getter(remote)
+    if not tokens:
+        raise ValueError("Access token is required")
+
+    user = cast(
+        "User",
+        oauth_get_user(
+            remote.consumer_key,
+            account_info=account_info,
+            access_token=tokens[0],
+        ),
     )
 
     if user is None:
@@ -390,9 +391,7 @@ def account_info_link_perun_groups(
 
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
     perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
-    aai_community_roles = get_communities_from_userinfo_token(
-        cast("dict", userinfo_token)
-    )
+    aai_community_roles = get_communities_from_userinfo_token(cast("dict", userinfo_token))
 
     # disabling synchronization as we already have the latest state from Perun
     previously_disabled = synchronization_disabled.set(True)

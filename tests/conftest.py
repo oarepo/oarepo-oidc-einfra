@@ -5,24 +5,38 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+from __future__ import annotations
+
 import contextlib
 import json
 import logging
 import os
 import shutil
 import sys
-from collections.abc import Generator
 from pathlib import Path
 from types import SimpleNamespace
+from typing import TYPE_CHECKING, Any
 
 import pytest
 import yaml
 
 from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
 logging.basicConfig(level=logging.INFO)
 opensearch_logger = logging.getLogger("opensearch")
 opensearch_logger.setLevel(logging.ERROR)
+
+# needed for boto3 to work properly
+os.environ["AWS_REQUEST_CHECKSUM_CALCULATION"] = "when_required"
+os.environ["AWS_RESPONSE_CHECKSUM_VALIDATION"] = "when_required"
+
+# remove INVENIO_*** env variables to avoid interference with tests
+for key in list(os.environ.keys()):
+    if key.startswith("INVENIO_"):
+        del os.environ[key]
 
 
 @pytest.fixture(scope="module")
@@ -44,26 +58,26 @@ def app_config(app_config):
 
     app_config["EINFRA_API_URL"] = "https://perun-api.acc.aai.e-infra.cz/krb"
     app_config["COMMUNITIES_ROLES"] = [
-        dict(
-            name="curator",
-            title="Curator",
-            description="Can curate records.",
-            can_manage=True,
-            is_owner=True,
-            can_manage_roles=["member"],
-        ),
-        dict(
-            name="member",
-            title="Member",
-            description="Community member with read permissions.",
-        ),
+        {
+            "name": "curator",
+            "title": "Curator",
+            "description": "Can curate records.",
+            "can_manage": True,
+            "is_owner": True,
+            "can_manage_roles": ["member"],
+        },
+        {
+            "name": "member",
+            "title": "Member",
+            "description": "Community member with read permissions.",
+        },
     ]
 
     password_path = Path(__file__).parent.parent / ".perun_passwd"
     if password_path.exists():
         app_config["EINFRA_SERVICE_PASSWORD"] = password_path.read_text().strip()
     else:
-        app_config["EINFRA_SERVICE_PASSWORD"] = "dummy"
+        app_config["EINFRA_SERVICE_PASSWORD"] = "dummy"  # noqa S105 # this is ok for testing
 
     app_config["EINFRA_SERVICE_ID"] = 143975
     app_config["EINFRA_SERVICE_USERNAME"] = "nrp-fa-devrepo"
@@ -78,21 +92,23 @@ def app_config(app_config):
     app_config["EINFRA_SYNC_SERVICE_ID"] = 1020
     app_config["EINFRA_SYNC_SERVICE_NAME"] = "test-sync"
     app_config["EINFRA_RSA_KEY"] = (
-        b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3\nPHloIk/Ljs2vZl/RAaitkXDx6aqpl1kGpS44eYJOaer4oWc6/QNaMtynvlSlnkuW\nrG765adNKT9sgAWSrPb81xkojsQabrSNv4nIOWUQi0Tjh0WxXQmbV+bMxkVaElhd\nHNFzUfHv+XqI8Hkc82mIGtyeMQn+VAuZbYkVXnjyCwwa9RmPOSH+O4N4epDXKk1V\nK9dUxf/rEYbjMNZGDva30do0mrBkU8W3O1mDVJSSgHn4ejKdGNYMm0JKPAgCWyPW\nJDoL092ctPCFlUMBBZ/OP3omvgnw0GaWZXxqSqaSvxFJkqCHqLMwpxmWTTAgEvAb\nnwIDAQAB\n-----END PUBLIC KEY-----\n"
+        b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmh"
+        b"o5h/lz6USUUazQaVT3\nPHloIk/Ljs2vZl/RAaitkXDx6aqpl1kGpS44eYJOaer4oWc6/QNaMt"
+        b"ynvlSlnkuW\nrG765adNKT9sgAWSrPb81xkojsQabrSNv4nIOWUQi0Tjh0WxXQmbV+bMxkVaEl"
+        b"hd\nHNFzUfHv+XqI8Hkc82mIGtyeMQn+VAuZbYkVXnjyCwwa9RmPOSH+O4N4epDXKk1V\nK9dU"
+        b"xf/rEYbjMNZGDva30do0mrBkU8W3O1mDVJSSgHn4ejKdGNYMm0JKPAgCWyPW\nJDoL092ctPCF"
+        b"lUMBBZ/OP3omvgnw0GaWZXxqSqaSvxFJkqCHqLMwpxmWTTAgEvAb\nnwIDAQAB"
+        b"\n-----END PUBLIC KEY-----\n"
     )
-    app_config["EINFRA_DUMP_DATA_URL"] = "/tmp"
+    app_config["EINFRA_DUMP_DATA_URL"] = "/tmp"  # noqa S108 # used only for tests
 
     from oarepo_oidc_einfra import EINFRA_LOGIN_APP
 
     app_config["OAUTHCLIENT_REMOTE_APPS"] = {"e-infra": EINFRA_LOGIN_APP}
 
     app_config["JSONSCHEMAS_HOST"] = "localhost"
-    app_config["RECORDS_REFRESOLVER_CLS"] = (
-        "invenio_records.resolver.InvenioRefResolver"
-    )
-    app_config["RECORDS_REFRESOLVER_STORE"] = (
-        "invenio_jsonschemas.proxies.current_refresolver_store"
-    )
+    app_config["RECORDS_REFRESOLVER_CLS"] = "invenio_records.resolver.InvenioRefResolver"
+    app_config["RECORDS_REFRESOLVER_STORE"] = "invenio_jsonschemas.proxies.current_refresolver_store"
     app_config["RATELIMIT_AUTHENTICATED_USER"] = "200 per second"
     app_config["SEARCH_HOSTS"] = [
         {
@@ -115,22 +131,23 @@ def app_config(app_config):
     app_config["SERVER_NAME"] = "127.0.0.1:5000"
 
     app_config["EINFRA_CONSUMER_KEY"] = os.environ.get("INVENIO_EINFRA_CONSUMER_KEY")
-    app_config["EINFRA_CONSUMER_SECRET"] = os.environ.get(
-        "INVENIO_EINFRA_CONSUMER_SECRET"
-    )
+    app_config["EINFRA_CONSUMER_SECRET"] = os.environ.get("INVENIO_EINFRA_CONSUMER_SECRET")
 
-    app_config["EINFRA_USER_DUMP_S3_ACCESS_KEY"] = "tests"
-    app_config["EINFRA_USER_DUMP_S3_SECRET_KEY"] = "teststests"
-    app_config["EINFRA_USER_DUMP_S3_ENDPOINT"] = "http://localhost:19000"
+    # S3 configuration for user dumps
+    app_config["EINFRA_USER_DUMP_S3_ACCESS_KEY"] = "invenio"
+    app_config["EINFRA_USER_DUMP_S3_SECRET_KEY"] = "invenio8"  # noqa S105 # this is ok for testing
+    app_config["EINFRA_USER_DUMP_S3_ENDPOINT"] = "http://localhost:9000"
     app_config["EINFRA_USER_DUMP_S3_BUCKET"] = "einfra-user-dumps"
 
     return app_config
 
 
-@pytest.fixture()
+@pytest.fixture
 def s3_dump_bucket(app):
     import boto3
     from botocore.exceptions import ClientError
+
+    assert app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"] == "invenio"
 
     client = boto3.client(
         "s3",
@@ -139,10 +156,8 @@ def s3_dump_bucket(app):
         endpoint_url=app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
     )
     # create bucket
-    try:
+    with contextlib.suppress(ClientError):
         client.create_bucket(Bucket=app.config["EINFRA_USER_DUMP_S3_BUCKET"])
-    except ClientError:
-        pass
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -150,47 +165,47 @@ def location(location):
     return location
 
 
-@pytest.fixture()
+@pytest.fixture
 def perun_api_url(app):
     return app.config["EINFRA_API_URL"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def perun_service_username(app):
     return app.config["EINFRA_SERVICE_USERNAME"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def perun_service_password(app):
     return app.config["EINFRA_SERVICE_PASSWORD"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def perun_sync_service_id(app):
     return app.config["EINFRA_SYNC_SERVICE_ID"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_vo_id(app):
     return app.config["EINFRA_REPOSITORY_VO_ID"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_facility_id(app):
     return app.config["EINFRA_REPOSITORY_FACILITY_ID"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_capabilities_attribute_id(app):
     return app.config["EINFRA_CAPABILITIES_ATTRIBUTE_ID"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_repo_communities_id(app):
     return app.config["EINFRA_COMMUNITIES_GROUP_ID"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def low_level_perun_api(perun_api_url, perun_service_username, perun_service_password):
     return PerunLowLevelAPI(
         base_url=perun_api_url,
@@ -199,14 +214,14 @@ def low_level_perun_api(perun_api_url, perun_service_username, perun_service_pas
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def constants_template():
     constants_file = Path(__file__).parent / "constants_template.yaml"
     with constants_file.open() as f:
         return SimpleNamespace(**{k: str(v) for k, v in yaml.safe_load(f).items()})
 
 
-@pytest.fixture()
+@pytest.fixture
 def constants(constants_template):
     constants_file = Path(__file__).parent.parent / ".perun_constants.yaml"
     if not constants_file.exists():
@@ -215,16 +230,15 @@ def constants(constants_template):
         return SimpleNamespace(**{k: str(v) for k, v in yaml.safe_load(f).items()})
 
 
-@pytest.fixture()
+@pytest.fixture
 def smart_record(perun_api_url, low_level_perun_api, constants, constants_template):
     import responses
     from responses._recorder import Recorder
 
     @contextlib.contextmanager
-    def smart_record(fname) -> Generator[SimpleNamespace, None, None]:
+    def smart_record(fname) -> Generator[SimpleNamespace]:
         file_path = Path(__file__).parent / "request_data" / fname
         if not file_path.exists():
-            print(f"Could not find recorded data at path {file_path}, recording ...")
             with Recorder() as recorder:
                 yield constants
                 messages = recorder.get_registry().registered
@@ -236,12 +250,11 @@ def smart_record(perun_api_url, low_level_perun_api, constants, constants_templa
                     )
                 recorder.dump_to_file(file_path=file_path, registered=messages)
         else:
-            print(f"Using recorded data from path {file_path}")
-            low_level_perun_api._auth = (
+            low_level_perun_api._auth = (  # noqa SLF001
                 None  # reset the auth just to make sure we use the recorded data
             )
             with responses.RequestsMock() as rsps:
-                rsps._add_from_file(file_path=file_path)
+                rsps._add_from_file(file_path=file_path)  # noqa SLF001
                 yield constants_template
 
     return smart_record
@@ -258,10 +271,10 @@ def replace_in_response(resp, source_constants, target_constants):
         if not k.startswith("_")
     }
 
-    def replace_recursively(data):
+    def replace_recursively[T: Any](data: T) -> T:
         if isinstance(data, dict):
             return {k: replace_recursively(v) for k, v in data.items()}
-        elif isinstance(data, list):
+        if isinstance(data, list):
             return [replace_recursively(v) for v in data]
         if data in (True, False, None):
             return data
@@ -272,24 +285,20 @@ def replace_in_response(resp, source_constants, target_constants):
     resp.body = json.dumps(content)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def test_group_id():
-    with (
-        Path(__file__).parent / "request_data" / "test_create_group.yaml"
-    ).open() as f:
+    with (Path(__file__).parent / "request_data" / "test_create_group.yaml").open() as f:
         data = yaml.safe_load(f)
         payload = json.loads(data["responses"][2]["response"]["body"])
         return payload["id"]
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_ui_pages(app):
     python_path = Path(sys.executable)
     invenio_instance_path = python_path.parent.parent / "var" / "instance"
     manifest_path = invenio_instance_path / "static" / "dist"
     manifest_path.mkdir(parents=True, exist_ok=True)
-    shutil.copy(
-        Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
-    )
+    shutil.copy(Path(__file__).parent / "manifest.json", manifest_path / "manifest.json")
 
     app.jinja_loader.searchpath.append(str(Path(__file__).parent / "templates"))

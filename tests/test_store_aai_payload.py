@@ -1,3 +1,13 @@
+#
+# Copyright (c) 2025 CESNET z.s.p.o.
+#
+# This file is a part of oarepo-oidc-einfra (see https://github.com/oarepo/oarepo-oidc-einfra).
+#
+# oarepo-oidc-einfra is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+#
+from __future__ import annotations
+
 from invenio_requests.records.api import Request
 
 

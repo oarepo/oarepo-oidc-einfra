@@ -6,3 +6,5 @@
 # details.
 #
 """Community service components."""
+
+from __future__ import annotations

@@ -5,6 +5,8 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+from __future__ import annotations
+
 from pathlib import Path
 
 from invenio_access.permissions import system_identity
@@ -29,16 +31,14 @@ def test_no_communities(app, db, location, search_clear):
     update_from_file("3.json")
 
 
-def test_no_communities_user_exists_but_not_linked(
-    app, db, location, search_clear, smart_record
-):
+def test_no_communities_user_exists_but_not_linked(app, db, location, search_clear, smart_record):
     with smart_record("test_no_communities_user_exists_but_not_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
             username="asdasdasd",
             email=my_original_email,
             active=True,
-            password="1234",
+            password="1234",  # noqa S106 # this password is ok for testing
             user_profile={"full_name": "Mirek Simek"},
         )
         db.session.add(user)
@@ -60,7 +60,7 @@ def test_no_communities_user_linked(app, db, location, search_clear, smart_recor
             username="asdasdasd",
             email=my_original_email,
             active=True,
-            password="1234",
+            password="1234",  # noqa S106 # this password is ok for testing
             user_profile={"full_name": "Mirek Simek"},
         )
         db.session.add(user)
@@ -90,7 +90,7 @@ def test_with_communities(app, db, location, search_clear, smart_record):
             username="asdasdasd",
             email=my_original_email,
             active=True,
-            password="1234",
+            password="1234",  # noqa S106 # this password is ok for testing
             user_profile={"full_name": "Mirek Simek"},
         )
         db.session.add(user)
@@ -126,7 +126,11 @@ def test_with_communities(app, db, location, search_clear, smart_record):
         assert str(memberships[0].community_id) == community.id
 
         # add a new curator so that there will ve 2 curators
-        u2 = User(email="u2@test.com", active=True, password="1234")
+        u2 = User(
+            email="u2@test.com",
+            active=True,
+            password="1234",  # noqa S106 # this password is ok for testing
+        )
         db.session.add(u2)
         db.session.commit()
 
@@ -147,7 +151,7 @@ def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
             username="asdasdasd",
             email="ms@cesnet.cz",
             active=True,
-            password="1234",
+            password="1234",  # noqa S106 # this password is ok for testing
             user_profile={"full_name": "Mirek Simek"},
         )
         db.session.add(user)

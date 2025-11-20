@@ -7,8 +7,9 @@
 #
 """OIDC utilities."""
 
+from __future__ import annotations
+
 import logging
-from typing import Set
 
 from urnparse import URN8141, InvalidURNFormatError
 
@@ -19,7 +20,7 @@ from .mapping import SlugCommunityRole, get_invenio_role_from_capability
 log = logging.getLogger(__name__)
 
 
-def get_communities_from_userinfo_token(userinfo_token: dict) -> Set[CommunityRole]:
+def get_communities_from_userinfo_token(userinfo_token: dict) -> set[CommunityRole]:
     """Extract communities and roles from userinfo token.
 
     :param userinfo_token:          userinfo token from perun/oidc server
@@ -50,7 +51,9 @@ def get_communities_from_userinfo_token(userinfo_token: dict) -> Set[CommunityRo
             slug_role: SlugCommunityRole = get_invenio_role_from_capability(parts[1:])
             if slug_role.role not in community_roles:
                 log.error(
-                    f"Role {slug_role.role} not found in community roles in urn {urn}"
+                    "Role %s not found in community roles in urn %s",
+                    slug_role.role,
+                    urn,
                 )
                 continue
             if slug_role.slug not in slug_to_id:

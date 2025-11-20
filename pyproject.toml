@@ -1,32 +1,62 @@
-[build_system]
-requires = ["setuptools", "wheel", "babel>2.8"]
-build-backend = "setuptools.build_meta"
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.ruff.lint]
-extend-select = [
-    "UP",   # pyupgrade
-    "D",    # pydocstyle
-    "B",    # flake8-bugbear
-    "SIM",  # flake8-simplify
-    "I",    # isort
-    "TCH",  # type checking
-    "ANN",  # annotations
-    "DOC",  # docstrings
+[project]
+name = "oarepo-oidc-einfra"
+dynamic = ["version"]
+description = "E-infra OIDC Auth backend for OARepo"
+readme = "README.md"
+license = "MIT"
+dependencies = [
+    "oarepo[rdm,tests]>=14,<15",
+    "oarepo-runtime",
+    "boto3",
+    "urnparse",
+    "tqdm",
 ]
 
-ignore = [
-    "ANN101",  # Missing type annotation for self in method
-    "ANN102",  # Missing type annotation for cls in classmethod
-    "ANN204",  # Missing return type annotation in __init__ method
-    "UP007",   # Imho a: Optional[int] = None is more readable than a: (int | None) = None for kwargs
-
-    "D203",    # 1 blank line required before class docstring (we use D211)
-    "D213",    # Multi-line docstring summary should start at the second line - we use D212 (starting on the same line)
-
+[project.optional-dependencies]
+dev = [
+    "oarepo-invenio-typing-stubs",
+]
+tests = [
+    "pytest-invenio",
+    "responses",
+]
+oarepo14 = [
+    "oarepo[rdm,tests]>=14,<15",
 ]
 
-[tool.ruff.lint.flake8-annotations]
-mypy-init-return = true
+[project.entry-points."invenio_access.actions"]
+"upload_dump.actions" = "oarepo_oidc_einfra.resources:upload_dump_action"
 
-[tool.mypy]
-disable_error_code = ["import-untyped", "import-not-found"]
+[project.entry-points."invenio_base.api_apps"]
+oarepo_oidc_einfra = "oarepo_oidc_einfra.ext:EInfraOIDCApp"
+
+[project.entry-points."invenio_base.api_blueprints"]
+oarepo_oidc_einfra = "oarepo_oidc_einfra.resources:create_api_blueprint"
+
+[project.entry-points."invenio_base.apps"]
+oarepo_oidc_einfra = "oarepo_oidc_einfra.ext:EInfraOIDCApp"
+
+[project.entry-points."invenio_base.blueprints"]
+oarepo_oidc_einfra = "oarepo_oidc_einfra.resources:create_ui_blueprint"
+
+[project.entry-points."invenio_i18n.translations"]
+oarepo_oidc_einfra = "oarepo_oidc_einfra"
+
+[project.entry-points."invenio_requests.types"]
+aai-community-invitation = "oarepo_oidc_einfra.services.requests.invitation:AAICommunityInvitation"
+
+[project.urls]
+Homepage = "https://github.com/oarepo/oarepo-oidc-einfra"
+Source = "https://github.com/oarepo/oarepo-oidc-einfra"
+
+[tool.hatch.version]
+path = "oarepo_oidc_einfra/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/oarepo_oidc_einfra",
+]

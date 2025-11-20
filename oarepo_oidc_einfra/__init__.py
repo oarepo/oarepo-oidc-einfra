@@ -8,6 +8,10 @@
 
 """E-INFRA OIDC Auth backend for OARepo."""
 
+from __future__ import annotations
+
 from .remote import EINFRA_LOGIN_APP
 
-__all__ = ("EINFRA_LOGIN_APP",)
+__version__ = "2.0.0dev0"
+
+__all__ = ("EINFRA_LOGIN_APP", "__version__")

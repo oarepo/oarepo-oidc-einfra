@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import logging
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, ClassVar, cast
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 from flask import Blueprint, Flask, current_app, flash, g, redirect, request
@@ -22,15 +22,15 @@ from flask_login.utils import login_url as make_login_url
 from flask_principal import PermissionDenied
 from flask_resources import Resource, ResourceConfig, route
 from flask_security import current_user
-from invenio_access import Permission, action_factory
-from invenio_access.permissions import system_identity
+from invenio_access.factory import action_factory
+from invenio_access.permissions import Permission, system_identity
 from invenio_accounts.models import User
 from invenio_cache.proxies import current_cache
 from invenio_communities.members.records.api import Member
 from invenio_communities.proxies import current_communities
 from invenio_db import db
 from invenio_i18n import gettext as _
-from invenio_records_resources.resources.errors import PermissionDeniedError
+from invenio_records_resources.services.errors import PermissionDeniedError
 from invenio_requests.customizations import CommentEventType
 from invenio_requests.proxies import current_events_service, current_requests_service
 from invenio_requests.records.api import Request, RequestEventFormat
@@ -40,6 +40,7 @@ from oarepo_oidc_einfra.proxies import current_einfra_oidc
 from oarepo_oidc_einfra.tasks import update_from_perun_dump
 
 if TYPE_CHECKING:
+    from invenio_communities.members.records.models import MemberModel
     from werkzeug import Response
 
 log = logging.getLogger(__name__)
@@ -57,7 +58,7 @@ class OIDCEInfraUIResourceConfig(ResourceConfig):
     url_prefix = "/auth/oidc/einfra"
     """URL prefix for the resource."""
 
-    routes = {
+    routes: ClassVar[dict[str, str]] = {
         "accept-invitation": "/invitations/<request_id>/accept",
     }
     """Routes for the resource."""
@@ -66,7 +67,7 @@ class OIDCEInfraUIResourceConfig(ResourceConfig):
 class OIDCEInfraUIResource(Resource):
     """REST API for the EInfra OIDC."""
 
-    def __init__(self, config: Optional[OIDCEInfraUIResourceConfig] = None):
+    def __init__(self, config: OIDCEInfraUIResourceConfig | None = None):
         """Initialize the resource."""
         super().__init__(config=config or OIDCEInfraUIResourceConfig())
 
@@ -74,10 +75,13 @@ class OIDCEInfraUIResource(Resource):
         """Create URL rules for the resource."""
         routes = self.config.routes
         return [
-            route("GET", routes["accept-invitation"], self.accept_invitation),
+            route("GET", routes["accept-invitation"], self.accept_invitation),  # type: ignore[reportArgumentType]
         ]
 
-    def accept_invitation(self) -> Response:
+    # TODO: will handle complexity later
+    def accept_invitation(  # noqa PLR0915
+        self,
+    ) -> Response:
         """Accept an invitation to join a community.
 
         This is an endpoint to which user is directed
@@ -96,7 +100,8 @@ class OIDCEInfraUIResource(Resource):
         and check in a background task if the invitation was accepted and then change the state of the request.
 
         """
-        assert request.view_args is not None
+        if request.view_args is None:
+            raise PermissionDenied("Missing request ID")
 
         request_id = decrypt(request.view_args["request_id"])
 
@@ -110,22 +115,20 @@ class OIDCEInfraUIResource(Resource):
 
             # redirect to the login page to go through the login process again
             redirect_url = make_login_url(
-                current_app.login_manager.login_view,
-                next_url=self.add_query_param(
-                    request.url, "fresh_login_token", fresh_login_token
-                ),
+                current_app.login_manager.login_view,  # type: ignore[reportAttributeAccessIssue]
+                next_url=self.add_query_param(request.url, "fresh_login_token", fresh_login_token),
             )
 
             return redirect(redirect_url)
-        else:
-            # check the fresh login token and raise error if it is not valid
-            fresh_login_token = decrypt(request.args["fresh_login_token"])
-            if fresh_login_token != "fresh_login_token_" + str(request_id):
-                raise PermissionDenied("Invalid login token")
+        # check the fresh login token and raise error if it is not valid
+        fresh_login_token = decrypt(request.args["fresh_login_token"])
+        if fresh_login_token != "fresh_login_token_" + str(request_id):
+            raise PermissionDenied("Invalid login token")
 
         # get the invitation request and check if it is submitted.
         invitation_request = Request.get_record(request_id)
-        assert invitation_request.status == "submitted"
+        if invitation_request.status != "submitted":
+            raise PermissionDenied("Invitation request might have already been accepted/rejected.")
 
         # if its user is not the current user, we might to delete
         # the user on the request so that it does not pollute the space
@@ -135,21 +138,27 @@ class OIDCEInfraUIResource(Resource):
         if not invitation.model:
             raise ValueError(f"Invitation {invitation} does not have a model.")
 
-        original_request_user_id = invitation.model.user_id
+        original_request_user_id = cast("MemberModel", invitation.model).user_id
 
         # AAI should have created a membership during the synchronization in login process
-        found_membership = Member.model_cls.query.filter(
-            Member.model_cls.user_id == g.identity.id,
-            Member.model_cls.community_id == invitation.model.community_id,
-            Member.model_cls.role == invitation.model.role,
-            Member.model_cls.active.is_(True),
-        ).one_or_none()
+        CM = cast("type[MemberModel]", Member.model_cls)
+        found_membership = (
+            db.session.query(CM)
+            .filter(
+                CM.user_id == g.identity.id,
+                CM.community_id == cast("MemberModel", invitation.model).community_id,
+                CM.role == cast("MemberModel", invitation.model).role,
+                CM.active.is_(True),
+            )
+            .one_or_none()
+        )
 
         if not found_membership:
             log.error(
-                "User %s accepted an invitation to community %s, but no membership was found. Request ID: %s, Invitation ID: %s",
+                "User %s accepted an invitation to community %s, "
+                "but no membership was found. Request ID: %s, Invitation ID: %s",
                 g.identity.id,
-                invitation.model.community_id,
+                invitation.model.community_id,  # type: ignore[reportAttributeAccessIssue]
                 invitation_request.id,
                 invitation.id,
             )
@@ -170,7 +179,7 @@ class OIDCEInfraUIResource(Resource):
                 # if the user is already a member of the community, we need to remove
                 # the invitation. At first remove the request id from the invitation
                 # so that we can move it to the found_membership
-                invitation.model.request_id = None
+                invitation.model.request_id = None  # type: ignore[reportAttributeAccessIssue]
                 db.session.add(invitation.model)
                 db.session.commit()
 
@@ -186,34 +195,27 @@ class OIDCEInfraUIResource(Resource):
                 db.session.commit()
 
                 # reindex the found membership to have the request id in the index
-                current_communities.service.members.indexer.index(
-                    Member.get_record(found_membership.id)
-                )
+                current_communities.service.members.indexer.index(Member.get_record(found_membership.id))
 
                 # add a comment to the found membership
-                actual_user = (
-                    db.session.query(User).filter_by(id=g.identity.id).one_or_none()
-                )
+                actual_user = db.session.query(User).filter_by(id=g.identity.id).one_or_none()
                 if actual_user and actual_user.email:
                     actual_user_email = actual_user.email
                 else:
                     actual_user_email = f"unknown email for user id {g.identity.id}"
 
-                invitation_user = (
-                    db.session.query(User)
-                    .filter_by(id=original_request_user_id)
-                    .one_or_none()
-                )
+                invitation_user = db.session.query(User).filter_by(id=original_request_user_id).one_or_none()
 
                 if invitation_user and invitation_user.email:
                     invitation_user_email = invitation_user.email
                 else:
-                    invitation_user_email = (
-                        f"unknown email for user id {original_request_user_id}"
-                    )
+                    invitation_user_email = f"unknown email for user id {original_request_user_id}"
+                invitation_request_id = invitation_request.id
+                if invitation_request_id is None:
+                    raise ValueError("Invitation request ID is None")
                 current_events_service.create(
                     system_identity,
-                    invitation_request.id,
+                    invitation_request_id,
                     {
                         "type": CommentEventType.type_id,
                         "payload": {
@@ -228,11 +230,10 @@ class OIDCEInfraUIResource(Resource):
                     },
                     CommentEventType,
                 )
-            except Exception as e:
-                log.error(
-                    "Error while accepting invitation for user %s: %s",
+            except Exception:
+                log.exception(
+                    "Error while accepting invitation for user %s",
                     g.identity.id,
-                    e,
                 )
                 flash(
                     _(
@@ -254,7 +255,7 @@ class OIDCEInfraUIResource(Resource):
         return redirect("/")
 
     @staticmethod
-    def add_query_param(url: str, param_name: str, param_value: str):
+    def add_query_param(url: str, param_name: str, param_value: str) -> str:
         """Safely add a query parameter to a URL that might already have query parameters."""
         # Parse the URL into components
         parsed_url = urlparse(url)
@@ -263,17 +264,13 @@ class OIDCEInfraUIResource(Resource):
         query_dict = parse_qs(parsed_url.query)
 
         # Add or update the parameter
-        query_dict[param_name] = [
-            str(param_value)
-        ]  # Wrap in list to handle multiple values
+        query_dict[param_name] = [str(param_value)]  # Wrap in list to handle multiple values
 
         # Rebuild the query string
         new_query = urlencode(query_dict, doseq=True)
 
         # Reconstruct the URL with the new query
-        new_url = urlunparse(parsed_url._replace(query=new_query))
-
-        return new_url
+        return urlunparse(parsed_url._replace(query=new_query))
 
 
 class OIDCEInfraAPIResourceConfig(ResourceConfig):
@@ -285,7 +282,7 @@ class OIDCEInfraAPIResourceConfig(ResourceConfig):
     url_prefix = "/auth/oidc/einfra"
     """URL prefix for the resource, will be at /api/auth/oidc/einfra."""
 
-    routes = {
+    routes: ClassVar[dict[str, str]] = {
         "upload-dump": "/dumps/upload",
         "notify-dump": "/dumps/notify",
     }
@@ -295,7 +292,7 @@ class OIDCEInfraAPIResourceConfig(ResourceConfig):
 class OIDCEInfraAPIResource(Resource):
     """REST API for the EInfra OIDC."""
 
-    def __init__(self, config: Optional[OIDCEInfraAPIResourceConfig] = None):
+    def __init__(self, config: OIDCEInfraAPIResourceConfig | None = None):
         """Initialize the resource."""
         super().__init__(config=config or OIDCEInfraAPIResourceConfig())
 
@@ -317,8 +314,8 @@ class OIDCEInfraAPIResource(Resource):
         The caller must have the permission to upload the dump (upload-oidc-einfra-dump action
         that can be assigned via invenio access commandline tool).
         """
-        if not Permission(upload_dump_action).allows(g.identity):
-            raise PermissionDeniedError()
+        if not Permission(upload_dump_action).allows(g.identity):  # type: ignore[reportArgumentType]
+            raise PermissionDeniedError
 
         if request.headers.get("Content-Type") != "application/json":
             return {
@@ -327,7 +324,7 @@ class OIDCEInfraAPIResource(Resource):
             }, 400
 
         dump_path, checksum = store_dump(request.data)
-        update_from_perun_dump.delay(dump_path, checksum)
+        update_from_perun_dump.delay(dump_path, checksum)  # type: ignore[reportFunctionMemberAccess]
         return {"status": "ok"}, 201
 
     @login_required
@@ -342,10 +339,10 @@ class OIDCEInfraAPIResource(Resource):
         (upload-oidc-einfra-dump action that can be assigned via invenio
         access commandline tool).
         """
-        if not Permission(upload_dump_action).allows(g.identity):
-            raise PermissionDeniedError()
+        if not Permission(upload_dump_action).allows(g.identity):  # type: ignore[reportArgumentType]
+            raise PermissionDeniedError
 
-        update_from_perun_dump.delay(current_app.config["EINFRA_LAST_DUMP_PATH"], None)
+        update_from_perun_dump.delay(current_app.config["EINFRA_LAST_DUMP_PATH"], None)  # type: ignore[reportFunctionMemberAccess]
         return {"status": "ok"}, 201
 
 
@@ -367,17 +364,18 @@ def store_dump(request_data: bytes) -> tuple[str, str]:
         Bucket=current_einfra_oidc.dump_s3_bucket,
         Key=dump_path,
         Body=request_data,
+        ContentLength=len(request_data),
     )
     current_cache.cache.set("EINFRA_LAST_DUMP_PATH", dump_path)
 
     return dump_path, hashlib.sha256(request_data).hexdigest()
 
 
-def create_ui_blueprint(app: Flask) -> Blueprint:
+def create_ui_blueprint(_app: Flask) -> Blueprint:
     """Create a blueprint for the REST API."""
     return OIDCEInfraUIResource().as_blueprint()
 
 
-def create_api_blueprint(app: Flask) -> Blueprint:
+def create_api_blueprint(_app: Flask) -> Blueprint:
     """Create a blueprint for the REST API."""
     return OIDCEInfraAPIResource().as_blueprint()

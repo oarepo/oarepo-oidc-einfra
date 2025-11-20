@@ -5,6 +5,8 @@
 # modify it under the terms of the MIT License; see LICENSE file for more
 # details.
 #
+from __future__ import annotations
+
 from invenio_access.permissions import system_identity
 from invenio_communities import current_communities
 

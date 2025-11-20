@@ -12,9 +12,8 @@ from __future__ import annotations
 import dataclasses
 import logging
 from collections import defaultdict
-from collections.abc import Iterable
 from functools import cached_property
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from uuid import UUID
 
 from flask import current_app, flash
@@ -30,9 +29,10 @@ from sqlalchemy import select
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 if TYPE_CHECKING:
-    from uuid import UUID
+    from collections.abc import Iterable
 
     from invenio_accounts.models import User
+    from invenio_communities.communities.records.models import CommunityMetadata
 
 log = logging.getLogger("perun.communities")
 
@@ -51,10 +51,14 @@ class CommunitySupport:
     @cached_property
     def slug_to_id(self) -> dict[str, UUID]:
         """Returns a mapping of community slugs to their ids."""
+        model_cls = cast("type[CommunityMetadata]", Community.model_cls)
         return {
             row[1]: row[0]
-            for row in db.session.execute(  # type: ignore
-                select(Community.model_cls.id, Community.model_cls.slug)
+            for row in db.session.execute(
+                select(
+                    model_cls.id,
+                    model_cls.slug,  # type: ignore[reportArgumentType]
+                )
             )
         }
 
@@ -67,7 +71,7 @@ class CommunitySupport:
         repository_comunity_roles = set()
         community_roles = self.role_names
 
-        for community in Community.model_cls.query.all():
+        for community in db.session.query(Community.model_cls).all():
             for role in community_roles:
                 repository_comunity_roles.add(CommunityRole(community.id, role))
         return repository_comunity_roles
@@ -118,7 +122,8 @@ class CommunitySupport:
             current_community_roles = cls.get_user_community_membership(user)
 
         for v in new_community_roles:
-            assert isinstance(v, CommunityRole)
+            if not isinstance(v, CommunityRole):
+                raise TypeError(f"new_community_roles must be a set of CommunityRole objects, got {type(v)}")
 
         # The role transformer is a function that can be used to transform the roles
         # before they are set for the user. It can be used to implement custom logic,
@@ -128,37 +133,30 @@ class CommunitySupport:
         # This can not be implemented on the AAI side as "members" group in AAI
         # can not be assigned a resource with capabilities.
         if current_einfra_oidc.role_transformer:
-            current_einfra_oidc.role_transformer(
-                user, current_community_roles, new_community_roles
-            )
+            current_einfra_oidc.role_transformer(user, current_community_roles, new_community_roles)
 
         # find if any community memberships are duplicated and if so,
         # keep only the one with the highest priority
         cls._remove_duplicate_roles(new_community_roles, user)
 
         # provide breadcrumbs for glitchtip
-        log.info(
-            "Current community roles for user %s: %s", user.id, current_community_roles
-        )
+        log.info("Current community roles for user %s: %s", user.id, current_community_roles)
         log.info("New community roles for user %s: %s", user.id, new_community_roles)
 
         for community_role in current_community_roles - new_community_roles:
             try:
                 cls._remove_user_community_membership(community_role.community_id, user)
-            except Exception as e:
+            except Exception:
                 # This is a case when the user is the last member of a community -
                 # in this case he can not be removed. This should happen only
                 # for community owners, as they are the last members of a community.
                 # In this case we just log the error and continue.
-                log.error(
-                    "Failed to remove user %s from community %s: "
-                    "current_community_roles=%s new_community_roles=%s: "
-                    "Exception: %s",
+                log.exception(
+                    "Failed to remove user %s from community %s: current_community_roles=%s new_community_roles=%s: ",
                     user.id,
                     community_role,
                     current_community_roles,
                     new_community_roles,
-                    e,
                 )
 
         for community_role in new_community_roles - current_community_roles:
@@ -167,27 +165,23 @@ class CommunitySupport:
                 # invitation request for the user in the community
                 # and the user has already accepted it inside AAI
                 cls._add_user_community_membership(community_role, user)
-            except Exception as e:
+            except Exception:
                 # If unexpected error occurs, rather than failing the whole login
                 # process, we log the error and continue. User will not be added
                 # to the community, but at least they can log in.
                 # The error will be recorded to glitchtip and can be investigated later.
-                log.error(
+                log.exception(
                     "Failed to add user %s to community %s with role %s: "
-                    "current_community_roles=%s new_community_roles=%s: "
-                    "Exception: %s",
+                    "current_community_roles=%s new_community_roles=%s: ",
                     user.id,
                     community_role.community_id,
                     community_role.role,
                     current_community_roles,
                     new_community_roles,
-                    e,
                 )
 
     @classmethod
-    def _remove_duplicate_roles(
-        cls, new_community_roles: set[CommunityRole], user: User
-    ) -> None:
+    def _remove_duplicate_roles(cls, new_community_roles: set[CommunityRole], user: User) -> None:
         roles_by_community_id = defaultdict[UUID, set[CommunityRole]](set)
         for community_role in new_community_roles:
             roles_by_community_id[community_role.community_id].add(community_role)
@@ -196,8 +190,7 @@ class CommunitySupport:
             if len(roles) > 1:
                 # get roles and their priorities, 0 is the highest priority
                 community_roles_with_priorities = {
-                    role["name"]: idx
-                    for idx, role in enumerate(current_app.config["COMMUNITIES_ROLES"])
+                    role["name"]: idx for idx, role in enumerate(current_app.config["COMMUNITIES_ROLES"])
                 }
                 # sort roles by their priority, highest priority first
                 sorted_roles: list[CommunityRole] = sorted(
@@ -216,16 +209,14 @@ class CommunitySupport:
                     new_community_roles.remove(role)
 
     @classmethod
-    def get_user_community_membership(
-        cls, user: User, active: bool = True
-    ) -> set[CommunityRole]:
+    def get_user_community_membership(cls, user: User, active: bool = True) -> set[CommunityRole]:
         """Get user's actual community roles.
 
         :param user: User object
         """
         ret = set()
-        for row in db.session.execute(  # type: ignore
-            select([MemberModel.community_id, MemberModel.role]).where(
+        for row in db.session.execute(
+            select(MemberModel.community_id, MemberModel.role).where(
                 MemberModel.user_id == user.id, MemberModel.active == active
             )
         ):
@@ -242,12 +233,10 @@ class CommunitySupport:
         :param user_ids: List of user ids
         """
         ret: dict[int, set[CommunityRole]] = {}
-        for row in db.session.execute(  # type: ignore
-            select(
-                [MemberModel.community_id, MemberModel.user_id, MemberModel.role]
-            ).where(
+        for row in db.session.execute(
+            select(MemberModel.community_id, MemberModel.user_id, MemberModel.role).where(
                 MemberModel.user_id.in_(user_ids), MemberModel.active == active
-            )  # type: ignore
+            )
         ):
             if row.user_id not in ret:
                 ret[row.user_id] = set()
@@ -256,9 +245,7 @@ class CommunitySupport:
         return ret
 
     @classmethod
-    def _add_user_community_membership(
-        cls, community_role: CommunityRole, user: User
-    ) -> None:
+    def _add_user_community_membership(cls, community_role: CommunityRole, user: User) -> None:
         """Add user to a community with a given role.
 
         :param community_role:          community role
@@ -276,16 +263,13 @@ class CommunitySupport:
             community_role.role,
         )
         try:
-            ret = current_communities.service.members.add(
-                system_identity, community_role.community_id, data
-            )
+            current_communities.service.members.add(system_identity, community_role.community_id, data)
             log.info(
                 "User %s added to community %s with role %s",
                 user.id,
                 community_role.community_id,
                 community_role.role,
             )
-            return ret
         except AlreadyMemberError:
             # We are here because
             #
@@ -312,9 +296,7 @@ class CommunitySupport:
             )
             if len(user_invitations_to_community) == 1:
                 if not user_invitations_to_community[0].active:
-                    log.info(
-                        "Found existing invitation for user %s, accepting it", user.id
-                    )
+                    log.info("Found existing invitation for user %s, accepting it", user.id)
                     current_communities.service.members.accept_invite(
                         system_identity, user_invitations_to_community[0].request_id
                     )
@@ -325,9 +307,8 @@ class CommunitySupport:
                         community_role.community_id,
                     )
             else:
-                log.error(
-                    "User %s is already a member of community %s, but no unique invitation found. "
-                    "Hits: %s",
+                log.exception(
+                    "User %s is already a member of community %s, but no unique invitation found. Hits: %s",
                     user.id,
                     community_role.community_id,
                     user_invitations_to_community,
@@ -352,13 +333,10 @@ class CommunitySupport:
         data = {"members": [{"type": "user", "id": str(user.id)}]}
         log.info("Removing user %s from community %s", user.id, community_id)
         try:
-            current_communities.service.members.delete(
-                system_identity, community_id, data
-            )
-        except Exception as e:
-            log.error(
-                "Failed to remove user %s from community %s: %s",
+            current_communities.service.members.delete(system_identity, community_id, data)
+        except Exception:
+            log.exception(
+                "Failed to remove user %s from community %s",
                 user.id,
                 community_id,
-                e,
             )
