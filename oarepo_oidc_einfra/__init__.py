@@ -12,6 +12,6 @@ from __future__ import annotations
 
 from .remote import EINFRA_LOGIN_APP
 
-__version__ = "2.0.0dev0"
+__version__ = "2.0.0dev1"
 
 __all__ = ("EINFRA_LOGIN_APP", "__version__")
