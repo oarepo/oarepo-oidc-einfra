@@ -9,7 +9,6 @@
 
 import logging
 from functools import cached_property
-from typing import Optional, Tuple
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -218,7 +217,7 @@ class PerunLowLevelAPI:
 
         return (group, group_created, admin_created)
 
-    def get_group_by_name(self, name: str, parent_group_id: int) -> Optional[dict]:
+    def get_group_by_name(self, name: str, parent_group_id: int) -> dict | None:
         """Get a group by name within a parent group.
 
         :param name:                name of the group
@@ -245,7 +244,7 @@ class PerunLowLevelAPI:
         capabilities: list[str],
         perun_sync_service_id: int,
         check_existing: bool = True,
-    ) -> Tuple[dict, bool]:
+    ) -> tuple[dict, bool]:
         """Create a new resource in Perun and assign the group to it.
 
         :param vo_id:           id of the virtual organization in within the resource is created
@@ -283,7 +282,7 @@ class PerunLowLevelAPI:
         name: str,
         description: str,
         check_existing: bool = True,
-    ) -> Tuple[dict, bool]:
+    ) -> tuple[dict, bool]:
         """Create a new resource in Perun, optionally checking if a resource with the same name already exists.
 
         :param vo_id:           id of the virtual organization in within the resource is created
@@ -412,7 +411,7 @@ class PerunLowLevelAPI:
 
     def get_resource_by_name(
         self, vo_id: int, facility_id: int, name: str
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Get a resource by name.
 
         :param vo_id:               id of the virtual organization
@@ -431,7 +430,7 @@ class PerunLowLevelAPI:
 
     def get_resource_by_capability(
         self, *, vo_id: int, facility_id: int, capability: str
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Get a resource by capability.
 
         :param vo_id:               id of the virtual organization in which the resource needs to be
@@ -449,20 +448,10 @@ class PerunLowLevelAPI:
         matching_resources = [
             resource["resource"]
             for resource in resources
-            if self._has_capability(resource, capability) and str(resource["resource"]["voId"]) == str(vo_id)
+            if self._has_capability(resource, capability)
+            and str(resource["resource"]["voId"]) == str(vo_id)
         ]
 
-        # Implementation 1: searcher
-        # resources = self._perun_call(
-        #     "searcher",
-        #     "getResources",
-        #     {"attributesWithSearchingValues": {"capabilities": capability}},
-        # )
-        # matching_resources = [
-        #     resource
-        #     for resource in resources
-        #     if resource["voId"] == vo_id and resource["facilityId"] == facility_id
-        # ]
         if not matching_resources:
             return None
         if len(matching_resources) > 1:
@@ -470,6 +459,48 @@ class PerunLowLevelAPI:
                 f"More than one resource found for {capability}: {matching_resources}"
             )
         return matching_resources[0]
+
+    def patch_resource_capabilities(
+        self,
+        resource_id: int,
+        capabilities_attribute_id: int,
+        remove: list[str],
+        add: list[str],
+    ) -> None:
+        """Patch capabilities of a resource.
+
+        :param resource_id:         id of the resource
+        :param capabilities_attribute_id:      id of the attribute that holds the capabilities
+        :param remove:              list of capabilities to be removed
+        :param add:                 list of capabilities to be added
+        """
+        attr = self._perun_call_dict(
+            "attributesManager",
+            "getAttribute",
+            {
+                "resource": resource_id,
+                "attributeId": capabilities_attribute_id,
+            },
+        )
+        old_value_set = set(attr["value"] or [])
+        new_value_set = (old_value_set | set(add)) - set(remove)
+        if old_value_set != new_value_set:
+            log.info(
+                "Patching capabilities of resource %s: old capabilities %s, new capabilities %s",
+                resource_id,
+                old_value_set,
+                new_value_set,
+            )
+            attr["value"] = list(new_value_set)
+            self._perun_call(
+                "attributesManager",
+                "setAttribute",
+                {"resource": resource_id, "attribute": attr},
+            )
+            log.info(
+                "Capabilities of resource %s patched",
+                resource_id,
+            )
 
     def _has_capability(self, resource: dict, capability: str) -> bool:
         attributes = resource.get("attributes", [])
@@ -500,7 +531,7 @@ class PerunLowLevelAPI:
 
     def get_user_by_attribute(
         self, *, attribute_name: str, attribute_value: str
-    ) -> Optional[dict]:
+    ) -> dict | None:
         """Get a user by attribute.
 
         :param attribute_name:          name of the attribute

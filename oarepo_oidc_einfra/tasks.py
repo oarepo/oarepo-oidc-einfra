@@ -107,6 +107,80 @@ def synchronize_community_to_perun(community_id: str) -> None:
         )
 
 
+@shared_task
+@mutex("EINFRA_SYNC_MUTEX")
+def remove_community_from_perun(community_slug: str) -> None:
+    """Remove community mapping from Perun.
+
+    This call keeps all the groups and their memberships in perun, but replaces
+    the resources with capabilities that are used for synchronization, so the
+    synchronization will not take place.
+    """
+    log.info("Unlinking community %s from Perun", community_slug)
+    roles = current_app.config["COMMUNITIES_ROLES"]
+
+    api = current_einfra_oidc.perun_api()
+
+    for role in roles:
+        role_name = role["name"]
+        replace_resource_capability(
+            api,
+            parent_vo=current_einfra_oidc.repository_vo_id,
+            old_capability=f"res:communities:{community_slug}:role:{role_name}",
+            new_capability=f"res:deactivated-communities:{community_slug}:role:{role_name}",
+        )
+
+    # replace the main community group's resource capability as well,
+    # so the synchronization will not try to re-create the community
+    replace_resource_capability(
+        api,
+        parent_vo=current_einfra_oidc.repository_vo_id,
+        old_capability=f"res:communities:{community_slug}",
+        new_capability=f"res:deactivated-communities:{community_slug}",
+    )
+
+
+def replace_resource_capability(
+    api: PerunLowLevelAPI,
+    *,
+    parent_vo: int,
+    old_capability: str,
+    new_capability: str,
+) -> None:
+    """Replace resource capabilities in perun.
+
+    :param api:                                 perun api
+    :param parent_vo:                           parent vo id
+    :param old_capability:                      old resource capability to replace
+    :param new_capability:                      new resource capability
+    """
+    resource = api.get_resource_by_capability(
+        vo_id=parent_vo,
+        facility_id=current_einfra_oidc.repository_facility_id,
+        capability=old_capability,
+    )
+    if not resource:
+        log.warning(
+            "Resource for capability %s not found inside Perun, "
+            "so can not replace it.",
+            old_capability,
+        )
+        return
+
+    log.info(
+        "Replacing resource %s with capability %s to capability %s",
+        resource["id"],
+        old_capability,
+        new_capability,
+    )
+    api.patch_resource_capabilities(
+        resource_id=resource["id"],
+        capabilities_attribute_id=current_einfra_oidc.capabilities_attribute_id,
+        remove=[old_capability],
+        add=[new_capability],
+    )
+
+
 def map_community_or_role(
     api: PerunLowLevelAPI,
     *,

@@ -34,6 +34,23 @@ class PropagateToAAIOp(Operation):
         synchronize_community_to_perun.delay(str(self.community.id))
 
 
+class DeleteFromAAIOp(Operation):
+    """Operation to propagate community to AAI in a background process."""
+
+    def __init__(self, community: Community):
+        """Create a new operation."""
+        self.community_slug = community.slug
+
+    def on_post_commit(self, uow: UnitOfWork) -> None:
+        """Propagate the community to AAI.
+
+        :param uow: unit of work
+        """
+        from oarepo_oidc_einfra.tasks import remove_community_from_perun
+
+        remove_community_from_perun.delay(self.community_slug)
+
+
 class CommunityAAIComponent(ServiceComponent):
     """Community AAI component that propagates the community to Perun."""
 
@@ -102,4 +119,5 @@ class CommunityAAIComponent(ServiceComponent):
         :param record: community record to be deleted
         :param kwargs: additional arguments
         """
-        raise NotImplementedError("Delete is not supported at the time being")
+        if current_einfra_oidc.synchronization_enabled:
+            self.uow.register(DeleteFromAAIOp(record))
