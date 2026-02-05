@@ -3,7 +3,7 @@
 export PIP_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
 export UV_EXTRA_INDEX_URL=https://gitlab.cesnet.cz/api/v4/projects/1408/packages/pypi/simple
 
-PYTHON=python3
+PYTHON=${PYTHON:-python3}
 
 set -e
 

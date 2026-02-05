@@ -434,7 +434,7 @@ class PerunLowLevelAPI:
     ) -> Optional[dict]:
         """Get a resource by capability.
 
-        :param vo_id:               id of the virtual organization
+        :param vo_id:               id of the virtual organization in which the resource needs to be
         :param facility_id:         id of the facility where we search for resource
         :param capability:          capability to search for
 
@@ -449,7 +449,7 @@ class PerunLowLevelAPI:
         matching_resources = [
             resource["resource"]
             for resource in resources
-            if self._has_capability(resource, capability)
+            if self._has_capability(resource, capability) and str(resource["resource"]["voId"]) == str(vo_id)
         ]
 
         # Implementation 1: searcher
