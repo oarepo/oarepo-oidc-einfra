@@ -420,13 +420,13 @@ class PerunLowLevelAPI:
     def get_resource_by_capability(
         self,
         *,
-        vo_id: int,  # noqa ARG002 for interface consistency
+        vo_id: int,
         facility_id: int,
         capability: str,
     ) -> dict | None:
         """Get a resource by capability.
 
-        :param vo_id:               id of the virtual organization
+        :param vo_id:               id of the virtual organization in which the resource needs to be
         :param facility_id:         id of the facility where we search for resource
         :param capability:          capability to search for
 
@@ -439,7 +439,9 @@ class PerunLowLevelAPI:
             {"facility": facility_id},
         )
         matching_resources = [
-            resource["resource"] for resource in resources if self._has_capability(resource, capability)
+            resource["resource"]
+            for resource in resources
+            if self._has_capability(resource, capability) and str(resource["resource"]["voId"]) == str(vo_id)
         ]
 
         if not matching_resources:

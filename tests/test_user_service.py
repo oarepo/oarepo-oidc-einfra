@@ -19,7 +19,7 @@ def test_create_user_with_profile(app, db, location, search_clear, client):
 
     user = current_users_service.create(  # noqa SLF001
         system_identity,
-        {"email": member_email},
+        {"email": member_email, "username": "testuser"},
     )._user
 
     u = db.session.query(User).get(user.id)

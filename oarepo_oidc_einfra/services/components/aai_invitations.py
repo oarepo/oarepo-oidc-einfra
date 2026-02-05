@@ -278,7 +278,7 @@ class AAIInvitationComponent(ServiceComponent):
         elif member_first_name:
             member_full_name = member_first_name
         else:
-            member_full_name = member_email.split("@")[0]
+            member_full_name = member_email.split("@", maxsplit=1)[0]
 
         user = current_users_service.create(
             system_identity,
