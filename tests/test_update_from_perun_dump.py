@@ -22,9 +22,7 @@ from oarepo_oidc_einfra.tasks import update_from_perun_dump
 def update_from_file(filename, fix_communities_in_perun=True):
     pth = Path(__file__).parent / "dump_data" / filename
     dump_path, checksum = store_dump(pth.read_bytes())
-    update_from_perun_dump(
-        dump_path, checksum, fix_communities_in_perun=fix_communities_in_perun
-    )
+    update_from_perun_dump(dump_path, checksum, fix_communities_in_perun=fix_communities_in_perun)
 
 
 def test_no_communities(app, db, location, search_clear):
@@ -178,7 +176,7 @@ def test_update_deactivated_ignored(app, db, location, search_clear):
         username="testuser",
         email="ms@cesnet.cz",
         active=True,
-        password="1234",
+        password="1234",  # noqa S106 # this password is ok for testing
         user_profile={"full_name": "Mirek Simek"},
     )
     db.session.add(user)
@@ -192,7 +190,7 @@ def test_update_deactivated_ignored(app, db, location, search_clear):
     db.session.commit()
 
     # Create CUNI community
-    community = current_communities.service.create(
+    current_communities.service.create(
         system_identity,
         {
             "slug": "CUNI",
@@ -216,15 +214,13 @@ def test_update_deactivated_ignored(app, db, location, search_clear):
     assert len(memberships) == 0, "User should not be added to deactivated community"
 
 
-def test_update_deactivated_attempts_remove_existing_role(
-    app, db, location, search_clear
-):
+def test_update_deactivated_attempts_remove_existing_role(app, db, location, search_clear):
     # Create a user linked to e-infra identity
     user = User(
         username="testuser",
         email="ms@cesnet.cz",
         active=True,
-        password="1234",
+        password="1234",  # noqa S106 # this password is ok for testing
         user_profile={"full_name": "Mirek Simek"},
     )
     db.session.add(user)
@@ -242,7 +238,7 @@ def test_update_deactivated_attempts_remove_existing_role(
         username="testadmin",
         email="admin@test.com",
         active=True,
-        password="1234",
+        password="1234",  # noqa S106 # this password is ok for testing
         user_profile={"full_name": "Test Admin"},
     )
     db.session.add(admin_user)
@@ -265,9 +261,7 @@ def test_update_deactivated_attempts_remove_existing_role(
     # Give both users roles in the community
     cs = CommunitySupport()
     cs.set_user_community_membership(user, {CommunityRole(community.id, "member")})
-    cs.set_user_community_membership(
-        admin_user, {CommunityRole(community.id, "curator")}
-    )
+    cs.set_user_community_membership(admin_user, {CommunityRole(community.id, "curator")})
 
     # Verify both users have roles
     memberships = list(Member.model_cls.query.filter_by(user_id=user.id).all())
@@ -275,9 +269,7 @@ def test_update_deactivated_attempts_remove_existing_role(
     assert memberships[0].role == "member"
     assert str(memberships[0].community_id) == community.id
 
-    admin_memberships = list(
-        Member.model_cls.query.filter_by(user_id=admin_user.id).all()
-    )
+    admin_memberships = list(Member.model_cls.query.filter_by(user_id=admin_user.id).all())
     assert len(admin_memberships) == 1
     assert admin_memberships[0].role == "curator"
 
@@ -290,12 +282,8 @@ def test_update_deactivated_attempts_remove_existing_role(
 
     # Verify that testuser was removed
     memberships = list(Member.model_cls.query.filter_by(user_id=user.id).all())
-    assert (
-        len(memberships) == 0
-    ), "testuser should be removed from the deactivated community"
+    assert len(memberships) == 0, "testuser should be removed from the deactivated community"
 
     # Verify that testadmin remains
-    admin_memberships = list(
-        Member.model_cls.query.filter_by(user_id=admin_user.id).all()
-    )
+    admin_memberships = list(Member.model_cls.query.filter_by(user_id=admin_user.id).all())
     assert len(admin_memberships) == 1, "testadmin should remain in the community"

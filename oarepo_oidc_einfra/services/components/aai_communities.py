@@ -47,7 +47,10 @@ class DeleteFromAAIOp(Operation):
         """Create a new operation."""
         self.community_slug = community.slug
 
-    def on_post_commit(self, uow: UnitOfWork) -> None:
+    def on_post_commit(
+        self,
+        uow: UnitOfWork,  # noqa: ARG002 unused argument as we are extending the interface
+    ) -> None:
         """Propagate the community to AAI.
 
         :param uow: unit of work
@@ -118,7 +121,13 @@ class CommunityAAIComponent(ServiceComponent):
         if record.slug != data["slug"]:
             raise ValueError("Cannot change the slug of the community as it is used in AAI")
 
-    def delete(self, identity: Identity, *, record: Community, **kwargs: dict) -> None:
+    def delete(
+        self,
+        identity: Identity,  # noqa: ARG002 unused arguments as we are extending the interface
+        *,
+        record: Community,
+        **kwargs: dict,  # noqa: ARG002 unused arguments as we are extending the interface
+    ) -> None:
         """Delete handler.
 
         At this time, we do not want to delete communities in AAI, so we raise an error.

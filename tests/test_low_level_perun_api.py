@@ -142,7 +142,7 @@ def test_replace_resource_capability(
     """
     from unittest.mock import patch
 
-    with smart_record("test_replace_resource_capability.yaml") as recorded:
+    with smart_record("test_replace_resource_capability.yaml") as _recorded:
         # Get resource by old capability
         resource = low_level_perun_api.get_resource_by_capability(
             vo_id=test_vo_id,
@@ -154,18 +154,18 @@ def test_replace_resource_capability(
 
         # Spy on _perun_call to capture the setAttribute payload
         # This allows us to verify the exact payload sent to Perun API
-        original_perun_call = low_level_perun_api._perun_call
+        original_perun_call = (
+            low_level_perun_api._perun_call  # noqa SLF001 private access
+        )
         setAttribute_calls = []
 
-        def perun_call_spy(manager, method, payload):
+        def perun_call_spy(manager, method, payload) -> dict:
             result = original_perun_call(manager, method, payload)
             if manager == "attributesManager" and method == "setAttribute":
                 setAttribute_calls.append(payload)
             return result
 
-        with patch.object(
-            low_level_perun_api, "_perun_call", side_effect=perun_call_spy
-        ):
+        with patch.object(low_level_perun_api, "_perun_call", side_effect=perun_call_spy):
             # Replace capability from AAA to BBB
             low_level_perun_api.patch_resource_capabilities(
                 resource_id=resource["id"],
@@ -175,9 +175,7 @@ def test_replace_resource_capability(
             )
 
         # Verify setAttribute was called exactly once with the correct payload
-        assert (
-            len(setAttribute_calls) == 1
-        ), "setAttribute should be called exactly once"
+        assert len(setAttribute_calls) == 1, "setAttribute should be called exactly once"
         set_attr_payload = setAttribute_calls[0]
 
         # Verify the payload contains the correct resource ID
@@ -185,6 +183,6 @@ def test_replace_resource_capability(
 
         # Verify the attribute object is present and contains the new capability
         assert "attribute" in set_attr_payload
-        assert set_attr_payload["attribute"]["value"] == [
-            "res:communities:BBB"
-        ], "The new capability should replace the old one"
+        assert set_attr_payload["attribute"]["value"] == ["res:communities:BBB"], (
+            "The new capability should replace the old one"
+        )
