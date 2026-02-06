@@ -40,6 +40,26 @@ class PropagateToAAIOp(Operation):
         synchronize_community_to_perun.delay(str(self.community.id))  # type: ignore[reportFunctionMemberAccess]
 
 
+class DeleteFromAAIOp(Operation):
+    """Operation to propagate community to AAI in a background process."""
+
+    def __init__(self, community: Community):
+        """Create a new operation."""
+        self.community_slug = community.slug
+
+    def on_post_commit(
+        self,
+        uow: UnitOfWork,  # noqa: ARG002 unused argument as we are extending the interface
+    ) -> None:
+        """Propagate the community to AAI.
+
+        :param uow: unit of work
+        """
+        from oarepo_oidc_einfra.tasks import remove_community_from_perun
+
+        remove_community_from_perun.delay(self.community_slug)
+
+
 class CommunityAAIComponent(ServiceComponent):
     """Community AAI component that propagates the community to Perun."""
 
@@ -101,7 +121,13 @@ class CommunityAAIComponent(ServiceComponent):
         if record.slug != data["slug"]:
             raise ValueError("Cannot change the slug of the community as it is used in AAI")
 
-    def delete(self, identity: Identity, *, record: Community, **kwargs: dict) -> None:
+    def delete(
+        self,
+        identity: Identity,  # noqa: ARG002 unused arguments as we are extending the interface
+        *,
+        record: Community,
+        **kwargs: dict,  # noqa: ARG002 unused arguments as we are extending the interface
+    ) -> None:
         """Delete handler.
 
         At this time, we do not want to delete communities in AAI, so we raise an error.
@@ -110,4 +136,5 @@ class CommunityAAIComponent(ServiceComponent):
         :param record: community record to be deleted
         :param kwargs: additional arguments
         """
-        raise NotImplementedError("Delete is not supported at the time being")
+        if current_einfra_oidc.synchronization_enabled:
+            self.uow.register(DeleteFromAAIOp(record))
