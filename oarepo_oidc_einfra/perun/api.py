@@ -79,7 +79,9 @@ class PerunLowLevelAPI:
         """
         ret = self._perun_call(manager, method, payload)
         if not isinstance(ret, dict):
-            raise TypeError(f"Expected dict from Perun call {manager}.{method} but got {type(ret)}")
+            raise TypeError(
+                f"Expected dict from Perun call {manager}.{method} but got {type(ret)}"
+            )
         return ret
 
     def _perun_call_list(self, manager: str, method: str, payload: dict) -> list:
@@ -91,7 +93,9 @@ class PerunLowLevelAPI:
         """
         ret = self._perun_call(manager, method, payload)
         if not isinstance(ret, list):
-            raise TypeError(f"Expected list from Perun call {manager}.{method} but got {type(ret)}")
+            raise TypeError(
+                f"Expected list from Perun call {manager}.{method} but got {type(ret)}"
+            )
         return ret
 
     def _perun_call(self, manager: str, method: str, payload: dict) -> dict | list:
@@ -120,12 +124,22 @@ class PerunLowLevelAPI:
         )
 
         if resp.status_code == HTTPStatus.NOT_FOUND:
-            raise DoesNotExistError(f"Not found returned for method {method} and {payload}")
+            raise DoesNotExistError(
+                f"Not found returned for method {method} and {payload}"
+            )
 
-        if resp.status_code == HTTPStatus.BAD_REQUEST and resp.json().get("name") == "ResourceNotExistsException":
-            raise DoesNotExistError(f"Not found returned for method {method} and {payload}")
+        if (
+            resp.status_code == HTTPStatus.BAD_REQUEST
+            and resp.json().get("name") == "ResourceNotExistsException"
+        ):
+            raise DoesNotExistError(
+                f"Not found returned for method {method} and {payload}"
+            )
 
-        if resp.status_code < HTTPStatus.OK or resp.status_code >= HTTPStatus.MULTIPLE_CHOICES:
+        if (
+            resp.status_code < HTTPStatus.OK
+            or resp.status_code >= HTTPStatus.MULTIPLE_CHOICES
+        ):
             raise GenericPerunError(f"Perun call failed: {resp.text}")
         response = resp.json()
         log.info(
@@ -159,7 +173,9 @@ class PerunLowLevelAPI:
         group_created = False
         admin_created = False
 
-        group: dict | None = self.get_group_by_name(name, parent_group_id) if check_existing else None
+        group: dict | None = (
+            self.get_group_by_name(name, parent_group_id) if check_existing else None
+        )
 
         if not group:
             log.info("Creating group %s within parent %s", name, parent_group_id)
@@ -204,12 +220,16 @@ class PerunLowLevelAPI:
 
         # check if the group has the service as an admin and if not, add it
         # if inheritance works, do not duplicate the admin here
-        admins = self._perun_call("groupsManager", "getAdmins", {"group": group["id"], "onlyDirectAdmins": 0})
+        admins = self._perun_call(
+            "groupsManager", "getAdmins", {"group": group["id"], "onlyDirectAdmins": 0}
+        )
         for admin in admins:
             if str(admin["id"]) == str(self._service_id):
                 break
         else:
-            log.info("Adding service %s as admin to group %s", self._service_id, group["id"])
+            log.info(
+                "Adding service %s as admin to group %s", self._service_id, group["id"]
+            )
             self._perun_call(
                 "groupsManager",
                 "addAdmin",
@@ -226,7 +246,9 @@ class PerunLowLevelAPI:
         :param parent_group_id:     ID of the parent group
         :return:                    group or None if not found
         """
-        groups = self._perun_call("groupsManager", "getAllSubGroups", {"group": parent_group_id})
+        groups = self._perun_call(
+            "groupsManager", "getAllSubGroups", {"group": parent_group_id}
+        )
         for group in groups:
             if group["shortName"] == name:
                 return cast("dict", group)
@@ -263,7 +285,9 @@ class PerunLowLevelAPI:
         if not isinstance(capabilities, list):
             raise TypeError("Capabilities must be a list")
 
-        resource, resource_created = self.create_resource(vo_id, facility_id, name, description, check_existing)
+        resource, resource_created = self.create_resource(
+            vo_id, facility_id, name, description, check_existing
+        )
 
         resource_id = resource["id"]
 
@@ -293,7 +317,11 @@ class PerunLowLevelAPI:
 
         :return:            (resource: json, resource_created: bool)
         """
-        resource = self.get_resource_by_name(vo_id, facility_id, name) if check_existing else None
+        resource = (
+            self.get_resource_by_name(vo_id, facility_id, name)
+            if check_existing
+            else None
+        )
         resource_created = False
         if not resource:
             log.info(
@@ -347,7 +375,9 @@ class PerunLowLevelAPI:
             )
             log.info("Group %s assigned to resource %s", group_id, resource_id)
 
-    def set_resource_capabilities(self, resource_id: int, capability_attr_id: int, capabilities: list[str]) -> None:
+    def set_resource_capabilities(
+        self, resource_id: int, capability_attr_id: int, capabilities: list[str]
+    ) -> None:
         """Set capabilities to a resource.
 
         :param resource_id:             id of the resource
@@ -362,7 +392,9 @@ class PerunLowLevelAPI:
         )
         value = attr["value"] or []
         if not (set(value) >= set(capabilities)):
-            log.info("Setting capabilities %s to resource %s", capabilities, resource_id)
+            log.info(
+                "Setting capabilities %s to resource %s", capabilities, resource_id
+            )
             attr["value"] = list(set(value) | set(capabilities))
             self._perun_call(
                 "attributesManager",
@@ -379,7 +411,9 @@ class PerunLowLevelAPI:
         :return:
         """
         # assign sync service to the resource
-        services = self._perun_call("resourcesManager", "getAssignedServices", {"resource": resource_id})
+        services = self._perun_call(
+            "resourcesManager", "getAssignedServices", {"resource": resource_id}
+        )
         for service in services:
             if str(service["id"]) == str(service_id):
                 break
@@ -400,7 +434,9 @@ class PerunLowLevelAPI:
                 resource_id,
             )
 
-    def get_resource_by_name(self, vo_id: int, facility_id: int, name: str) -> dict | None:
+    def get_resource_by_name(
+        self, vo_id: int, facility_id: int, name: str
+    ) -> dict | None:
         """Get a resource by name.
 
         :param vo_id:               id of the virtual organization
@@ -418,11 +454,7 @@ class PerunLowLevelAPI:
             return None
 
     def get_resource_by_capability(
-        self,
-        *,
-        vo_id: int,
-        facility_id: int,
-        capability: str,
+        self, *, vo_id: int, facility_id: int, capability: str
     ) -> dict | None:
         """Get a resource by capability.
 
@@ -441,19 +473,120 @@ class PerunLowLevelAPI:
         matching_resources = [
             resource["resource"]
             for resource in resources
-            if self._has_capability(resource, capability) and str(resource["resource"]["voId"]) == str(vo_id)
+            if self._has_capability(resource, capability)
+            and str(resource["resource"]["voId"]) == str(vo_id)
         ]
 
+        # Implementation 1: searcher
+        # resources = self._perun_call(
+        #     "searcher",
+        #     "getResources",
+        #     {"attributesWithSearchingValues": {"capabilities": capability}},
+        # )
+        # matching_resources = [
+        #     resource
+        #     for resource in resources
+        #     if resource["voId"] == vo_id and resource["facilityId"] == facility_id
+        # ]
         if not matching_resources:
             return None
         if len(matching_resources) > 1:
-            raise ValueError(f"More than one resource found for {capability}: {matching_resources}")
+            raise ValueError(
+                f"More than one resource found for {capability}: {matching_resources}"
+            )
         return cast("dict", matching_resources[0])
+
+    def patch_resource_capabilities(
+        self,
+        resource_id: int,
+        capabilities_attribute_id: int,
+        remove: list[str],
+        add: list[str],
+    ) -> None:
+        """Patch capabilities of a resource.
+
+        :param resource_id:         id of the resource
+        :param capabilities_attribute_id:      id of the attribute that holds the capabilities
+        :param remove:              list of capabilities to be removed
+        :param add:                 list of capabilities to be added
+        """
+        attr = self._perun_call_dict(
+            "attributesManager",
+            "getAttribute",
+            {
+                "resource": resource_id,
+                "attributeId": capabilities_attribute_id,
+            },
+        )
+        old_value_set = set(attr["value"] or [])
+        new_value_set = (old_value_set | set(add)) - set(remove)
+        if old_value_set != new_value_set:
+            log.info(
+                "Patching capabilities of resource %s: old capabilities %s, new capabilities %s",
+                resource_id,
+                old_value_set,
+                new_value_set,
+            )
+            attr["value"] = list(new_value_set)
+            self._perun_call(
+                "attributesManager",
+                "setAttribute",
+                {"resource": resource_id, "attribute": attr},
+            )
+            log.info(
+                "Capabilities of resource %s patched",
+                resource_id,
+            )
+
+    def patch_resource_capabilities(
+        self,
+        resource_id: int,
+        capabilities_attribute_id: int,
+        remove: list[str],
+        add: list[str],
+    ) -> None:
+        """Patch capabilities of a resource.
+
+        :param resource_id:         id of the resource
+        :param capabilities_attribute_id:      id of the attribute that holds the capabilities
+        :param remove:              list of capabilities to be removed
+        :param add:                 list of capabilities to be added
+        """
+        attr = self._perun_call_dict(
+            "attributesManager",
+            "getAttribute",
+            {
+                "resource": resource_id,
+                "attributeId": capabilities_attribute_id,
+            },
+        )
+        old_value_set = set(attr["value"] or [])
+        new_value_set = (old_value_set | set(add)) - set(remove)
+        if old_value_set != new_value_set:
+            log.info(
+                "Patching capabilities of resource %s: old capabilities %s, new capabilities %s",
+                resource_id,
+                old_value_set,
+                new_value_set,
+            )
+            attr["value"] = list(new_value_set)
+            self._perun_call(
+                "attributesManager",
+                "setAttribute",
+                {"resource": resource_id, "attribute": attr},
+            )
+            log.info(
+                "Capabilities of resource %s patched",
+                resource_id,
+            )
 
     def _has_capability(self, resource: dict, capability: str) -> bool:
         attributes = resource.get("attributes", [])
         for attr in attributes:
-            if attr["namespace"] == "urn:perun:resource:attribute-def:def" and attr["friendlyName"] == "capabilities":
+            if (
+                attr["namespace"] == "urn:perun:resource:attribute-def:def"
+                and attr["friendlyName"] == "capabilities"
+            ):
                 return capability in attr["value"]
         return False
 
@@ -473,7 +606,9 @@ class PerunLowLevelAPI:
             )
         )
 
-    def get_user_by_attribute(self, *, attribute_name: str, attribute_value: str) -> dict | None:
+    def get_user_by_attribute(
+        self, *, attribute_name: str, attribute_value: str
+    ) -> dict | None:
         """Get a user by attribute.
 
         :param attribute_name:          name of the attribute
@@ -485,7 +620,9 @@ class PerunLowLevelAPI:
             {"attributeName": attribute_name, "attributeValue": attribute_value},
         )
         if len(users) > 1:
-            raise ValueError(f"More than one user found for {attribute_name}={attribute_value}: {users}")
+            raise ValueError(
+                f"More than one user found for {attribute_name}={attribute_value}: {users}"
+            )
 
         if not users:
             return None
@@ -507,9 +644,13 @@ class PerunLowLevelAPI:
 
         :param name:        name of the attribute
         """
-        return self._perun_call_dict("attributesManager", "getAttributeDefinition", {"attributeName": name})
+        return self._perun_call_dict(
+            "attributesManager", "getAttributeDefinition", {"attributeName": name}
+        )
 
-    def remove_user_from_group(self, *, vo_id: int, user_id: int, group_id: int) -> None:
+    def remove_user_from_group(
+        self, *, vo_id: int, user_id: int, group_id: int
+    ) -> None:
         """Remove a user from a group.
 
         :param vo_id:           id of the virtual organization
@@ -541,7 +682,9 @@ class PerunLowLevelAPI:
 
     def _get_or_create_member_in_vo(self, vo_id: int, user_id: int) -> dict:
         # TODO: create part here (but we might not need it if everything goes through invitations)
-        return self._perun_call_dict("membersManager", "getMemberByUser", {"vo": vo_id, "user": user_id})
+        return self._perun_call_dict(
+            "membersManager", "getMemberByUser", {"vo": vo_id, "user": user_id}
+        )
 
     def send_invitation(  # noqa PLR0913 consistency
         self,
