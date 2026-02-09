@@ -1,0 +1,83 @@
+responses:
+- response:
+    auto_calculate_content_length: false
+    body: '[{"resource": {"id": "15027", "createdAt": "2024-10-20 19:50:33.488602",
+      "createdBy": "nrp-fa-devrepo@META", "modifiedAt": "2024-10-20 19:50:33.488602",
+      "modifiedBy": "nrp-fa-devrepo@META", "createdByUid": "143975", "modifiedByUid":
+      "143975", "facilityId": "4662", "voId": "4003", "name": "Community:AAA", "description":
+      "Resource for community AAA", "uuid": "7828dca3-6d7e-4749-9e1b-ba508ba3df50",
+      "beanName": "Resource"}, "attributes": [{"id": "3585", "createdAt": "2019-11-04
+      09:18:27.260377", "createdBy": "1001002@muni.cz", "modifiedAt": "2019-11-04
+      09:18:27.260377", "modifiedBy": "1001002@muni.cz", "createdByUid": "1001004",
+      "modifiedByUid": "1001004", "friendlyName": "capabilities", "namespace": "urn:perun:resource:attribute-def:def",
+      "description": "Capabilities according to AARC specification. i.e. specification
+      of resource and optional actions.", "type": "java.util.ArrayList", "displayName":
+      "Capabilities", "writable": true, "unique": false, "value": ["res:communities:AAA"],
+      "valueCreatedAt": "2024-10-20 19:50:34.123456", "valueCreatedBy": "nrp-fa-devrepo@META",
+      "valueModifiedAt": "2024-10-20 19:50:34.123456", "valueModifiedBy": "nrp-fa-devrepo@META",
+      "entity": "resource", "baseFriendlyName": "capabilities", "friendlyNameParameter":
+      "", "beanName": "Attribute"}]}]'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=100
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/resourcesManager/getEnrichedResourcesForFacility
+- response:
+    auto_calculate_content_length: false
+    body: '{"id": "3585", "createdAt": "2019-11-04 09:18:27.260377", "createdBy":
+      "1001002@muni.cz", "modifiedAt": "2019-11-04 09:18:27.260377", "modifiedBy":
+      "1001002@muni.cz", "createdByUid": "1001004", "modifiedByUid": "1001004", "friendlyName":
+      "capabilities", "namespace": "urn:perun:resource:attribute-def:def", "description":
+      "Capabilities according to AARC specification. i.e. specification of resource
+      and optional actions.", "type": "java.util.ArrayList", "displayName": "Capabilities",
+      "writable": true, "unique": false, "value": ["res:communities:AAA"], "valueCreatedAt":
+      "2024-10-20 19:50:34.123456", "valueCreatedBy": "nrp-fa-devrepo@META", "valueModifiedAt":
+      "2024-10-20 19:50:34.123456", "valueModifiedBy": "nrp-fa-devrepo@META", "entity":
+      "resource", "baseFriendlyName": "capabilities", "friendlyNameParameter": "",
+      "beanName": "Attribute"}'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=99
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/getAttribute
+- response:
+    auto_calculate_content_length: false
+    body: 'null'
+    content_type: text/plain
+    headers:
+      Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+      Expires: '0'
+      Keep-Alive: timeout=5, max=98
+      Pragma: no-cache
+      Referrer-Policy: no-referrer-when-downgrade
+      Strict-Transport-Security: max-age=63072000
+      Transfer-Encoding: chunked
+      Vary: Accept-Encoding
+      X-Content-Type-Options: nosniff
+      X-Frame-Options: SAMEORIGIN
+      X-XSS-Protection: 1; mode=block
+    method: POST
+    status: 200
+    url: https://perun-api.acc.aai.e-infra.cz/krb/rpc/json/attributesManager/setAttribute

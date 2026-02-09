@@ -417,13 +417,7 @@ class PerunLowLevelAPI:
         except DoesNotExistError:
             return None
 
-    def get_resource_by_capability(
-        self,
-        *,
-        vo_id: int,
-        facility_id: int,
-        capability: str,
-    ) -> dict | None:
+    def get_resource_by_capability(self, *, vo_id: int, facility_id: int, capability: str) -> dict | None:
         """Get a resource by capability.
 
         :param vo_id:               id of the virtual organization in which the resource needs to be
@@ -449,6 +443,48 @@ class PerunLowLevelAPI:
         if len(matching_resources) > 1:
             raise ValueError(f"More than one resource found for {capability}: {matching_resources}")
         return cast("dict", matching_resources[0])
+
+    def patch_resource_capabilities(
+        self,
+        resource_id: int,
+        capabilities_attribute_id: int,
+        remove: list[str],
+        add: list[str],
+    ) -> None:
+        """Patch capabilities of a resource.
+
+        :param resource_id:         id of the resource
+        :param capabilities_attribute_id:      id of the attribute that holds the capabilities
+        :param remove:              list of capabilities to be removed
+        :param add:                 list of capabilities to be added
+        """
+        attr = self._perun_call_dict(
+            "attributesManager",
+            "getAttribute",
+            {
+                "resource": resource_id,
+                "attributeId": capabilities_attribute_id,
+            },
+        )
+        old_value_set = set(attr["value"] or [])
+        new_value_set = (old_value_set | set(add)) - set(remove)
+        if old_value_set != new_value_set:
+            log.info(
+                "Patching capabilities of resource %s: old capabilities %s, new capabilities %s",
+                resource_id,
+                old_value_set,
+                new_value_set,
+            )
+            attr["value"] = list(new_value_set)
+            self._perun_call(
+                "attributesManager",
+                "setAttribute",
+                {"resource": resource_id, "attribute": attr},
+            )
+            log.info(
+                "Capabilities of resource %s patched",
+                resource_id,
+            )
 
     def _has_capability(self, resource: dict, capability: str) -> bool:
         attributes = resource.get("attributes", [])
