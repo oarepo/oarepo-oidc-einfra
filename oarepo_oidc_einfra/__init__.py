@@ -10,8 +10,13 @@
 
 from __future__ import annotations
 
+from importlib.metadata import PackageNotFoundError, version
+
 from .remote import EINFRA_LOGIN_APP
 
-__version__ = "2.0.0dev4"
+try:
+    __version__ = version("oarepo-oidc-einfra")
+except PackageNotFoundError:
+    __version__ = "0.0.0dev0+unknown"
 
 __all__ = ("EINFRA_LOGIN_APP", "__version__")
