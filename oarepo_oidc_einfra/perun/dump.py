@@ -81,7 +81,9 @@ class PerunDumpData:
             #   attributes" : {
             #       "urn:perun:resource:attribute-def:def:capabilities" : [
             #           res:communities:abc:role:members"
-            capabilities = r.get("attributes", {}).get(current_einfra_oidc.capabilities_attribute_name, [])
+            capabilities = r.get("attributes", {}).get(
+                current_einfra_oidc.capabilities_attribute_name, []
+            )
             for capability in capabilities:
                 parts = capability.split(":")
                 if (
@@ -99,9 +101,13 @@ class PerunDumpData:
                         )
                         continue
                     if role not in self.community_role_names:
-                        log.error("Role from PERUN %s not found in the repository", role)
+                        log.error(
+                            "Role from PERUN %s not found in the repository", role
+                        )
                         continue
-                    community_role = CommunityRole(self.slug_to_id[community_slug], role)
+                    community_role = CommunityRole(
+                        self.slug_to_id[community_slug], role
+                    )
                     resources[r_id].append(community_role)
 
         return resources
@@ -115,9 +121,15 @@ class PerunDumpData:
             einfra_id = u["attributes"].get(
                 current_einfra_oidc.einfra_user_id_dump_attribute,
             )
-            full_name = u["attributes"].get(current_einfra_oidc.user_display_name_attribute)
-            organization = u["attributes"].get(current_einfra_oidc.user_organization_attribute)
-            email = u["attributes"].get(current_einfra_oidc.user_preferred_mail_attribute)
+            full_name = u["attributes"].get(
+                current_einfra_oidc.user_display_name_attribute
+            )
+            organization = u["attributes"].get(
+                current_einfra_oidc.user_organization_attribute
+            )
+            email = u["attributes"].get(
+                current_einfra_oidc.user_preferred_mail_attribute
+            )
             yield AAIUser(
                 einfra_id=einfra_id,
                 email=email,
@@ -126,7 +138,9 @@ class PerunDumpData:
                 roles=self._get_roles_for_resources(u.get("allowed_resources", {})),
             )
 
-    def _get_roles_for_resources(self, allowed_resources: Iterable[str]) -> set[CommunityRole]:
+    def _get_roles_for_resources(
+        self, allowed_resources: Iterable[str]
+    ) -> set[CommunityRole]:
         """Return community roles for an iterable of allowed resources.
 
         :param allowed_resources:       iterable of resource ids

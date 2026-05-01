@@ -40,8 +40,13 @@ class SlugCommunityRole:
 # res:communities:{slug}:role:{role}
 COMMUNITY_CAPABILITY_PARTS_COUNT = 5
 
+# res:roles:{role}
+GLOBAL_ROLE_CAPABILITY_PARTS_COUNT = 3
 
-def get_invenio_role_from_capability(capability: str | list) -> SlugCommunityRole:
+
+def get_invenio_community_role_from_capability(
+    capability: str | list,
+) -> SlugCommunityRole:
     """Get the Invenio role from the capability.
 
     :param capability:      capability name
@@ -59,13 +64,34 @@ def get_invenio_role_from_capability(capability: str | list) -> SlugCommunityRol
     raise ValueError(f"Not an invenio role capability: {capability}")
 
 
+def get_invenio_global_role_from_capability(
+    capability: str | list,
+) -> str:
+    """Get the Invenio global role from the capability.
+
+    :param capability:      capability name
+    :return:                (slug, role)
+    """
+    parts = capability.split(":") if isinstance(capability, str) else capability
+
+    if (
+        len(parts) == GLOBAL_ROLE_CAPABILITY_PARTS_COUNT
+        and parts[0] == "res"
+        and parts[1] == "roles"
+    ):
+        return parts[2]
+    raise ValueError(f"Not an invenio global role capability: {capability}")
+
+
 def get_user_einfra_id(user_id: int) -> str | None:
     """Get e-infra identity for user with given id.
 
     :param user_id:     user id
     :return:            e-infra identity or None if user has no e-infra identity associated
     """
-    user_identity = UserIdentity.query.filter_by(id_user=user_id, method="e-infra").one_or_none()
+    user_identity = UserIdentity.query.filter_by(
+        id_user=user_id, method="e-infra"
+    ).one_or_none()
     if user_identity and user_identity.id:
         return str(user_identity.id)
     return None
@@ -79,7 +105,11 @@ def einfra_to_local_users_map() -> dict[str, int]:
     :return:                    a mapping of e-infra id to user id
     """
     local_users = {}
-    rows = db.session.execute(select(UserIdentity.id, UserIdentity.id_user).where(UserIdentity.method == "e-infra"))
+    rows = db.session.execute(
+        select(UserIdentity.id, UserIdentity.id_user).where(
+            UserIdentity.method == "e-infra"
+        )
+    )
     for row in rows:
         einfra_id = row[0]
         user_id = row[1]

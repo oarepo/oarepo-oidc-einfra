@@ -10,12 +10,17 @@
 from __future__ import annotations
 
 import logging
+from typing import Generator
 
 from urnparse import URN8141, InvalidURNFormatError
 
 from ..communities import CommunityRole, CommunitySupport
 from ..proxies import current_einfra_oidc
-from .mapping import SlugCommunityRole, get_invenio_role_from_capability
+from .mapping import (
+    SlugCommunityRole,
+    get_invenio_community_role_from_capability,
+    get_invenio_global_role_from_capability,
+)
 
 log = logging.getLogger(__name__)
 
@@ -32,23 +37,12 @@ def get_communities_from_userinfo_token(userinfo_token: dict) -> set[CommunityRo
 
     community_roles = cs.role_names
 
-    # Entitlement looks like:
-    # 1 = {str} 'urn:geant:cesnet.cz:res:communities:cuni:role:curator#perun.cesnet.cz'
-    entitlements = userinfo_token.get("eduperson_entitlement", [])
     aai_groups = set()
-    for entitlement in entitlements:
+    for entitlement_mapping_part, urn in iter_mapping_entitlements(userinfo_token):
         try:
-            urn = URN8141.from_string(entitlement)
-        except InvalidURNFormatError:
-            # not a valid URN, skipping
-            continue
-        if urn.namespace_id.value not in current_einfra_oidc.entitlement_namespaces:
-            continue
-        parts = urn.specific_string.parts
-        if not parts or parts[0] != current_einfra_oidc.entitlement_prefix:
-            continue
-        try:
-            slug_role: SlugCommunityRole = get_invenio_role_from_capability(parts[1:])
+            slug_role: SlugCommunityRole = get_invenio_community_role_from_capability(
+                entitlement_mapping_part[1:]
+            )
             if slug_role.role not in community_roles:
                 log.error(
                     "Role %s not found in community roles in urn %s",
@@ -68,3 +62,48 @@ def get_communities_from_userinfo_token(userinfo_token: dict) -> set[CommunityRo
             continue
 
     return aai_groups
+
+
+def iter_mapping_entitlements(
+    userinfo_token: dict,
+) -> Generator[tuple[str, URN8141], None, None]:
+    """Iterate over entitlements in userinfo token.
+
+    :param userinfo_token:  userinfo token
+    :return:                generator of entitlements
+    """
+
+    # Entitlement looks like:
+    # 1 = {str} 'urn:geant:cesnet.cz:res:communities:cuni:role:curator#perun.cesnet.cz'
+    entitlements = userinfo_token.get("eduperson_entitlement", [])
+    for entitlement in entitlements:
+        try:
+            urn = URN8141.from_string(entitlement)
+        except InvalidURNFormatError:
+            # not a valid URN, skipping
+            continue
+        if urn.namespace_id.value not in current_einfra_oidc.entitlement_namespaces:
+            continue
+        parts = urn.specific_string.parts
+        if not parts or parts[0] != current_einfra_oidc.entitlement_prefix:
+            continue
+        yield parts[1], urn
+
+
+def get_global_roles_from_userinfo_token(userinfo_token: dict) -> set[str]:
+    """Extract global roles from userinfo token.
+
+    :param userinfo_token:  userinfo token
+    :return:                set of global roles
+    """
+    global_roles = set()
+    for entitlement_mapping_part, urn in iter_mapping_entitlements(userinfo_token):
+        try:
+            global_role: GlobalRole = get_invenio_global_role_from_capability(
+                entitlement_mapping_part[1:]
+            )
+            global_roles.add(global_role)
+        except ValueError:
+            continue
+
+    return global_roles
