@@ -164,11 +164,7 @@ def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
 
     # convert hexa@e-infra.cz to e-infra-cz-hexa to be a valid username
     username_parts = decoded_token["sub"].replace(".", "-").split("@")
-    username = (
-        username_parts[1] + "-" + username_parts[0]
-        if len(username_parts) > 1
-        else decoded_token["sub"]
-    )
+    username = username_parts[1] + "-" + username_parts[0] if len(username_parts) > 1 else decoded_token["sub"]
 
     return {
         "external_id": decoded_token["sub"],
@@ -240,9 +236,7 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
         # Create user <-> external id link.
 
         # If there is no user identity for this user and group, create it
-        ui = UserIdentity.query.filter_by(
-            user=user, method=BACKEND_NAME, id=decoded_token["sub"]
-        ).one_or_none()
+        ui = UserIdentity.query.filter_by(user=user, method=BACKEND_NAME, id=decoded_token["sub"]).one_or_none()
         if not ui:
             UserIdentity.create(user, BACKEND_NAME, decoded_token["sub"])
 
@@ -297,9 +291,7 @@ def autocreate_user(
 
     user_preferences = {k: v for k, v in user_preferences.items() if v is not None}
 
-    user_identity = UserIdentity.query.filter_by(
-        id=external_id, method=method
-    ).one_or_none()
+    user_identity = UserIdentity.query.filter_by(id=external_id, method=method).one_or_none()
     if not user_identity:
         user = User.query.filter(User.username == username).one_or_none()
         # if not user, try to find user by the email address (invenio has unique on that as well)
@@ -403,9 +395,7 @@ def account_info_link_perun_groups(
 
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
     perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
-    aai_community_roles = get_communities_from_userinfo_token(
-        cast("dict", userinfo_token)
-    )
+    aai_community_roles = get_communities_from_userinfo_token(cast("dict", userinfo_token))
     global_roles = get_global_roles_from_userinfo_token(cast("dict", userinfo_token))
 
     # disabling synchronization as we already have the latest state from Perun

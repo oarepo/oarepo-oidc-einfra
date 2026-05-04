@@ -10,7 +10,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Generator
+from typing import TYPE_CHECKING
 
 from urnparse import URN8141, InvalidURNFormatError
 
@@ -21,6 +21,10 @@ from .mapping import (
     parse_community_capability,
     parse_global_role_capability,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+
 
 log = logging.getLogger(__name__)
 
@@ -39,9 +43,7 @@ def get_communities_from_userinfo_token(userinfo_token: dict) -> set[CommunityRo
 
     aai_groups = set()
     for entitlement_mapping_part, urn in iter_mapping_entitlements(userinfo_token):
-        slug_role: SlugCommunityRole | None = parse_community_capability(
-            entitlement_mapping_part
-        )
+        slug_role: SlugCommunityRole | None = parse_community_capability(entitlement_mapping_part)
         if slug_role is None:
             continue
         if slug_role.role not in community_roles:
@@ -70,13 +72,12 @@ def get_communities_from_userinfo_token(userinfo_token: dict) -> set[CommunityRo
 
 def iter_mapping_entitlements(
     userinfo_token: dict,
-) -> Generator[tuple[tuple[str], URN8141], None, None]:
+) -> Generator[tuple[list[str], URN8141]]:
     """Iterate over entitlements in userinfo token.
 
     :param userinfo_token:  userinfo token
     :return:                generator of entitlements
     """
-
     # Entitlement looks like:
     # 1 = {str} 'urn:geant:cesnet.cz:res:communities:cuni:role:curator#perun.cesnet.cz'
     entitlements = userinfo_token.get("eduperson_entitlement", [])
@@ -101,7 +102,7 @@ def get_global_roles_from_userinfo_token(userinfo_token: dict) -> set[str]:
     :return:                set of global roles
     """
     global_roles = set()
-    for entitlement_mapping_part, urn in iter_mapping_entitlements(userinfo_token):
+    for entitlement_mapping_part, _urn in iter_mapping_entitlements(userinfo_token):
         global_role: str | None = parse_global_role_capability(entitlement_mapping_part)
         if global_role:
             global_roles.add(global_role)

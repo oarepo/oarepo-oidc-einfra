@@ -87,8 +87,7 @@ def synchronize_community_to_perun(community_id: str) -> None:
         parent_id=current_einfra_oidc.communities_group_id,
         parent_vo=current_einfra_oidc.repository_vo_id,
         name=f"Community {slug}",
-        description=community.metadata.get("description")
-        or f"Group for community {slug}",
+        description=community.metadata.get("description") or f"Group for community {slug}",
         resource_name=f"Community:{slug}",
         resource_description=f"Resource for community {slug}",
         resource_capabilities=[f"res:communities:{slug}"],
@@ -253,9 +252,7 @@ def get_latest_perun_dump_path() -> str:
         response = client.list_objects_v2(**kwargs)
 
         all_keys.extend(
-            (obj["Key"], obj["LastModified"])
-            for obj in response.get("Contents", [])
-            if obj["Key"].endswith(".json")
+            (obj["Key"], obj["LastModified"]) for obj in response.get("Contents", []) if obj["Key"].endswith(".json")
         )
 
         if "NextContinuationToken" not in response:
@@ -327,21 +324,15 @@ def update_from_perun_dump(
         if checksum is not None:
             value_checksum = hashlib.sha256(value).hexdigest()
             if value_checksum != checksum:
-                log.error(
-                    "Checksum of the downloaded dump does not match the expected checksum."
-                )
+                log.error("Checksum of the downloaded dump does not match the expected checksum.")
                 return
         data = json.loads(value.decode("utf-8"))
     community_support = CommunitySupport()
     global_roles_support = GlobalRolesSupport()
-    dump = PerunDumpData(
-        data, community_support.slug_to_id, community_support.role_names
-    )
+    dump = PerunDumpData(data, community_support.slug_to_id, community_support.role_names)
 
     if fix_communities_in_perun:
-        synchronize_communities_to_perun(
-            community_support.all_community_roles, dump.aai_community_roles
-        )
+        synchronize_communities_to_perun(community_support.all_community_roles, dump.aai_community_roles)
 
     synchronize_users_from_perun(dump, community_support, global_roles_support)
 
@@ -360,10 +351,7 @@ def synchronize_communities_to_perun(
             "Some community roles are not mapped to any resource: %s",
             repository_community_roles - aai_community_roles,
         )
-        communities_not_in_perun = {
-            str(cr.community_id)
-            for cr in repository_community_roles - aai_community_roles
-        }
+        communities_not_in_perun = {str(cr.community_id) for cr in repository_community_roles - aai_community_roles}
         for community_id in communities_not_in_perun:
             synchronize_community_to_perun(community_id)
 
@@ -402,17 +390,11 @@ def synchronize_users_from_perun(
             continue
 
         # bulk get users from the database
-        local_users = (
-            db.session.query(User)
-            .filter(User.id.in_(local_user_id_to_einfra_id.keys()))
-            .all()
-        )
+        local_users = db.session.query(User).filter(User.id.in_(local_user_id_to_einfra_id.keys())).all()
 
         # bulk get communities for the users
-        local_community_roles_by_user_id = (
-            community_support.get_user_list_community_membership(
-                local_user_id_to_einfra_id.keys()
-            )
+        local_community_roles_by_user_id = community_support.get_user_list_community_membership(
+            local_user_id_to_einfra_id.keys()
         )
 
         for user in local_users:
@@ -423,20 +405,14 @@ def synchronize_users_from_perun(
                 aai_user.community_roles,
                 aai_user.global_roles,
             )
-            update_user_metadata(
-                user, aai_user.full_name, aai_user.email, aai_user.organization
-            )
+            update_user_metadata(user, aai_user.full_name, aai_user.email, aai_user.organization)
 
-            new_community_roles = filter_community_roles(
-                community_support, aai_user.community_roles
-            )
+            new_community_roles = filter_community_roles(community_support, aai_user.community_roles)
 
             community_support.set_user_community_membership(
                 user,
                 new_community_roles=new_community_roles,
-                current_community_roles=local_community_roles_by_user_id.get(
-                    user.id, set()
-                ),
+                current_community_roles=local_community_roles_by_user_id.get(user.id, set()),
             )
 
             global_roles_support.set_user_global_roles(
@@ -444,9 +420,7 @@ def synchronize_users_from_perun(
                 aai_user.global_roles,
             )
 
-        for unknown_user in set(aai_user_chunk_by_einfra_id.keys()) - set(
-            local_user_id_to_einfra_id.values()
-        ):
+        for unknown_user in set(aai_user_chunk_by_einfra_id.keys()) - set(local_user_id_to_einfra_id.values()):
             log.info(
                 "User with einfra id %s not yet found in the local database",
                 unknown_user,
@@ -473,17 +447,13 @@ def filter_community_roles(
     for community_role in aai_roles:
         if community_role.community_id not in new_community_roles or (
             community_support.role_priority(community_role.role)
-            > community_support.role_priority(
-                new_community_roles[community_role.community_id].role
-            )
+            > community_support.role_priority(new_community_roles[community_role.community_id].role)
         ):
             new_community_roles[community_role.community_id] = community_role
     return set(new_community_roles.values())
 
 
-def update_user_metadata(
-    user: User, full_name: str, email: str, organization: str
-) -> None:
+def update_user_metadata(user: User, full_name: str, email: str, organization: str) -> None:
     """Update user metadata in the database.
 
     If the data is the same, nothing is updated.
@@ -545,15 +515,9 @@ def create_aai_invitation(request_id: str) -> dict | None:
         capability=capability,
     )
     if not resource:
-        raise ValueError(
-            f"Resource for capability {capability} not found inside Perun."
-        )
+        raise ValueError(f"Resource for capability {capability} not found inside Perun.")
     groups = perun_api.get_resource_groups(resource_id=resource["id"])
-    groups = [
-        group
-        for group in groups
-        if group["voId"] == current_einfra_oidc.repository_vo_id
-    ]
+    groups = [group for group in groups if group["voId"] == current_einfra_oidc.repository_vo_id]
 
     if not groups:
         log.error(
@@ -714,9 +678,7 @@ def aai_group_op(
                 group_id=group["id"],
             )
         except:  # noqa: E722 # we want to log all exceptions
-            log.exception(
-                "Error while performing %s on group %s for user %s", op, group, user
-            )
+            log.exception("Error while performing %s on group %s for user %s", op, group, user)
 
 
 @shared_task
@@ -727,9 +689,7 @@ def add_einfra_user_task(email: str, einfra_id: str) -> None:
         email,
         einfra_id,
     )
-    _datastore: UserDatastore = LocalProxy(
-        lambda: current_app.extensions["security"].datastore
-    )  # type: ignore[reportAssignmentType]
+    _datastore: UserDatastore = LocalProxy(lambda: current_app.extensions["security"].datastore)  # type: ignore[reportAssignmentType]
 
     email = email.lower()
     user = User.query.filter_by(email=email).first()
@@ -746,9 +706,7 @@ def add_einfra_user_task(email: str, einfra_id: str) -> None:
         user = User.query.filter_by(email=email).one()
         log.info("    Created new user %s with email %s", user, email)
 
-    identity = UserIdentity.query.filter_by(
-        method="e-infra", id=einfra_id, id_user=user.id
-    ).first()
+    identity = UserIdentity.query.filter_by(method="e-infra", id=einfra_id, id_user=user.id).first()
     if not identity:
         UserIdentity.create(
             user=user,
@@ -787,12 +745,8 @@ def import_perun_users_from_dump(dump_path: str | None = None) -> None:
         data = json.loads(obj.getvalue().decode("utf-8"))
 
     for user_data in data["users"].values():
-        einfra_id = user_data["attributes"].get(
-            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
-        )
-        email = user_data["attributes"].get(
-            "urn:perun:user:attribute-def:def:preferredMail"
-        )
+        einfra_id = user_data["attributes"].get("urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent")
+        email = user_data["attributes"].get("urn:perun:user:attribute-def:def:preferredMail")
         if not email or not einfra_id:
             continue
         add_einfra_user_task(email, einfra_id)

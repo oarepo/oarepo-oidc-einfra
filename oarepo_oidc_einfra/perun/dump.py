@@ -96,9 +96,7 @@ class PerunDumpData:
             #   attributes" : {
             #       "urn:perun:resource:attribute-def:def:capabilities" : [
             #           res:communities:abc:role:members"
-            capabilities = r.get("attributes", {}).get(
-                current_einfra_oidc.capabilities_attribute_name, []
-            )
+            capabilities = r.get("attributes", {}).get(current_einfra_oidc.capabilities_attribute_name, [])
             for capability in capabilities:
                 slug_role = parse_community_capability(capability)
                 if slug_role is None:
@@ -131,9 +129,7 @@ class PerunDumpData:
             #   attributes" : {
             #       "urn:perun:resource:attribute-def:def:capabilities" : [
             #           res:roles:abc"
-            capabilities = r.get("attributes", {}).get(
-                current_einfra_oidc.capabilities_attribute_name, []
-            )
+            capabilities = r.get("attributes", {}).get(current_einfra_oidc.capabilities_attribute_name, [])
             for capability in capabilities:
                 role_name = parse_global_role_capability(capability)
                 if role_name is None:
@@ -157,31 +153,19 @@ class PerunDumpData:
             einfra_id = u["attributes"].get(
                 current_einfra_oidc.einfra_user_id_dump_attribute,
             )
-            full_name = u["attributes"].get(
-                current_einfra_oidc.user_display_name_attribute
-            )
-            organization = u["attributes"].get(
-                current_einfra_oidc.user_organization_attribute
-            )
-            email = u["attributes"].get(
-                current_einfra_oidc.user_preferred_mail_attribute
-            )
+            full_name = u["attributes"].get(current_einfra_oidc.user_display_name_attribute)
+            organization = u["attributes"].get(current_einfra_oidc.user_organization_attribute)
+            email = u["attributes"].get(current_einfra_oidc.user_preferred_mail_attribute)
             yield AAIUser(
                 einfra_id=einfra_id,
                 email=email,
                 full_name=full_name,
                 organization=organization,
-                community_roles=self._get_community_roles_for_resource(
-                    u.get("allowed_resources", {})
-                ),
-                global_roles=self._get_global_roles_for_resources(
-                    u.get("allowed_resources", {})
-                ),
+                community_roles=self._get_community_roles_for_resource(u.get("allowed_resources", {})),
+                global_roles=self._get_global_roles_for_resources(u.get("allowed_resources", {})),
             )
 
-    def _get_community_roles_for_resource(
-        self, allowed_resources: dict[str, Any]
-    ) -> set[CommunityRole]:
+    def _get_community_roles_for_resource(self, allowed_resources: dict[str, Any]) -> set[CommunityRole]:
         """Return community roles for an iterable of allowed resources.
 
         :param allowed_resources:       iterable of resource ids
@@ -192,9 +176,7 @@ class PerunDumpData:
             aai_communities.update(self.resource_to_community_roles.get(resource, []))
         return aai_communities
 
-    def _get_global_roles_for_resources(
-        self, allowed_resources: dict[str, Any]
-    ) -> set[Role]:
+    def _get_global_roles_for_resources(self, allowed_resources: dict[str, Any]) -> set[Role]:
         """Return community roles for an iterable of allowed resources.
 
         :param allowed_resources:       iterable of resource ids

@@ -22,9 +22,7 @@ from oarepo_oidc_einfra.tasks import update_from_perun_dump
 def update_from_file(filename, fix_communities_in_perun=True):
     pth = Path(__file__).parent / "dump_data" / filename
     dump_path, checksum = store_dump(pth.read_bytes())
-    update_from_perun_dump(
-        dump_path, checksum, fix_communities_in_perun=fix_communities_in_perun
-    )
+    update_from_perun_dump(dump_path, checksum, fix_communities_in_perun=fix_communities_in_perun)
 
 
 def test_no_communities(app, db, location, search_clear, s3_dump_bucket):
@@ -33,9 +31,7 @@ def test_no_communities(app, db, location, search_clear, s3_dump_bucket):
     update_from_file("3.json")
 
 
-def test_no_communities_user_exists_but_not_linked(
-    app, db, location, search_clear, smart_record, s3_dump_bucket
-):
+def test_no_communities_user_exists_but_not_linked(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_no_communities_user_exists_but_not_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
@@ -57,9 +53,7 @@ def test_no_communities_user_exists_but_not_linked(
         assert user.email == my_original_email
 
 
-def test_no_communities_user_linked(
-    app, db, location, search_clear, smart_record, s3_dump_bucket
-):
+def test_no_communities_user_linked(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_no_communities_user_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
@@ -89,9 +83,7 @@ def test_no_communities_user_linked(
         assert user.email == "miroslav.simek@cesnet.cz"
 
 
-def test_with_communities(
-    app, db, location, search_clear, smart_record, s3_dump_bucket
-):
+def test_with_communities(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_with_communities.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
@@ -153,9 +145,7 @@ def test_with_communities(
         assert len(memberships) == 0
 
 
-def test_user_not_found_anymore(
-    app, db, location, search_clear, smart_record, s3_dump_bucket
-):
+def test_user_not_found_anymore(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_suspend_user.yaml"):
         user = User(
             username="asdasdasd",
@@ -224,9 +214,7 @@ def test_update_deactivated_ignored(app, db, location, search_clear, s3_dump_buc
     assert len(memberships) == 0, "User should not be added to deactivated community"
 
 
-def test_update_deactivated_attempts_remove_existing_role(
-    app, db, location, search_clear, s3_dump_bucket
-):
+def test_update_deactivated_attempts_remove_existing_role(app, db, location, search_clear, s3_dump_bucket):
     # Create a user linked to e-infra identity
     user = User(
         username="testuser",
@@ -273,9 +261,7 @@ def test_update_deactivated_attempts_remove_existing_role(
     # Give both users roles in the community
     cs = CommunitySupport()
     cs.set_user_community_membership(user, {CommunityRole(community.id, "member")})
-    cs.set_user_community_membership(
-        admin_user, {CommunityRole(community.id, "curator")}
-    )
+    cs.set_user_community_membership(admin_user, {CommunityRole(community.id, "curator")})
 
     # Verify both users have roles
     memberships = list(Member.model_cls.query.filter_by(user_id=user.id).all())
@@ -283,9 +269,7 @@ def test_update_deactivated_attempts_remove_existing_role(
     assert memberships[0].role == "member"
     assert str(memberships[0].community_id) == community.id
 
-    admin_memberships = list(
-        Member.model_cls.query.filter_by(user_id=admin_user.id).all()
-    )
+    admin_memberships = list(Member.model_cls.query.filter_by(user_id=admin_user.id).all())
     assert len(admin_memberships) == 1
     assert admin_memberships[0].role == "curator"
 
@@ -298,20 +282,14 @@ def test_update_deactivated_attempts_remove_existing_role(
 
     # Verify that testuser was removed
     memberships = list(Member.model_cls.query.filter_by(user_id=user.id).all())
-    assert len(memberships) == 0, (
-        "testuser should be removed from the deactivated community"
-    )
+    assert len(memberships) == 0, "testuser should be removed from the deactivated community"
 
     # Verify that testadmin remains
-    admin_memberships = list(
-        Member.model_cls.query.filter_by(user_id=admin_user.id).all()
-    )
+    admin_memberships = list(Member.model_cls.query.filter_by(user_id=admin_user.id).all())
     assert len(admin_memberships) == 1, "testadmin should remain in the community"
 
 
-def test_global_roles(
-    app, db, location, search_clear, smart_record, administrator_role, s3_dump_bucket
-):
+def test_global_roles(app, db, location, search_clear, smart_record, administrator_role, s3_dump_bucket):
     my_original_email = "user1@einfra.cesnet.cz"
     user = User(
         username="testuser",
