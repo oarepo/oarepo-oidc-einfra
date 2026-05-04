@@ -29,6 +29,7 @@ from werkzeug.local import LocalProxy
 
 from oarepo_oidc_einfra.communities import CommunityRole, CommunitySupport
 from oarepo_oidc_einfra.encryption import encrypt
+from oarepo_oidc_einfra.global_roles import GlobalRolesSupport
 from oarepo_oidc_einfra.mutex import mutex
 from oarepo_oidc_einfra.perun.dump import PerunDumpData
 from oarepo_oidc_einfra.perun.mapping import (
@@ -327,12 +328,13 @@ def update_from_perun_dump(
                 return
         data = json.loads(value.decode("utf-8"))
     community_support = CommunitySupport()
+    global_roles_support = GlobalRolesSupport()
     dump = PerunDumpData(data, community_support.slug_to_id, community_support.role_names)
 
     if fix_communities_in_perun:
         synchronize_communities_to_perun(community_support.all_community_roles, dump.aai_community_roles)
 
-    synchronize_users_from_perun(dump, community_support)
+    synchronize_users_from_perun(dump, community_support, global_roles_support)
 
 
 def synchronize_communities_to_perun(
@@ -365,7 +367,11 @@ def chunks[T](iterable: Iterable[T], size: int = 10) -> Iterable[chain[T]]:
         yield chain([first], islice(iterator, size - 1))
 
 
-def synchronize_users_from_perun(dump: PerunDumpData, community_support: CommunitySupport) -> None:
+def synchronize_users_from_perun(
+    dump: PerunDumpData,
+    community_support: CommunitySupport,
+    global_roles_support: GlobalRolesSupport,
+) -> None:
     """Synchronize users from perun dump to the database.
 
     :param dump:                 perun dump data
@@ -393,15 +399,25 @@ def synchronize_users_from_perun(dump: PerunDumpData, community_support: Communi
 
         for user in local_users:
             aai_user = aai_user_chunk_by_einfra_id[local_user_id_to_einfra_id[user.id]]
-            log.info("Setting user %s with roles %s", user, aai_user.roles)
+            log.info(
+                "Setting user %s with community roles %s and global roles %s",
+                user,
+                aai_user.community_roles,
+                aai_user.global_roles,
+            )
             update_user_metadata(user, aai_user.full_name, aai_user.email, aai_user.organization)
 
-            new_community_roles = filter_community_roles(community_support, aai_user.roles)
+            new_community_roles = filter_community_roles(community_support, aai_user.community_roles)
 
             community_support.set_user_community_membership(
                 user,
                 new_community_roles=new_community_roles,
                 current_community_roles=local_community_roles_by_user_id.get(user.id, set()),
+            )
+
+            global_roles_support.set_user_global_roles(
+                user,
+                aai_user.global_roles,
             )
 
         for unknown_user in set(aai_user_chunk_by_einfra_id.keys()) - set(local_user_id_to_einfra_id.values()):
@@ -415,6 +431,7 @@ def synchronize_users_from_perun(dump: PerunDumpData, community_support: Communi
         user = User.query.filter_by(id=local_user_id).one()
         log.info("Removing obsolete user %s", user)
         community_support.set_user_community_membership(user, set())
+        global_roles_support.set_global_roles_membership(user, set())
 
 
 def filter_community_roles(

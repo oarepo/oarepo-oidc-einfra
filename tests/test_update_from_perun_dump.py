@@ -25,13 +25,13 @@ def update_from_file(filename, fix_communities_in_perun=True):
     update_from_perun_dump(dump_path, checksum, fix_communities_in_perun=fix_communities_in_perun)
 
 
-def test_no_communities(app, db, location, search_clear):
+def test_no_communities(app, db, location, search_clear, s3_dump_bucket):
     update_from_file("1.json")
     update_from_file("2.json")
     update_from_file("3.json")
 
 
-def test_no_communities_user_exists_but_not_linked(app, db, location, search_clear, smart_record):
+def test_no_communities_user_exists_but_not_linked(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_no_communities_user_exists_but_not_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
@@ -53,7 +53,7 @@ def test_no_communities_user_exists_but_not_linked(app, db, location, search_cle
         assert user.email == my_original_email
 
 
-def test_no_communities_user_linked(app, db, location, search_clear, smart_record):
+def test_no_communities_user_linked(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_no_communities_user_linked.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
@@ -83,7 +83,7 @@ def test_no_communities_user_linked(app, db, location, search_clear, smart_recor
         assert user.email == "miroslav.simek@cesnet.cz"
 
 
-def test_with_communities(app, db, location, search_clear, smart_record):
+def test_with_communities(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_with_communities.yaml"):
         my_original_email = "ms@cesnet.cz"
         user = User(
@@ -145,7 +145,7 @@ def test_with_communities(app, db, location, search_clear, smart_record):
         assert len(memberships) == 0
 
 
-def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
+def test_user_not_found_anymore(app, db, location, search_clear, smart_record, s3_dump_bucket):
     with smart_record("test_suspend_user.yaml"):
         user = User(
             username="asdasdasd",
@@ -170,7 +170,7 @@ def test_user_not_found_anymore(app, db, location, search_clear, smart_record):
         User.query.filter_by(username="asdasdasd").one()
 
 
-def test_update_deactivated_ignored(app, db, location, search_clear):
+def test_update_deactivated_ignored(app, db, location, search_clear, s3_dump_bucket):
     # Create a user linked to e-infra identity
     user = User(
         username="testuser",
@@ -214,7 +214,7 @@ def test_update_deactivated_ignored(app, db, location, search_clear):
     assert len(memberships) == 0, "User should not be added to deactivated community"
 
 
-def test_update_deactivated_attempts_remove_existing_role(app, db, location, search_clear):
+def test_update_deactivated_attempts_remove_existing_role(app, db, location, search_clear, s3_dump_bucket):
     # Create a user linked to e-infra identity
     user = User(
         username="testuser",
@@ -287,3 +287,33 @@ def test_update_deactivated_attempts_remove_existing_role(app, db, location, sea
     # Verify that testadmin remains
     admin_memberships = list(Member.model_cls.query.filter_by(user_id=admin_user.id).all())
     assert len(admin_memberships) == 1, "testadmin should remain in the community"
+
+
+def test_global_roles(app, db, location, search_clear, smart_record, administrator_role, s3_dump_bucket):
+    my_original_email = "user1@einfra.cesnet.cz"
+    user = User(
+        username="testuser",
+        email=my_original_email,
+        active=True,
+        password="1234",  # noqa S106 # this password is ok for testing
+        user_profile={"full_name": "Mirek Simek"},
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    UserIdentity.create(
+        user=user,
+        method="e-infra",
+        external_id="user1@einfra.cesnet.cz",
+    )
+    db.session.commit()
+
+    update_from_file("1.json")
+    db.session.expire(user)
+    assert user.roles == []
+    update_from_file("2.json")
+    db.session.expire(user)
+    assert user.roles == [administrator_role]
+    update_from_file("3.json")
+    db.session.expire(user)
+    assert user.roles == []

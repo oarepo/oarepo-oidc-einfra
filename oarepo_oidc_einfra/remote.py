@@ -371,7 +371,11 @@ def account_info_link_perun_groups(
 
     # make the import local to avoud circular imports
     from oarepo_oidc_einfra.communities import CommunitySupport
-    from oarepo_oidc_einfra.perun import get_communities_from_userinfo_token
+    from oarepo_oidc_einfra.global_roles import GlobalRolesSupport
+    from oarepo_oidc_einfra.perun import (
+        get_communities_from_userinfo_token,
+        get_global_roles_from_userinfo_token,
+    )
 
     tokens = token_getter(remote)
     if not tokens:
@@ -392,12 +396,14 @@ def account_info_link_perun_groups(
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
     perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
     aai_community_roles = get_communities_from_userinfo_token(cast("dict", userinfo_token))
+    global_roles = get_global_roles_from_userinfo_token(cast("dict", userinfo_token))
 
     # disabling synchronization as we already have the latest state from Perun
     previously_disabled = synchronization_disabled.set(True)
     try:
         # setting the user community membership based on the Perun groups
         CommunitySupport.set_user_community_membership(user, aai_community_roles)
+        GlobalRolesSupport.set_global_roles_membership(user, global_roles)
     finally:
         synchronization_disabled.reset(previously_disabled)
 

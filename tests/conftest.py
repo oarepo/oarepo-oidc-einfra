@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 import yaml
+from invenio_accounts.models import Role
 
 from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 
@@ -142,7 +143,7 @@ def app_config(app_config):
     return app_config
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def s3_dump_bucket(app):
     import boto3
     from botocore.exceptions import ClientError
@@ -302,3 +303,11 @@ def test_ui_pages(app):
     shutil.copy(Path(__file__).parent / "manifest.json", manifest_path / "manifest.json")
 
     app.jinja_loader.searchpath.append(str(Path(__file__).parent / "templates"))
+
+
+@pytest.fixture
+def administrator_role(db):
+    role = Role(name="administrator")
+    db.session.add(role)
+    db.session.commit()
+    return role

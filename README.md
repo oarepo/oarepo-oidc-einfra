@@ -11,7 +11,7 @@ Add the module to your repository's pyproject.toml:
 ``` toml
 
 dependencies = [
-    "oarepo-oidc-einfra>=1.0.0",
+    "oarepo-oidc-einfra>=4.0.0",
     # ...
 ]
 ```
@@ -93,3 +93,14 @@ EINFRA_SYNC_SERVICE_ID = 0
 ```
 
 6. Start the server and go to the login page https://127.0.0.1:5000/login/
+
+## Mapping global invenio roles
+
+To map perun group to a global invenio role:
+
+1. Assign the facility to the group via a resource
+2. On resource, add the following capability: `res:roles:<role_name>`
+
+Users that will be members of the group will be automatically
+given the role (and if they are removed from the group the role 
+will be removed).
