@@ -13,12 +13,15 @@ import dataclasses
 import logging
 from collections import defaultdict
 from functools import cached_property
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from invenio_accounts.models import Role
+from invenio_db import db
 
 from oarepo_oidc_einfra.communities import CommunityRole
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
-from .mapping import COMMUNITY_CAPABILITY_PARTS_COUNT
+from .mapping import parse_community_capability, parse_global_role_capability
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -35,7 +38,8 @@ class AAIUser:
     email: str
     full_name: str
     organization: str
-    roles: set[CommunityRole]
+    community_roles: set[CommunityRole]
+    global_roles: set[Role]
 
 
 class PerunDumpData:
@@ -69,6 +73,17 @@ class PerunDumpData:
         return aai_community_roles
 
     @cached_property
+    def aai_global_roles(self) -> set[Role]:
+        """Return all community roles from the dump.
+
+        :return: set of community roles known to perun
+        """
+        aai_global_roles = set()
+        for resource_global_roles in self.resource_to_global_roles.values():
+            aai_global_roles.update(resource_global_roles)
+        return aai_global_roles
+
+    @cached_property
     def resource_to_community_roles(self) -> dict[str, list[CommunityRole]]:
         """Returns a mapping of resource id to community roles.
 
@@ -85,31 +100,52 @@ class PerunDumpData:
                 current_einfra_oidc.capabilities_attribute_name, []
             )
             for capability in capabilities:
-                parts = capability.split(":")
-                if (
-                    len(parts) == COMMUNITY_CAPABILITY_PARTS_COUNT
-                    and parts[0] == "res"
-                    and parts[1] == "communities"
-                    and parts[3] == "role"
-                ):
-                    community_slug = parts[2]
-                    role = parts[4]
-                    if community_slug not in self.slug_to_id:
-                        log.error(
-                            "Community from PERUN %s not found in the repository",
-                            community_slug,
-                        )
-                        continue
-                    if role not in self.community_role_names:
-                        log.error(
-                            "Role from PERUN %s not found in the repository", role
-                        )
-                        continue
-                    community_role = CommunityRole(
-                        self.slug_to_id[community_slug], role
+                slug_role = parse_community_capability(capability)
+                if slug_role is None:
+                    continue
+                community_slug, role = slug_role.slug, slug_role.role
+                if community_slug not in self.slug_to_id:
+                    log.error(
+                        "Community from PERUN %s not found in the repository",
+                        community_slug,
                     )
-                    resources[r_id].append(community_role)
+                    continue
+                if role not in self.community_role_names:
+                    log.error("Role from PERUN %s not found in the repository", role)
+                    continue
+                community_role = CommunityRole(self.slug_to_id[community_slug], role)
+                resources[r_id].append(community_role)
 
+        return resources
+
+    @cached_property
+    def resource_to_global_roles(self) -> dict[str, list[Role]]:
+        """Returns a mapping of resource id to global roles.
+
+        :return:    for each Perun resource, mapping to associated global roles
+        """
+        resources = defaultdict(list)
+        for r_id, r in self.dump_data["resources"].items():
+            # data look like
+            # "0003a30a-5512-4ff1-ae1c-b13372041459" : {
+            #   attributes" : {
+            #       "urn:perun:resource:attribute-def:def:capabilities" : [
+            #           res:roles:abc"
+            capabilities = r.get("attributes", {}).get(
+                current_einfra_oidc.capabilities_attribute_name, []
+            )
+            for capability in capabilities:
+                role_name = parse_global_role_capability(capability)
+                if role_name is None:
+                    continue
+                role = db.session.query(Role).filter_by(name=role_name).first()
+                if role is None:
+                    log.error(
+                        "Role from PERUN %s not found in the repository",
+                        role_name,
+                    )
+                    continue
+                resources[r_id].append(role)
         return resources
 
     def users(self) -> Iterable[AAIUser]:
@@ -135,11 +171,16 @@ class PerunDumpData:
                 email=email,
                 full_name=full_name,
                 organization=organization,
-                roles=self._get_roles_for_resources(u.get("allowed_resources", {})),
+                community_roles=self._get_community_roles_for_resource(
+                    u.get("allowed_resources", {})
+                ),
+                global_roles=self._get_global_roles_for_resources(
+                    u.get("allowed_resources", {})
+                ),
             )
 
-    def _get_roles_for_resources(
-        self, allowed_resources: Iterable[str]
+    def _get_community_roles_for_resource(
+        self, allowed_resources: dict[str, Any]
     ) -> set[CommunityRole]:
         """Return community roles for an iterable of allowed resources.
 
@@ -150,3 +191,16 @@ class PerunDumpData:
         for resource in allowed_resources:
             aai_communities.update(self.resource_to_community_roles.get(resource, []))
         return aai_communities
+
+    def _get_global_roles_for_resources(
+        self, allowed_resources: dict[str, Any]
+    ) -> set[Role]:
+        """Return community roles for an iterable of allowed resources.
+
+        :param allowed_resources:       iterable of resource ids
+        :return:                        a set of associated community roles
+        """
+        aai_roles = set()
+        for resource in allowed_resources:
+            aai_roles.update(self.resource_to_global_roles.get(resource, []))
+        return aai_roles

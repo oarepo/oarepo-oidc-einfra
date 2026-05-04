@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 import yaml
+from invenio_accounts.models import Role
 
 from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 
@@ -107,8 +108,12 @@ def app_config(app_config):
     app_config["OAUTHCLIENT_REMOTE_APPS"] = {"e-infra": EINFRA_LOGIN_APP}
 
     app_config["JSONSCHEMAS_HOST"] = "localhost"
-    app_config["RECORDS_REFRESOLVER_CLS"] = "invenio_records.resolver.InvenioRefResolver"
-    app_config["RECORDS_REFRESOLVER_STORE"] = "invenio_jsonschemas.proxies.current_refresolver_store"
+    app_config["RECORDS_REFRESOLVER_CLS"] = (
+        "invenio_records.resolver.InvenioRefResolver"
+    )
+    app_config["RECORDS_REFRESOLVER_STORE"] = (
+        "invenio_jsonschemas.proxies.current_refresolver_store"
+    )
     app_config["RATELIMIT_AUTHENTICATED_USER"] = "200 per second"
     app_config["SEARCH_HOSTS"] = [
         {
@@ -131,7 +136,9 @@ def app_config(app_config):
     app_config["SERVER_NAME"] = "127.0.0.1:5000"
 
     app_config["EINFRA_CONSUMER_KEY"] = os.environ.get("INVENIO_EINFRA_CONSUMER_KEY")
-    app_config["EINFRA_CONSUMER_SECRET"] = os.environ.get("INVENIO_EINFRA_CONSUMER_SECRET")
+    app_config["EINFRA_CONSUMER_SECRET"] = os.environ.get(
+        "INVENIO_EINFRA_CONSUMER_SECRET"
+    )
 
     # S3 configuration for user dumps
     app_config["EINFRA_USER_DUMP_S3_ACCESS_KEY"] = "invenio"
@@ -142,7 +149,7 @@ def app_config(app_config):
     return app_config
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def s3_dump_bucket(app):
     import boto3
     from botocore.exceptions import ClientError
@@ -287,7 +294,9 @@ def replace_in_response(resp, source_constants, target_constants):
 
 @pytest.fixture
 def test_group_id():
-    with (Path(__file__).parent / "request_data" / "test_create_group.yaml").open() as f:
+    with (
+        Path(__file__).parent / "request_data" / "test_create_group.yaml"
+    ).open() as f:
         data = yaml.safe_load(f)
         payload = json.loads(data["responses"][2]["response"]["body"])
         return payload["id"]
@@ -299,6 +308,16 @@ def test_ui_pages(app):
     invenio_instance_path = python_path.parent.parent / "var" / "instance"
     manifest_path = invenio_instance_path / "static" / "dist"
     manifest_path.mkdir(parents=True, exist_ok=True)
-    shutil.copy(Path(__file__).parent / "manifest.json", manifest_path / "manifest.json")
+    shutil.copy(
+        Path(__file__).parent / "manifest.json", manifest_path / "manifest.json"
+    )
 
     app.jinja_loader.searchpath.append(str(Path(__file__).parent / "templates"))
+
+
+@pytest.fixture
+def administrator_role(db):
+    role = Role(name="administrator")
+    db.session.add(role)
+    db.session.commit()
+    return role

@@ -44,13 +44,15 @@ COMMUNITY_CAPABILITY_PARTS_COUNT = 5
 GLOBAL_ROLE_CAPABILITY_PARTS_COUNT = 3
 
 
-def get_invenio_community_role_from_capability(
-    capability: str | list,
-) -> SlugCommunityRole:
-    """Get the Invenio role from the capability.
+def parse_community_capability(
+    capability: str | list[str] | tuple[str, ...],
+) -> SlugCommunityRole | None:
+    """Try to parse a capability as a community role.
 
     :param capability:      capability name
-    :return:                (slug, role)
+    :return:                SlugCommunityRole if the capability matches the
+                            ``res:communities:{slug}:role:{role}`` pattern,
+                            ``None`` otherwise
     """
     parts = capability.split(":") if isinstance(capability, str) else capability
 
@@ -61,26 +63,26 @@ def get_invenio_community_role_from_capability(
         and parts[3] == "role"
     ):
         return SlugCommunityRole(parts[2], parts[4])
-    raise ValueError(f"Not an invenio role capability: {capability}")
+    return None
 
 
-def get_invenio_global_role_from_capability(
-    capability: str | list,
-) -> str:
-    """Get the Invenio global role from the capability.
+def parse_global_role_capability(
+    capability: str | list[str] | tuple[str, ...],
+) -> str | None:
+    """Try to parse a capability as a global role.
 
     :param capability:      capability name
-    :return:                (slug, role)
+    :return:                role if the capability matches the
+                            ``res:global:role:{role}`` pattern, ``None`` otherwise
     """
     parts = capability.split(":") if isinstance(capability, str) else capability
-
     if (
         len(parts) == GLOBAL_ROLE_CAPABILITY_PARTS_COUNT
         and parts[0] == "res"
         and parts[1] == "roles"
     ):
         return parts[2]
-    raise ValueError(f"Not an invenio global role capability: {capability}")
+    return None
 
 
 def get_user_einfra_id(user_id: int) -> str | None:
