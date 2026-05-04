@@ -74,9 +74,9 @@ class PerunDumpData:
 
     @cached_property
     def aai_global_roles(self) -> set[Role]:
-        """Return all community roles from the dump.
+        """Return all global roles (invenio_accounts.models.Role) from the dump.
 
-        :return: set of community roles known to perun
+        :return: set of global roles known to perun
         """
         aai_global_roles = set()
         for resource_global_roles in self.resource_to_global_roles.values():
@@ -177,7 +177,7 @@ class PerunDumpData:
         return aai_communities
 
     def _get_global_roles_for_resources(self, allowed_resources: dict[str, Any]) -> set[Role]:
-        """Return community roles for an iterable of allowed resources.
+        """Return global roles (invenio_accounts.models.Role) for an iterable of allowed resources.
 
         :param allowed_resources:       iterable of resource ids
         :return:                        a set of associated community roles

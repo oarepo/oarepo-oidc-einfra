@@ -8,8 +8,12 @@
 
 from __future__ import annotations
 
+import logging
+
 from invenio_accounts.models import Role, User
 from invenio_db import db
+
+log = logging.getLogger("perun.roles")
 
 
 class GlobalRolesSupport:
@@ -20,10 +24,14 @@ class GlobalRolesSupport:
         """Set the global roles for the user."""
         transformed_roles = db.session.query(Role).filter(Role.name.in_(global_roles)).all()
         if len(transformed_roles) != len(global_roles):
-            raise ValueError(
-                "Not all global roles were found in the database: "
-                + ", ".join(set(global_roles) - {role.name for role in transformed_roles})
+            log.error(
+                "Failed to set user's global roles - some of the roles were not found: "
+                "user=%s global_roles=%s transformed_roles=%s",
+                user.id,
+                global_roles,
+                transformed_roles,
             )
+
         user.roles = transformed_roles  # type: ignore[reportAttributeAccessIssue]
         db.session.add(user)
         db.session.commit()

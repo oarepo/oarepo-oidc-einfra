@@ -73,7 +73,7 @@ def parse_global_role_capability(
 
     :param capability:      capability name
     :return:                role if the capability matches the
-                            ``res:global:role:{role}`` pattern, ``None`` otherwise
+                            ``res:role:{role}`` pattern, ``None`` otherwise
     """
     parts = capability.split(":") if isinstance(capability, str) else capability
     if len(parts) == GLOBAL_ROLE_CAPABILITY_PARTS_COUNT and parts[0] == "res" and parts[1] == "roles":
