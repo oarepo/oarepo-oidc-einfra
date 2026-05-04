@@ -99,7 +99,7 @@ EINFRA_SYNC_SERVICE_ID = 0
 To map perun group to a global invenio role:
 
 1. Assign the facility to the group via a resource
-2. On resouce, add the following capability: `res:role:<role_name>`
+2. On resource, add the following capability: `res:roles:<role_name>`
 
 Users that will be members of the group will be automatically
 given the role (and if they are removed from the group the role 
