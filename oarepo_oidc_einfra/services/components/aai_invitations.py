@@ -246,7 +246,7 @@ class AAIInvitationComponent(ServiceComponent):
 
         return current_requests_service.create(
             system_identity,
-            {"title": title, "description": description, "user": user_id},
+            {"title": title, "description": description, "payload": {"user": user_id}},
             AAICommunityInvitation,
             receiver=None,
             creator=community,
