@@ -12,6 +12,7 @@ requires-python = ">=3.14,<3.15"
 dependencies = [
     "oarepo[rdm,tests]>=14,<15",
     "oarepo-runtime>=4.0.0,<5.0.0",
+    "oarepo-requests>=5.5.0,<6.0.0",
     "boto3",
     "urnparse",
     "tqdm",
