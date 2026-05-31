@@ -19,9 +19,10 @@ from invenio_base.utils import obj_or_import_string
 from invenio_communities.communities.services.components import (
     DefaultCommunityComponents,
 )
-from invenio_communities.members.services.components import (
-    DefaultCommunityMemberComponents,  # type: ignore[reportAttributeAccessIssue] # defined in our patch
+from invenio_communities.members.services.config import (
+    CommunityMemberCachingComponent,
 )
+from invenio_records_resources.services.records.components import MetadataComponent
 
 from oarepo_oidc_einfra.perun import PerunLowLevelAPI
 from oarepo_oidc_einfra.services.components.aai_communities import CommunityAAIComponent
@@ -84,7 +85,8 @@ class EInfraOIDCApp:
         elif not communities_members_components:
             app.config["COMMUNITIES_MEMBERS_SERVICE_COMPONENTS"] = [
                 AAIInvitationComponent,
-                *DefaultCommunityMemberComponents,
+                MetadataComponent,
+                CommunityMemberCachingComponent,
             ]
 
     def perun_api(self) -> PerunLowLevelAPI:
