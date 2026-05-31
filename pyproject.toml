@@ -4,21 +4,21 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oarepo-oidc-einfra"
-version = "4.2.0"
+version = "5.0.0"
 description = "E-infra OIDC Auth backend for OARepo"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.14,<3.15"
 dependencies = [
     "oarepo[rdm,tests]>=14,<15",
-    "oarepo-runtime>=4.0.0,<5.0.0",
-    "oarepo-requests>=5.5.0,<6.0.0",
+    "oarepo-runtime>=5.0.0,<6.0.0",
+    "oarepo-requests>=7.0.0,<8.0.0",
     "boto3",
     "urnparse",
     "tqdm",
 
     # invenio dependencies
-    "invenio-communities>=26.0.0,<27.0.0",
+    "invenio-communities>=27.0.0,<28.0.0",
 ]
 
 
@@ -32,7 +32,7 @@ tests = [
 
     # invenio dependencies
     "invenio-app>=3.0.0,<4.0.0",
-    "invenio-oauth2server>=4.0.0,<5.0.0",
+    "invenio-oauth2server>=5.0.0,<6.0.0",
 ]
 oarepo14 = [
     "oarepo[rdm,tests]>=14,<15",
