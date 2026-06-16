@@ -4,15 +4,15 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oarepo-oidc-einfra"
-version = "6.0.0"
+version = "7.0.0"
 description = "E-infra OIDC Auth backend for OARepo"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.14,<3.15"
 dependencies = [
     "oarepo[rdm,tests]>=14,<15",
-    "oarepo-runtime>=6.0.0,<7.0.0",
-    "oarepo-requests>=8.0.0,<9.0.0",
+    "oarepo-runtime>=7.0.0,<8.0.0",
+    "oarepo-requests>=9.0.0,<10.0.0",
     "boto3",
     "urnparse",
     "tqdm",
