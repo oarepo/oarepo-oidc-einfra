@@ -78,7 +78,7 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
     ):
         """Initialize the E-Infra OIDC Remote Auth backend for NRP."""
         request_token_params = request_token_params or {
-            "scope": "openid profile email eduperson_entitlement isCesnetEligibleLastSeen organization",
+            "scope": "openid profile email eduperson_entitlement organization",
         }
 
         access_token_url = access_token_url or f"{base_url}token"
