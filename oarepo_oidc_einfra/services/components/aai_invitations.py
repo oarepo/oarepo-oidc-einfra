@@ -282,7 +282,7 @@ class AAIInvitationComponent(ServiceComponent):
 
         user = current_users_service.create(
             system_identity,
-            {"email": member_email},
+            {"email": member_email, "username": None},
         )
 
         u = db.session.query(User).get(user["id"])
