@@ -9,7 +9,6 @@
 
 from __future__ import annotations
 
-import re
 from typing import TYPE_CHECKING, cast, override
 
 from flask import current_app
@@ -20,6 +19,7 @@ from invenio_db import db
 from invenio_db.uow import Operation, UnitOfWork
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.records.components.base import ServiceComponent
+from invenio_records_resources.services.uow import RecordCommitOp
 from invenio_requests.customizations.event_types import CommentEventType
 from invenio_requests.proxies import current_events_service, current_requests_service
 from invenio_users_resources.proxies import current_users_service
@@ -281,15 +281,31 @@ class AAIInvitationComponent(ServiceComponent):
         else:
             member_full_name = member_email.split("@", maxsplit=1)[0]
 
-        username = re.sub(r"[^a-zA-Z0-9]", "_", member_email)
-        # if username does not start with a letter, prepend "a_"
-        if not username[0].isalpha():
-            username = f"a_{username}"
+        # we can not use the user service to create the user because it sends change password email
+        #
+        with UnitOfWork() as uow:
+            data = {"email": member_email}
+            # validate new user data
+            data, errors = current_users_service.schema.load(
+                data,
+                context={"identity": system_identity},
+                raise_errors=True,
+            )
+            data["username"] = None
 
-        user = current_users_service.create(
-            system_identity,
-            {"email": member_email, "username": username},
-        )
+            # create user
+            user = current_users_service._create_user(data)  # noqa: SLF001
+            # run components
+            current_users_service.run_components(
+                "create",
+                system_identity,
+                data=data,
+                user=user,
+                errors=errors,
+                uow=uow,
+            )
+            uow.register(RecordCommitOp(user, indexer=current_users_service.indexer, index_refresh=True))
+            uow.commit()
 
         u = db.session.query(User).get(user["id"])
         if u and (not u.user_profile or "full_name" not in u.user_profile):
