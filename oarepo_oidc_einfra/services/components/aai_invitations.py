@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING, cast, override
 
 from flask import current_app
@@ -280,9 +281,14 @@ class AAIInvitationComponent(ServiceComponent):
         else:
             member_full_name = member_email.split("@", maxsplit=1)[0]
 
+        username = re.sub(r"[^a-zA-Z0-9]", "_", member_email)
+        # if username does not start with a letter, prepend "a_"
+        if not username[0].isalpha():
+            username = f"a_{username}"
+
         user = current_users_service.create(
             system_identity,
-            {"email": member_email, "username": None},
+            {"email": member_email, "username": username},
         )
 
         u = db.session.query(User).get(user["id"])
