@@ -35,6 +35,7 @@ if TYPE_CHECKING:
 
 
 perun_log = logging.getLogger("oarepo_oidc_einfra.perun.remote")
+log = logging.getLogger("oarepo_oidc_einfra.remote")
 
 BACKEND_NAME = "e-infra"
 
@@ -327,7 +328,21 @@ def autocreate_user(
         if user_identity.user is None:
             raise RuntimeError(f"UserIdentity {user_identity} has no associated user!")
 
-        user_identity.user.email = email
+        user_by_email = User.query.filter(User.email == email, User.id != user_identity.user.id).first()
+
+        if user_by_email is None:
+            user_identity.user.email = email
+        else:
+            log.error(
+                "User is logging in with user identity %s, user %s, current email %s. "
+                "The AAI returns email %s that corresponds to a different user %s!",
+                user_identity,
+                user_identity.user,
+                user_identity.user.email,
+                email,
+                user_by_email,
+            )
+
         user_identity.user.user_profile = {
             **user_identity.user.user_profile,
             **user_profile,
