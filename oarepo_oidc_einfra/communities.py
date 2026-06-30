@@ -297,7 +297,7 @@ class CommunitySupport:
             if len(user_invitations_to_community) == 1:
                 if not user_invitations_to_community[0].active:
                     log.info("Found existing invitation for user %s, accepting it", user.id)
-                    current_communities.service.members.accept_invite(
+                    current_communities.service.members.accept_member_request(  # type: ignore[reportAttributeAccessIssue]
                         system_identity, user_invitations_to_community[0].request_id
                     )
                 else:
