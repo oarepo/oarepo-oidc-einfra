@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, override
 
 from invenio_db.uow import Operation, UnitOfWork
 from invenio_records_resources.services.records.components.base import ServiceComponent
+from marshmallow import ValidationError
 
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
@@ -84,12 +85,14 @@ class CommunityAAIComponent(ServiceComponent):
         """
         # propagate the community to AAI
         if data is None:
-            raise ValueError("Missing data for community creation")
+            raise ValidationError("Missing data for community creation")
 
         if "slug" not in data:
-            raise ValueError("Missing slug in community data")
+            raise ValidationError("Missing slug in community data", field_name="slug")
         if not re.match("^[a-z0-9-]+$", data["slug"]):
-            raise ValueError("Invalid slug, only lowercase letters, numbers and hyphens are allowed")
+            raise ValidationError(
+                "Invalid slug, only lowercase letters, numbers and hyphens are allowed", field_name="slug"
+            )
 
         if current_einfra_oidc.synchronization_enabled:
             self.uow.register(PropagateToAAIOp(record))
@@ -113,13 +116,13 @@ class CommunityAAIComponent(ServiceComponent):
         :param kwargs: additional arguments
         """
         if data is None:
-            raise ValueError("Missing data for community update")
+            raise ValidationError("Missing data for community update")
 
         if record is None:
-            raise ValueError("Missing record for community update")
+            raise ValidationError("Missing record for community update", field_name="slug")
 
         if record.slug != data["slug"]:
-            raise ValueError("Cannot change the slug of the community as it is used in AAI")
+            raise ValidationError("Cannot change the slug of the community as it is used in AAI", field_name="slug")
 
     def delete(
         self,

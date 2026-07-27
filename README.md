@@ -51,20 +51,17 @@ INVENIO_EINFRA_CONSUMER_SECRET=*Client Secret*
 ```python
 from oarepo_oidc_einfra import EINFRA_LOGIN_APP
 
-OAUTHCLIENT_REMOTE_APPS = {
-    "e-infra": EINFRA_LOGIN_APP
-}
+OAUTHCLIENT_REMOTE_APPS = {"e-infra": EINFRA_LOGIN_APP}
 ```
 
 4. Add the e-infra public key to your invenio.cfg or environment variables:
 ```python
-EINFRA_RSA_KEY=b'-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3\nPHloIk/Ljs2vZl/RAaitkXDx6aqpl1kGpS44eYJOaer4oWc6/QNaMtynvlSlnkuW\nrG765adNKT9sgAWSrPb81xkojsQabrSNv4nIOWUQi0Tjh0WxXQmbV+bMxkVaElhd\nHNFzUfHv+XqI8Hkc82mIGtyeMQn+VAuZbYkVXnjyCwwa9RmPOSH+O4N4epDXKk1V\nK9dUxf/rEYbjMNZGDva30do0mrBkU8W3O1mDVJSSgHn4ejKdGNYMm0JKPAgCWyPW\nJDoL092ctPCFlUMBBZ/OP3omvgnw0GaWZXxqSqaSvxFJkqCHqLMwpxmWTTAgEvAb\nnwIDAQAB\n-----END PUBLIC KEY-----\n'
+EINFRA_RSA_KEY = b"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3\nPHloIk/Ljs2vZl/RAaitkXDx6aqpl1kGpS44eYJOaer4oWc6/QNaMtynvlSlnkuW\nrG765adNKT9sgAWSrPb81xkojsQabrSNv4nIOWUQi0Tjh0WxXQmbV+bMxkVaElhd\nHNFzUfHv+XqI8Hkc82mIGtyeMQn+VAuZbYkVXnjyCwwa9RmPOSH+O4N4epDXKk1V\nK9dUxf/rEYbjMNZGDva30do0mrBkU8W3O1mDVJSSgHn4ejKdGNYMm0JKPAgCWyPW\nJDoL092ctPCFlUMBBZ/OP3omvgnw0GaWZXxqSqaSvxFJkqCHqLMwpxmWTTAgEvAb\nnwIDAQAB\n-----END PUBLIC KEY-----\n"
 ```
 
 5. Add the VO, communities group, api url and others to your invenio.cfg or environment variables:
 
 ```python
-
 EINFRA_SERVICE_USERNAME = "username"
 """Username of the service in the E-INFRA Perun."""
 
@@ -89,7 +86,6 @@ EINFRA_CAPABILITIES_ATTRIBUTE_ID = 0
 EINFRA_SYNC_SERVICE_ID = 0
 """Internal ID of the service in the E-INFRA Perun that is responsible for synchronization
 (creating and pushing dumps with resources and users)."""
-
 ```
 
 6. Start the server and go to the login page https://127.0.0.1:5000/login/
