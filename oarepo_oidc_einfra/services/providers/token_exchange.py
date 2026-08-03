@@ -9,6 +9,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 import jwt
@@ -19,11 +20,10 @@ from oarepo_runtime.ext import AuthProvider
 from ...remote import BACKEND_NAME
 
 JWT_SEGMENT_SEPARATOR_COUNT = 2
+log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from invenio_accounts.models import User
-
-DEFAULT_ISSUER = "https://login.e-infra.cz/oidc/"
 
 
 class EInfraTokenExchangeProvider(AuthProvider):
@@ -61,19 +61,15 @@ class EInfraTokenExchangeProvider(AuthProvider):
             "EINFRA_TOKEN_EXCHANGE_AUDIENCE",
             current_app.config.get("INVENIO_EINFRA_CONSUMER_KEY"),
         )
-        issuer = current_app.config.get("EINFRA_TOKEN_EXCHANGE_ISSUER", DEFAULT_ISSUER)
+        issuer = current_app.config.get("EINFRA_TOKEN_EXCHANGE_ISSUER")
         public_key = current_app.config.get("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY")
-        if public_key is None:
-            public_key = current_app.config.get("EINFRA_RSA_KEY")
 
         if not audience:
             raise RuntimeError("EINFRA_TOKEN_EXCHANGE_AUDIENCE is not configured")
-        if not public_key:
-            raise RuntimeError("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY is not configured")
         try:
             return jwt.decode(  # type: ignore[no-any-return]
                 token,
-                key=public_key,
+                key=public_key,  # type: ignore[reportArgumentType]
                 algorithms=["RS256"],
                 audience=audience,
                 issuer=issuer,
@@ -91,6 +87,7 @@ class EInfraTokenExchangeProvider(AuthProvider):
         ).one_or_none()
 
         if identity is None or identity.user is None:
+            log.error("No local user is linked to e-INFRA subject %s", subject)
             abort(403)
 
         return identity.user

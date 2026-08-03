@@ -62,9 +62,16 @@ class EInfraOIDCApp:
         # sets the default configuration values
         from . import config
 
+        app.config.setdefault("EINFRA_TOKEN_EXCHANGE_ISSUER", "https://login.e-infra.cz/oidc/")
+
         for k in dir(config):
             if k.startswith("EINFRA_"):
                 app.config.setdefault(k, getattr(config, k))
+
+        if app.config.get("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY") is None:
+            app.config["EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"] = app.config.get("EINFRA_RSA_KEY")
+        if not app.config["EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"]:
+            raise RuntimeError("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY is not configured")
 
     def register_sync_component_to_community_service(self, app: Flask) -> None:
         """Register components to the community service."""
