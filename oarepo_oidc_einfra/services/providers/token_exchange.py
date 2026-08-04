@@ -74,7 +74,7 @@ class EInfraTokenExchangeProvider(AuthProvider):
                 options={"require": ["sub", "exp", "iat"]},
             )
         except jwt.PyJWTError:
-            log.error("Rejected e-INFRA token: JWT validation failed")
+            log.exception("Rejected e-INFRA token: JWT validation failed")
             abort(403)
 
     @staticmethod
