@@ -64,8 +64,6 @@ class EInfraTokenExchangeProvider(AuthProvider):
         issuer = current_app.config.get("EINFRA_TOKEN_EXCHANGE_ISSUER")
         public_key = current_app.config.get("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY")
 
-        if not audience:
-            raise RuntimeError("EINFRA_TOKEN_EXCHANGE_AUDIENCE is not configured")
         try:
             return jwt.decode(  # type: ignore[no-any-return]
                 token,
