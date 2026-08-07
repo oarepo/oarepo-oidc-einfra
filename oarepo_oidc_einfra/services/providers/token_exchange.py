@@ -50,7 +50,7 @@ class EInfraTokenExchangeProvider(AuthProvider):
 
         scheme, separator, token = authorization.partition(" ")
         if scheme.lower() != "bearer" or not separator or not token.strip():
-            abort(403)
+            return None
 
         return str(token.strip())
 
