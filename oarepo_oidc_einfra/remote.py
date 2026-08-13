@@ -1,10 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """E-Infra OIDC Remote Auth backend for NRP."""
 
 from __future__ import annotations
@@ -62,8 +58,8 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
     def __init__(  # noqa PLR0193 interface requirement
         self,
         *,
-        title: str = _("E-Infra AAI"),  # type: ignore[reportArgumentType]
-        description: str = _("E-Infra authentication and authorization service."),  # type: ignore[reportArgumentType]
+        title: str = _("E-Infra AAI"),  # ty: ignore[invalid-parameter-default]
+        description: str = _("E-Infra authentication and authorization service."),  # ty: ignore[invalid-parameter-default]
         base_url: str = "https://login.e-infra.cz/oidc/",
         app_key: str = "EINFRA",
         icon: str | None = None,
@@ -226,7 +222,7 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
     )
 
     with db.session.begin_nested():
-        token.remote_account.extra_data = {  # type: ignore[reportAttributeAccessIssue]
+        token.remote_account.extra_data = {  # ty: ignore[unresolved-attribute]
             "full_name": decoded_token["name"],
             "locale": find_locale(decoded_token.get("locale")),
             "timezone": decoded_token.get("zoneinfo"),

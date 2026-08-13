@@ -1,10 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """Authenticate an existing Invenio user from an exchanged e-INFRA JWT."""
 
 from __future__ import annotations
@@ -67,7 +63,7 @@ class EInfraTokenExchangeProvider(AuthProvider):
         try:
             return jwt.decode(  # type: ignore[no-any-return]
                 token,
-                key=public_key,  # type: ignore[reportArgumentType]
+                key=public_key,  # ty: ignore[invalid-argument-type]
                 algorithms=["RS256"],
                 audience=audience,
                 issuer=issuer,

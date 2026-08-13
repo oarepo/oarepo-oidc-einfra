@@ -1,10 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """Background tasks."""
 
 from __future__ import annotations
@@ -689,7 +685,10 @@ def add_einfra_user_task(email: str, einfra_id: str) -> None:
         email,
         einfra_id,
     )
-    _datastore: UserDatastore = LocalProxy(lambda: current_app.extensions["security"].datastore)  # type: ignore[reportAssignmentType]
+    _datastore = cast(
+        "UserDatastore",
+        LocalProxy(lambda: current_app.extensions["security"].datastore),  # type: ignore[reportAssignmentType]
+    )
 
     email = email.lower()
     user = User.query.filter_by(email=email).first()

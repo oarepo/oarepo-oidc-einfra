@@ -1,10 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """AAI (perun) communities mapping."""
 
 from __future__ import annotations
@@ -69,8 +65,8 @@ class CommunityAAIComponent(ServiceComponent):
         self,
         identity: Identity,
         *,
-        record: Community,
-        data: dict,
+        record: Community | None = None,
+        data: dict | None = None,
         **kwargs: dict,
     ) -> None:
         """Create handler.
@@ -87,6 +83,9 @@ class CommunityAAIComponent(ServiceComponent):
         if data is None:
             raise ValidationError("Missing data for community creation")
 
+        if record is None:
+            raise ValidationError("Missing record for community creation", field_name="slug")
+
         if "slug" not in data:
             raise ValidationError("Missing slug in community data", field_name="slug")
         if not re.match("^[a-z0-9-]+$", data["slug"]):
@@ -102,8 +101,8 @@ class CommunityAAIComponent(ServiceComponent):
         self,
         identity: Identity,
         *,
-        record: Community,
-        data: dict,
+        record: Community | None = None,
+        data: dict | None = None,
         **kwargs: dict,
     ) -> None:
         """Update handler.
@@ -128,7 +127,7 @@ class CommunityAAIComponent(ServiceComponent):
         self,
         identity: Identity,  # noqa: ARG002 unused arguments as we are extending the interface
         *,
-        record: Community,
+        record: Community | None = None,
         **kwargs: dict,  # noqa: ARG002 unused arguments as we are extending the interface
     ) -> None:
         """Delete handler.
@@ -139,5 +138,8 @@ class CommunityAAIComponent(ServiceComponent):
         :param record: community record to be deleted
         :param kwargs: additional arguments
         """
+        if record is None:
+            raise ValidationError("Missing record for community deletion", field_name="slug")
+
         if current_einfra_oidc.synchronization_enabled:
             self.uow.register(DeleteFromAAIOp(record))

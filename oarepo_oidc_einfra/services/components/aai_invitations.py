@@ -1,10 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """AAI (perun) membership handling."""
 
 from __future__ import annotations
@@ -124,7 +120,7 @@ class AAIInvitationComponent(ServiceComponent):
             self._add_invitation_message_to_request(identity, request_item, message)
 
         # Create an inactive member entry linked to the request.
-        self.service._add_factory(  # noqa SLF001 no public api to do this # type: ignore[reportAttributeAccessIssue]
+        self.service._add_factory(  # noqa SLF001 no public api to do this # ty: ignore[unresolved-attribute]
             identity,
             community,
             role,
