@@ -1,10 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """Helper proxy to the state object."""
 
 from __future__ import annotations
@@ -18,7 +14,7 @@ from werkzeug.local import LocalProxy
 if TYPE_CHECKING:
     from oarepo_oidc_einfra.ext import EInfraOIDCApp
 
-current_einfra_oidc: EInfraOIDCApp = LocalProxy["EInfraOIDCApp"](lambda: current_app.extensions["einfra-oidc"])  # type: ignore[reportAssignmentType]
+current_einfra_oidc: EInfraOIDCApp = LocalProxy["EInfraOIDCApp"](lambda: current_app.extensions["einfra-oidc"])  # ty: ignore[invalid-assignment]
 """Helper proxy to get the current einfra oidc."""
 
 

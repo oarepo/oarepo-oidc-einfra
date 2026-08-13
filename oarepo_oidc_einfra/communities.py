@@ -1,10 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """Helper functions for working with communities."""
 
 from __future__ import annotations
@@ -51,13 +47,13 @@ class CommunitySupport:
     @cached_property
     def slug_to_id(self) -> dict[str, UUID]:
         """Returns a mapping of community slugs to their ids."""
-        model_cls = cast("type[CommunityMetadata]", Community.model_cls)
+        model_cls: type[CommunityMetadata] = cast("type[CommunityMetadata]", Community.model_cls)
         return {
             row[1]: row[0]
             for row in db.session.execute(
-                select(
+                select(  # ty: ignore[no-matching-overload]
                     model_cls.id,
-                    model_cls.slug,  # type: ignore[reportArgumentType]
+                    model_cls.slug,
                 )
             )
         }
@@ -297,7 +293,7 @@ class CommunitySupport:
             if len(user_invitations_to_community) == 1:
                 if not user_invitations_to_community[0].active:
                     log.info("Found existing invitation for user %s, accepting it", user.id)
-                    current_communities.service.members.accept_member_request(  # type: ignore[reportAttributeAccessIssue]
+                    current_communities.service.members.accept_member_request(  # ty: ignore[unresolved-attribute]
                         system_identity, user_invitations_to_community[0].request_id
                     )
                 else:

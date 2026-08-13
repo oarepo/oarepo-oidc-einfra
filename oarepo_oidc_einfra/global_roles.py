@@ -1,9 +1,6 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
+
 """Support for global roles and their membership."""
 
 from __future__ import annotations
@@ -32,7 +29,7 @@ class GlobalRolesSupport:
                 transformed_roles,
             )
 
-        user.roles = transformed_roles  # type: ignore[reportAttributeAccessIssue]
+        user.roles = transformed_roles  # ty: ignore[invalid-assignment]
         db.session.add(user)
         db.session.commit()
 
@@ -42,6 +39,6 @@ class GlobalRolesSupport:
         global_roles: set[Role],
     ) -> None:
         """Set the global roles for the user."""
-        user.roles = list(global_roles)  # type: ignore[reportAttributeAccessIssue]
+        user.roles = list(global_roles)  # ty: ignore[invalid-assignment]
         db.session.add(user)
         db.session.commit()

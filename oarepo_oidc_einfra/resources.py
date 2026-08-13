@@ -1,10 +1,5 @@
-#
-# Copyright (C) 2024 CESNET z.s.p.o.
-#
-# oarepo-oidc-einfra  is free software; you can redistribute it and/or
-# modify it under the terms of the MIT License; see LICENSE file for more
-# details.
-#
+# SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
+# SPDX-License-Identifier: MIT
 
 """OIDC resources (API + UI)."""
 
@@ -75,7 +70,7 @@ class OIDCEInfraUIResource(Resource):
         """Create URL rules for the resource."""
         routes = self.config.routes
         return [
-            route("GET", routes["accept-invitation"], self.accept_invitation),  # type: ignore[reportArgumentType]
+            route("GET", routes["accept-invitation"], self.accept_invitation),  # ty: ignore[invalid-argument-type]
         ]
 
     # TODO: will handle complexity later
@@ -115,7 +110,7 @@ class OIDCEInfraUIResource(Resource):
 
             # redirect to the login page to go through the login process again
             redirect_url = make_login_url(
-                current_app.login_manager.login_view,  # type: ignore[reportAttributeAccessIssue]
+                current_app.login_manager.login_view,  # ty: ignore[unresolved-attribute]
                 next_url=self.add_query_param(request.url, "fresh_login_token", fresh_login_token),
             )
 
@@ -158,7 +153,7 @@ class OIDCEInfraUIResource(Resource):
                 "User %s accepted an invitation to community %s, "
                 "but no membership was found. Request ID: %s, Invitation ID: %s",
                 g.identity.id,
-                invitation.model.community_id,  # type: ignore[reportAttributeAccessIssue]
+                invitation.model.community_id,  # ty: ignore[unresolved-attribute]
                 invitation_request.id,
                 invitation.id,
             )
@@ -179,7 +174,7 @@ class OIDCEInfraUIResource(Resource):
                 # if the user is already a member of the community, we need to remove
                 # the invitation. At first remove the request id from the invitation
                 # so that we can move it to the found_membership
-                invitation.model.request_id = None  # type: ignore[reportAttributeAccessIssue]
+                invitation.model.request_id = None  # ty: ignore[invalid-assignment]
                 db.session.add(invitation.model)
                 db.session.commit()
 
@@ -247,7 +242,7 @@ class OIDCEInfraUIResource(Resource):
 
         # mark the request as accepted. Note: we are not running the accept action
         # here as we already have the membership created
-        invitation_request.status = "accepted"
+        invitation_request.status = "accepted"  # ty: ignore[invalid-attribute-access]
         invitation_request.commit()
         db.session.commit()
         current_requests_service.indexer.index(invitation_request)
