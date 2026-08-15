@@ -80,6 +80,11 @@ def _get_community_memberships(user_id):
     return db.session.query(MemberModel).filter_by(user_id=user_id).all()
 
 
+def _get_community_slug(community_id):
+    """Get the slug of a community by its id."""
+    return db.session.query(CommunityMetadata).filter_by(id=community_id).first().slug
+
+
 def _get_user_roles(user_id):
     """Get global roles for a user."""
     from invenio_accounts.models import User
@@ -104,7 +109,6 @@ class TestSynchronizeUsersFromPerun:
         assert user_profile.get("affiliations") == "Test Org"
         assert community_user.email == "community@example.com"
 
-    @pytest.mark.skip(reason="Known issue: CommunityEntitlement objects contain expired community references")
     def test_assigns_community_entitlements(self, minimal_dump_json, users_with_identities, communities):
         """Test that users get correct community memberships from the dump."""
         dump = PerunDumpData(minimal_dump_json)
@@ -116,7 +120,7 @@ class TestSynchronizeUsersFromPerun:
 
         assert len(memberships) == 2
 
-        slugs_roles = {(m.community.slug, m.role) for m in memberships}
+        slugs_roles = {(_get_community_slug(m.community_id), m.role) for m in memberships}
         assert ("test-community", "member") in slugs_roles
         assert ("another-community", "curator") in slugs_roles
 
@@ -142,7 +146,6 @@ class TestSynchronizeUsersFromPerun:
         assert len(entitlements) == 1
         assert any("administration" in e for e in entitlements)
 
-    @pytest.mark.skip(reason="Known issue: CommunityEntitlement objects contain expired community references")
     def test_assigns_both_community_and_role_entitlements(
         self, minimal_dump_json, users_with_identities, communities, roles
     ):
@@ -157,7 +160,7 @@ class TestSynchronizeUsersFromPerun:
         memberships = _get_community_memberships(test_user.id)
         assert len(memberships) == 2
 
-        slugs_roles = {(m.community.slug, m.role) for m in memberships}
+        slugs_roles = {(_get_community_slug(m.community_id), m.role) for m in memberships}
         assert ("test-community", "member") in slugs_roles
         assert ("another-community", "curator") in slugs_roles
 

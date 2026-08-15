@@ -186,4 +186,3 @@ def update_user_metadata(user: User, full_name: str, email: str, organization: s
     if save:
         user.user_profile = {**(user_profile or {})}  # type: ignore[reportAttributeAccessIssue]
         db.session.add(user)
-        db.session.commit()
