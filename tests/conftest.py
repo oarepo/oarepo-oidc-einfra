@@ -46,6 +46,13 @@ def app_config(app_config):
         },
     ]
 
+    app_config["EINFRA_USER_DUMP_S3_ACCESS_KEY"] = "invenio"
+    app_config["EINFRA_USER_DUMP_S3_SECRET_KEY"] = "invenio8"  # noqa S105
+    app_config["EINFRA_USER_DUMP_S3_ENDPOINT"] = "http://localhost:9000"
+    app_config["EINFRA_USER_DUMP_S3_BUCKET"] = "dump"
+
+    app_config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"] = "urn:perun:resource:attribute-def:def:capabilities"
+
     return app_config
 
 
@@ -86,3 +93,56 @@ def roles(app, database):
     current_datastore.commit()
 
     return [role]
+
+
+@pytest.fixture(scope="module")
+def e_infra_dump(app, database):
+    """Create S3 bucket and upload the e-infra dump file for testing.
+
+    Creates the bucket specified in EINFRA_USER_DUMP_S3_BUCKET if it doesn't exist,
+    and uploads the dump.json file from the tests directory if one doesn't already exist.
+    """
+    import json
+    from pathlib import Path
+    import json
+
+    import boto3
+    from flask import current_app
+
+    # Create S3 client
+    client = boto3.client(
+        "s3",
+        aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
+        aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
+        endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
+    )
+
+    bucket_name = current_app.config["EINFRA_USER_DUMP_S3_BUCKET"]
+
+    # Create bucket if it doesn't exist
+    try:
+        client.head_bucket(Bucket=bucket_name)
+    except client.exceptions.ClientError:
+        # Bucket doesn't exist, create it
+        client.create_bucket(Bucket=bucket_name)
+
+    # Check if dump.json already exists
+    try:
+        client.head_object(Bucket=bucket_name, Key="dump.json")
+        # File exists, nothing to do
+        return
+    except client.exceptions.ClientError:
+        # File doesn't exist, upload empty dump
+        pass
+
+    # Upload dump file from tests/dump.json
+    dump_path = Path(__file__).parent / "minimal_dump.json"
+    with dump_path.open("rb") as f:
+        dump_content = f.read()
+
+    client.put_object(
+        Bucket=bucket_name,
+        Key="dump.json",
+        Body=dump_content,
+        ContentType="application/json",
+    )

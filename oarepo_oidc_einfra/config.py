@@ -47,6 +47,9 @@ EINFRA_USER_ORGANIZATION_ATTRIBUTE = "urn:perun:user:attribute-def:def:organizat
 EINFRA_USER_PREFERRED_MAIL_ATTRIBUTE = "urn:perun:user:attribute-def:def:preferredMail"
 """Attribute on user inside perun that represents the preferred mail of the user."""
 
+EINFRA_CAPABILITIES_ATTRIBUTE_NAME = "urn:perun:resource:attribute-def:def:capabilities"
+"""Attribute name for resource capabilities in the PERUN dump."""
+
 EINFRA_LAST_DUMP_PATH = "nrp_invenio_export.json"
 """Path to the last dump file in the S3 bucket."""
 

@@ -1,0 +1,1897 @@
+{
+   "metadata": {
+      "facility": {
+         "attributes": {},
+         "destinations": [
+            "https://s3.nrp1.du.cesnet.cz/96a7bc27_d336_4b71_b56a_852021c962dd:eosccz-repo-datarepo-test-aai-001"
+         ],
+         "facilityName": "Datovy catch-all repozitar TEST",
+         "facilityUuid": "05022e8f-c5b8-4bb4-9f10-15fc14487b77"
+      },
+      "version": "3.0.1"
+   },
+   "resources": {
+      "be7acbba-07ce-4c0f-92a3-79ae494e0a1c": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:bfu"
+            ]
+         }
+      },
+      "dacf529e-2d71-44f6-ad28-e53c38239b8e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:llm-settings-community:role:submitter"
+            ]
+         }
+      },
+      "29a46f96-16a3-46b0-99ef-bb8a98da9677": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:restrict:role:submitter"
+            ]
+         }
+      },
+      "7ca61a25-e979-4b74-949c-bcce9eb33bf3": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comb:role:submitter"
+            ]
+         }
+      },
+      "35c65bff-bce6-4b4c-9f03-06720dbeda3c": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:betka"
+            ]
+         }
+      },
+      "891dfd6a-387d-4cf2-902a-224aad6f201d": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:my-community"
+            ]
+         }
+      },
+      "1ce8b0b6-8cf2-4ecd-80d5-8707afa4d2a5": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cuni-datahub:role:curator"
+            ]
+         }
+      },
+      "f11ad5bf-acee-4dda-a336-04c81d53369e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:digitalia:role:submitter"
+            ]
+         }
+      },
+      "9fdae846-2009-4ab0-992f-a41f49544105": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:betka:role:member"
+            ]
+         }
+      },
+      "cc6c1bc4-70c7-4ea2-bc20-f9891e9a92f3": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncp:role:member"
+            ]
+         }
+      },
+      "dce4cff9-80f1-4bca-b401-3d4be7882ee7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:digitalia"
+            ]
+         }
+      },
+      "eb08fb20-2e9f-4e95-b845-c5a71c2e305b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:test-na-notifikace:role:submitter"
+            ]
+         }
+      },
+      "4dd0ecd0-4359-470d-92aa-fe4c2890a7ec": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comb:role:member"
+            ]
+         }
+      },
+      "54fca4aa-3842-4d01-ae15-a7b70fab7469": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:restrict:role:owner"
+            ]
+         }
+      },
+      "cc8f2689-6d93-44dd-8f34-67e8e83eff70": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comb"
+            ]
+         }
+      },
+      "48263902-0a7d-471b-ab49-4241e1dd65d3": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:2patro:role:curator"
+            ]
+         }
+      },
+      "c44e8645-6e6d-4846-bc51-35f0f4b1352a": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:1542645:role:owner"
+            ]
+         }
+      },
+      "266a6edb-67a3-49de-8e31-23b3b66663f7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojkaa:role:member"
+            ]
+         }
+      },
+      "a6eb6eb4-fd6b-49f8-821e-711153a1fea7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:role:role:member"
+            ]
+         }
+      },
+      "432785b6-718e-4d4e-bd23-bd1e35510659": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncp"
+            ]
+         }
+      },
+      "c2dfe761-819b-46d6-9eea-2972e3eeae31": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:betka:role:curator"
+            ]
+         }
+      },
+      "8b6295f9-8115-40ad-97ff-e5d0c111c963": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:12345"
+            ]
+         }
+      },
+      "601c9cf6-5d00-4dc1-b430-5b1567c57a51": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:nah:role:owner"
+            ]
+         }
+      },
+      "6fd3af9a-0dbd-4134-8a0d-6f8debb2d60c": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:rest:role:owner"
+            ]
+         }
+      },
+      "cc3ecda3-93c9-4695-85e1-0c1b5a714475": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:my-community:role:owner"
+            ]
+         }
+      },
+      "5b160cc0-4bf2-4a41-86ee-6f01a68178d1": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:come:role:member"
+            ]
+         }
+      },
+      "d9235fba-ecee-4bb5-ad73-9b6b7420e83d": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comd:role:curator"
+            ]
+         }
+      },
+      "f70487d8-3320-419d-860e-80eb69981d3b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:12345:role:curator"
+            ]
+         }
+      },
+      "8c0627a8-05d5-4d70-92ef-a66fe977f6ea": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:imc-cas"
+            ]
+         }
+      },
+      "a9bfb08b-4dda-40aa-9690-32c28fca09a4": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mobile:role:curator"
+            ]
+         }
+      },
+      "e2d89a6c-93db-48d0-969a-08e909fdd0a1": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:bfu:role:submitter"
+            ]
+         }
+      },
+      "7e7420d3-439c-4d10-9073-5cbc25f812d4": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comd:role:owner"
+            ]
+         }
+      },
+      "0bb055b0-b856-4364-89b4-f41872022ac9": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comf:role:curator"
+            ]
+         }
+      },
+      "3030d600-b224-44af-ac90-b672f193e6ac": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ron-test:role:submitter"
+            ]
+         }
+      },
+      "abf9c231-e708-44e1-9d9d-e195013b1ca0": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:retests:role:curator"
+            ]
+         }
+      },
+      "9a9d5cd2-8dd3-490d-8d94-d24b7143c4f4": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojka:role:submitter"
+            ]
+         }
+      },
+      "24e56298-220e-474b-9d46-404ef9ffd656": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:com:role:owner"
+            ]
+         }
+      },
+      "d277c6fe-0907-4b78-ab29-8ddd505f3296": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:heyrovsky:role:submitter"
+            ]
+         }
+      },
+      "5a312e47-8604-4220-910e-64cdee831774": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comd:role:submitter"
+            ]
+         }
+      },
+      "49c1e167-ace7-468b-a2fb-9192adc33687": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncr:role:submitter"
+            ]
+         }
+      },
+      "f6cd9799-896e-47cc-ba9f-6e3611448ab3": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:restrict:role:curator"
+            ]
+         }
+      },
+      "1854937a-574c-4cf1-8292-7339c079470f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:rest:role:submitter"
+            ]
+         }
+      },
+      "b689e8ea-1794-4e33-b6c6-0c568ba4f936": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:1542645:role:member"
+            ]
+         }
+      },
+      "fc200f44-005b-446a-89ea-f79f36f2ea6e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:12345:role:member"
+            ]
+         }
+      },
+      "3cd8e23f-3138-48c4-93eb-46530416535c": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:come:role:submitter"
+            ]
+         }
+      },
+      "f8d58dca-a2c7-4002-b977-6d7053a3359b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:nah:role:member"
+            ]
+         }
+      },
+      "029bb7b3-c210-4043-85ff-b1e394d472b2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:imc-cas:role:owner"
+            ]
+         }
+      },
+      "7d8f9cd2-c575-4222-a115-3613117d4866": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:vsb-matur:role:submitter"
+            ]
+         }
+      },
+      "11b3fa6e-b9c8-426b-8cc7-f4564e007a1e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncp:role:owner"
+            ]
+         }
+      },
+      "6bc9a027-b2e5-443b-b5ab-f537e8cff487": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cesnet-tmc:role:member"
+            ]
+         }
+      },
+      "0eac37cd-d92f-4a79-9622-21bb3148ff3a": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comc"
+            ]
+         }
+      },
+      "269fa117-9fd9-4780-8db2-7bcb257c76b5": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:2patro:role:submitter"
+            ]
+         }
+      },
+      "0d8a799c-e222-4795-b16a-0d9defb3d42d": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncp:role:submitter"
+            ]
+         }
+      },
+      "f4a2a65c-2e52-49c4-acd2-8b47c16b7d44": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mobile:role:owner"
+            ]
+         }
+      },
+      "319d4212-7329-44fe-98cb-7b5fb84154e2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cesnet-tmc:role:submitter"
+            ]
+         }
+      },
+      "7a757aa2-374b-4695-9b0c-020c4e873e6b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:heyrovsky:role:member"
+            ]
+         }
+      },
+      "264b7ab5-4584-4554-b9d3-a45371b9455f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cuni-datahub:role:submitter"
+            ]
+         }
+      },
+      "f1b0c14e-579b-4d7c-bb8a-2cbf237d955f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:retests"
+            ]
+         }
+      },
+      "4a4f789a-ba02-4aca-b39c-a615f1282b7e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncr:role:curator"
+            ]
+         }
+      },
+      "b7e70b6c-1d61-4e1c-a049-900af361446c": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:2patro"
+            ]
+         }
+      },
+      "83b607d9-d6c9-42b3-98a4-37f81563ec60": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojkaa:role:owner"
+            ]
+         }
+      },
+      "b5fcd998-cd9c-444a-b1f3-9252b67b1cab": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:bfu:role:member"
+            ]
+         }
+      },
+      "9b84d976-5d76-44d4-8f6a-1285cd5866c2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-2"
+            ]
+         }
+      },
+      "00e2e1fc-423e-4284-a7a0-4123df59378d": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comd:role:member"
+            ]
+         }
+      },
+      "2aa4cdf6-cbe9-49d2-a965-c35067efbdad": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:llm-settings-community:role:owner"
+            ]
+         }
+      },
+      "197a116a-8b14-40fa-a350-125200ab975e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojkaa:role:curator"
+            ]
+         }
+      },
+      "9059e6cb-acde-4237-962d-2dec45245c7e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:retests:role:owner"
+            ]
+         }
+      },
+      "8f2fd25c-8a44-48e2-ab95-19fbef825336": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:llm-settings-community"
+            ]
+         }
+      },
+      "8c3ca23c-f9e8-4cb3-b060-07ce8718aa2e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojka"
+            ]
+         }
+      },
+      "734e55b2-22e5-4c0f-98e2-58e73a51b966": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:my-community:role:member"
+            ]
+         }
+      },
+      "db63591a-d8f6-4762-89e8-744102e50446": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:trojka:role:member"
+            ]
+         }
+      },
+      "e918fdc4-75a4-428f-86de-423b3922b36b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojka:role:member"
+            ]
+         }
+      },
+      "ee219fe6-3e23-4dca-9a0e-7ca72fa9b048": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cesnet-tmc:role:owner"
+            ]
+         }
+      },
+      "679fbe22-c7f2-4be7-95c2-b42a1d7b872a": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:nah"
+            ]
+         }
+      },
+      "b069538a-3b43-4d54-ad90-202040f2cf32": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comb:role:owner"
+            ]
+         }
+      },
+      "f8d45042-4def-40ad-bb48-5f19f6680d66": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:trojka:role:submitter"
+            ]
+         }
+      },
+      "3b2e53a9-ed49-4dc2-89ea-41414e3c0d30": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:role:role:curator"
+            ]
+         }
+      },
+      "f5576fff-a874-45ba-9f46-fbd423ddd017": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:heyrovsky:role:curator"
+            ]
+         }
+      },
+      "432a449e-af1d-4879-b297-089799c0e379": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ron-test"
+            ]
+         }
+      },
+      "2e61f92b-1aec-49cb-9710-5bc4026cd3a0": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:2patro:role:member"
+            ]
+         }
+      },
+      "1f388592-9652-4ca2-a9d3-298c5016d738": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-test-1:role:owner"
+            ]
+         }
+      },
+      "41d59f47-388d-4481-ae17-d8fb08bc0ba8": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mobile:role:submitter"
+            ]
+         }
+      },
+      "67655223-28e5-4d0e-8364-524a1cfd2c88": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:test-na-notifikace:role:owner"
+            ]
+         }
+      },
+      "4678efae-8500-4f8a-8285-36d17eb6f807": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:com:role:curator"
+            ]
+         }
+      },
+      "6a4972a3-1aa9-4874-8ee4-5ec64d325916": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:come:role:owner"
+            ]
+         }
+      },
+      "95fd1b52-547e-43a4-a16f-2a939b224dfb": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cesnet-tmc"
+            ]
+         }
+      },
+      "e4114794-14fe-4b52-9154-039832cf6b71": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:vsb-matur:role:owner"
+            ]
+         }
+      },
+      "c1ba4d00-ed05-4f6c-95d0-8f208e3e4056": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:devops:role:owner"
+            ]
+         }
+      },
+      "b23877bc-e1d5-4864-ae87-a2a048b107b5": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:2patro:role:owner"
+            ]
+         }
+      },
+      "1483e7d3-4442-47dd-baa8-c2a40639a11a": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:nah:role:submitter"
+            ]
+         }
+      },
+      "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": []
+         }
+      },
+      "7e2b4161-f68e-4fe1-8864-9343f4cb15f3": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:retests:role:submitter"
+            ]
+         }
+      },
+      "71ca4489-bbe2-410a-a573-30b28383787d": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comc:role:submitter"
+            ]
+         }
+      },
+      "5ab28edc-6616-4854-98c4-4258aaf2d308": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:rest"
+            ]
+         }
+      },
+      "53d0c9fd-c889-4aa4-8d7e-ca230149d780": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:trojka:role:curator"
+            ]
+         }
+      },
+      "d93be0f1-1db5-4f64-b8d0-09dd983ce238": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojkaa"
+            ]
+         }
+      },
+      "44e2c39a-53d0-4db7-8bc0-cc46bab997a0": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mobile"
+            ]
+         }
+      },
+      "9de05e95-1ec1-47bf-a252-dd715022749a": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:digitalia:role:owner"
+            ]
+         }
+      },
+      "2591ba88-bfd8-454a-887d-3dca6569aa2f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:vsb-matur:role:curator"
+            ]
+         }
+      },
+      "d8338892-3465-4be9-a794-c473bd9ed7ef": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:12345:role:submitter"
+            ]
+         }
+      },
+      "83379163-861f-4827-8c2c-6066c9ebd9d2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:betka:role:submitter"
+            ]
+         }
+      },
+      "0aad56df-85e7-44b1-9340-b09da31b5574": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mobile:role:member"
+            ]
+         }
+      },
+      "ccbd92be-5b19-4d83-8694-c04baa900ad6": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:llm-settings-community:role:curator"
+            ]
+         }
+      },
+      "9f3ab764-82b5-4218-a7fd-6ce4b752f5b7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mcp:role:member"
+            ]
+         }
+      },
+      "b00ac264-ffd7-4a00-9253-7d95772ab3ee": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:com"
+            ]
+         }
+      },
+      "3035a1d7-0d3d-4b8a-9ac8-a6b0a91188cb": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ron-test:role:member"
+            ]
+         }
+      },
+      "c0d5fed3-4384-47a5-b40e-c7e0854ae323": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:heyrovsky:role:owner"
+            ]
+         }
+      },
+      "d1b83276-e3de-4f97-a271-b2b3b89bd625": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncr:role:owner"
+            ]
+         }
+      },
+      "07d04c30-ce92-443f-811d-9b42ce147929": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comc:role:owner"
+            ]
+         }
+      },
+      "ffe4362c-4842-48cc-a94c-3f75f4214059": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:six:role:member"
+            ]
+         }
+      },
+      "56b82d5a-8d19-4e5c-93ff-dbce4ddc6a84": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:heyrovsky"
+            ]
+         }
+      },
+      "84462044-4a19-4052-8c8d-1c7e879e2616": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:nah:role:curator"
+            ]
+         }
+      },
+      "6a06d224-90be-437e-901f-3941bf277f46": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comf"
+            ]
+         }
+      },
+      "3cf55f25-e41e-4356-919b-56bf58dd9718": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comf:role:submitter"
+            ]
+         }
+      },
+      "fad4c83a-0892-4d57-8bcc-12cf90aeb9e3": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:devops:role:curator"
+            ]
+         }
+      },
+      "5ae08ab9-8708-4280-a525-b8a863ee9a90": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mcp:role:submitter"
+            ]
+         }
+      },
+      "d87b0e50-e844-4350-bd23-1912163361ca": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:vsb-matur"
+            ]
+         }
+      },
+      "3f297d34-c306-4fc3-b70a-48d38b6b90a9": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:rest:role:member"
+            ]
+         }
+      },
+      "5a710345-a45b-40b7-8131-1701919a49fe": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-2:role:submitter"
+            ]
+         }
+      },
+      "d4641c48-b021-4fe7-8f6c-4392d8bd7260": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comc:role:member"
+            ]
+         }
+      },
+      "7d53cbbe-75dd-43a1-ab32-77bd2fed8c91": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ron-test:role:owner"
+            ]
+         }
+      },
+      "2b4b2bd1-aa03-4bae-970a-02c65b53c59f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojkaa:role:submitter"
+            ]
+         }
+      },
+      "4d049bcd-4fef-4524-96ae-fbb75b99249d": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-test-1:role:curator"
+            ]
+         }
+      },
+      "6cef25a1-e8dc-4850-9b59-0652f9cde54b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncp:role:curator"
+            ]
+         }
+      },
+      "55cd3cca-49c5-4484-b2d2-399196be93b3": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:six:role:submitter"
+            ]
+         }
+      },
+      "1a96126d-9e67-4d77-8440-35f9aa0f6f09": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:role:role:submitter"
+            ]
+         }
+      },
+      "bde45629-1f5e-4445-8e88-ceb03ec8b8cb": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-test-1"
+            ]
+         }
+      },
+      "9cdb7f70-d27d-47ea-9bcb-5c48583cc12d": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:six:role:curator"
+            ]
+         }
+      },
+      "6bf24b43-7599-4acd-87e1-84c747fde2ff": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comf:role:member"
+            ]
+         }
+      },
+      "4d014885-1e7b-40fa-8f28-ae9344fda8b2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:test-na-notifikace:role:curator"
+            ]
+         }
+      },
+      "24bb2631-236d-46a3-9d1e-07ed18d7f1a1": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:test-na-notifikace:role:member"
+            ]
+         }
+      },
+      "3845cacb-6684-4056-afeb-bf8c8b34de44": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:six"
+            ]
+         }
+      },
+      "378601c5-7e13-42c2-8085-b3779c8a5912": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:1542645:role:curator"
+            ]
+         }
+      },
+      "d4846587-fc44-44c3-9bb5-90c24381b908": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:devops"
+            ]
+         }
+      },
+      "5fd9eecc-d7dd-4a9e-ad8c-452aeb343425": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:12345:role:owner"
+            ]
+         }
+      },
+      "6ec3c0c3-8271-4aa2-a56e-132f5b333cd2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-2:role:member"
+            ]
+         }
+      },
+      "64cd871d-8bf6-439d-89cb-9132e7271095": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:come"
+            ]
+         }
+      },
+      "1e55eb3e-b1be-4dd6-b5f9-a3543a58f964": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:betka:role:owner"
+            ]
+         }
+      },
+      "1821bebf-bad0-4724-9dde-36ac87130d75": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cuni-datahub:role:owner"
+            ]
+         }
+      },
+      "c657eef8-82b1-4f54-b2aa-1d96af68d79f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:imc-cas:role:submitter"
+            ]
+         }
+      },
+      "77ebe637-f8f0-4989-ac58-ea0b07e159b4": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comc:role:curator"
+            ]
+         }
+      },
+      "247c8b46-2469-4ced-9898-80c83730a9b2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comb:role:curator"
+            ]
+         }
+      },
+      "7c4c1e40-bb45-45bc-afb8-d3cd10ba261f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojka:role:curator"
+            ]
+         }
+      },
+      "7082e309-5f78-4ad7-b82a-a7b8e103640e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:come:role:curator"
+            ]
+         }
+      },
+      "4f74e07c-24a5-4d12-a03f-556c0e095de8": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:bfu:role:owner"
+            ]
+         }
+      },
+      "792605a3-8d8b-471d-ad2e-d7b2396cb20b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:restrict"
+            ]
+         }
+      },
+      "b03a0c59-0441-4dc9-8095-3c824e28633f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:test-na-notifikace"
+            ]
+         }
+      },
+      "4dfa3906-9eb0-4a3e-97b0-2927bf05a6cd": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:role:role:owner"
+            ]
+         }
+      },
+      "2d99d531-e90d-4d42-a13b-360849b3b3d9": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:dvojka:role:owner"
+            ]
+         }
+      },
+      "da21ad6f-8a80-435f-bae7-5f93f55ce0ff": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncr:role:member"
+            ]
+         }
+      },
+      "6b5ba50a-33cd-4ce8-85c7-646ceb65a11f": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:bfu:role:curator"
+            ]
+         }
+      },
+      "a99295f6-c126-4f9b-9aae-686c08e03c93": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:role"
+            ]
+         }
+      },
+      "493c074c-1a1d-4b42-a3be-b2c89fed44f6": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cesnet-tmc:role:curator"
+            ]
+         }
+      },
+      "23511f38-2700-42c0-a5c1-76a9a5c773f7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cuni-datahub:role:member"
+            ]
+         }
+      },
+      "dd549762-3a15-46a1-9b70-73c4b9ec5acd": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:digitalia:role:curator"
+            ]
+         }
+      },
+      "2b273375-41da-4535-b681-c9e48bc75c31": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-test-1:role:submitter"
+            ]
+         }
+      },
+      "76c4bf3e-e996-400a-b3d2-1a48ceea7915": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:devops:role:member"
+            ]
+         }
+      },
+      "6ad96db9-9d1d-4a47-ba5e-b4870fe08e7a": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:retests:role:member"
+            ]
+         }
+      },
+      "800dbfcf-3a5e-4eaf-9297-4ac20b88052b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:my-community:role:submitter"
+            ]
+         }
+      },
+      "cf3f2fa3-16f7-44b0-b88e-3ce3f36ac9dd": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:1542645"
+            ]
+         }
+      },
+      "e752cb0c-e58a-4fe5-b254-4db5ec6ca958": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:vsb-matur:role:member"
+            ]
+         }
+      },
+      "c9d14858-b67e-4ec9-a888-bb3fddd20aa7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:cuni-datahub"
+            ]
+         }
+      },
+      "50368331-2d6f-4619-b89b-4eef4e80d991": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:six:role:owner"
+            ]
+         }
+      },
+      "bef78468-d9f3-4085-a8cd-51737b891cbf": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mcp:role:owner"
+            ]
+         }
+      },
+      "27619b10-0286-41a6-a59e-c0dffe79161e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:rest:role:curator"
+            ]
+         }
+      },
+      "bd1c1d86-7878-4634-9a02-fd39f7608744": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comf:role:owner"
+            ]
+         }
+      },
+      "5ac882cf-06b2-40d7-b403-dc1fc4d0a91b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-2:role:curator"
+            ]
+         }
+      },
+      "7afcb3a8-6a7d-4d16-bded-3dbe0cd30959": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:1542645:role:submitter"
+            ]
+         }
+      },
+      "d729e94b-2e86-485e-963f-30333e1be34e": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-test-1:role:member"
+            ]
+         }
+      },
+      "c0fd64e9-28d0-4257-b101-0094c2150d75": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:com:role:submitter"
+            ]
+         }
+      },
+      "b173017b-3224-4b1e-b565-2b17488575c7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ncr"
+            ]
+         }
+      },
+      "77f9fa06-fbe8-4b5b-90f0-0f7a6a12bce7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:llm-settings-community:role:member"
+            ]
+         }
+      },
+      "26debf63-b569-4eb9-bb0d-87196521dded": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:com:role:member"
+            ]
+         }
+      },
+      "8b11ccfe-33d3-4273-9550-9914140f3cf8": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:comd"
+            ]
+         }
+      },
+      "17ac9f3a-36ea-461d-9cb9-8202fc0d9a74": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:restrict:role:member"
+            ]
+         }
+      },
+      "978b3c8f-68a5-4517-a30e-dcd3f32b7f80": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ron-test:role:curator"
+            ]
+         }
+      },
+      "ee37d005-91fb-4019-b61c-be2dc33c68a7": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:imc-cas:role:member"
+            ]
+         }
+      },
+      "97eeed63-2123-4b98-a6ae-560b994978e5": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:trojka:role:owner"
+            ]
+         }
+      },
+      "09fcc5ec-719c-4df2-b436-48da492adaa2": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:my-community:role:curator"
+            ]
+         }
+      },
+      "efb8d76b-177d-492a-8e64-d2c205ebe20b": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mcp"
+            ]
+         }
+      },
+      "5a8187bd-99eb-4cc3-946a-39768c9a3326": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:imc-cas:role:curator"
+            ]
+         }
+      },
+      "5da27ab9-8ce1-4a20-bff8-e7636a670565": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:trojka"
+            ]
+         }
+      },
+      "f5297073-ed9e-4ea9-86ca-f7351b37475a": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:ms-2:role:owner"
+            ]
+         }
+      },
+      "80e8afeb-f8ca-414c-a91b-0eb17f780e53": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:digitalia:role:member"
+            ]
+         }
+      },
+      "411fce13-3427-4a71-afe8-f1fdef5cf3d4": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:mcp:role:curator"
+            ]
+         }
+      },
+      "08fdfd8d-8fed-4f59-b718-dbd582aeb1eb": {
+         "attributes": {
+            "urn:perun:resource:attribute-def:def:capabilities": [
+               "res:communities:devops:role:submitter"
+            ]
+         }
+      }
+   },
+   "users": {
+      "0349d360-77f5-4b64-bd74-b5dfce0bbb69": {
+         "allowed_resources": {
+            "f4a2a65c-2e52-49c4-acd2-8b47c16b7d44": {
+               "attributes": {}
+            },
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            },
+            "44e2c39a-53d0-4db7-8bc0-cc46bab997a0": {
+               "attributes": {}
+            },
+            "bde45629-1f5e-4445-8e88-ceb03ec8b8cb": {
+               "attributes": {}
+            },
+            "4dfa3906-9eb0-4a3e-97b0-2927bf05a6cd": {
+               "attributes": {}
+            },
+            "a99295f6-c126-4f9b-9aae-686c08e03c93": {
+               "attributes": {}
+            },
+            "2b273375-41da-4535-b681-c9e48bc75c31": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Jan Novák",
+            "urn:perun:user:attribute-def:def:organization": "CESNET, z. s. p. o.",
+            "urn:perun:user:attribute-def:def:preferredMail": "jan.novak@cesnet.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "lili3"
+         }
+      },
+      "7c7ccf17-e743-41a7-8960-9a73408f1fcf": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Petra Svobodová",
+            "urn:perun:user:attribute-def:def:organization": "Masarykova univerzita",
+            "urn:perun:user:attribute-def:def:preferredMail": "petra.svobodova@muni.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "jhandl"
+         }
+      },
+      "915a3c0c-6236-4cb4-998f-401e2965012e": {
+         "allowed_resources": {
+            "8b6295f9-8115-40ad-97ff-e5d0c111c963": {
+               "attributes": {}
+            },
+            "8c0627a8-05d5-4d70-92ef-a66fe977f6ea": {
+               "attributes": {}
+            },
+            "029bb7b3-c210-4043-85ff-b1e394d472b2": {
+               "attributes": {}
+            },
+            "3b2e53a9-ed49-4dc2-89ea-41414e3c0d30": {
+               "attributes": {}
+            },
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            },
+            "5fd9eecc-d7dd-4a9e-ad8c-452aeb343425": {
+               "attributes": {}
+            },
+            "a99295f6-c126-4f9b-9aae-686c08e03c93": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "PhDr. Tomáš Dvořák",
+            "urn:perun:user:attribute-def:def:organization": "České vysoké učení technické",
+            "urn:perun:user:attribute-def:def:preferredMail": "tomas.dvorak@cvut.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "simekmiroslav"
+         }
+      },
+      "d1f83400-dda8-4628-b0a3-e82aeb363e19": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Eva Černá",
+            "urn:perun:user:attribute-def:def:organization": "Univerzita Karlova",
+            "urn:perun:user:attribute-def:def:preferredMail": "eva.cerna@cuni.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "nikolasixtova"
+         }
+      },
+      "c90f3637-c775-4c72-8bf2-092225853ee0": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Petr Malý",
+            "urn:perun:user:attribute-def:def:organization": "Vysoké učení technické v Brně",
+            "urn:perun:user:attribute-def:def:preferredMail": "petr.maly@vutbr.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "rep-drp-tst-s3a"
+         }
+      },
+      "7710dc59-c78f-44ea-805c-9aa89cad00fd": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Lucie Kovářová",
+            "urn:perun:user:attribute-def:def:organization": "Akademie věd České republiky",
+            "urn:perun:user:attribute-def:def:preferredMail": "lucie.kovarova@avcr.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "illyria"
+         }
+      },
+      "51da2b87-d2e8-437c-8aa3-e4eb2407c89f": {
+         "allowed_resources": {
+            "7ca61a25-e979-4b74-949c-bcce9eb33bf3": {
+               "attributes": {}
+            },
+            "cc8f2689-6d93-44dd-8f34-67e8e83eff70": {
+               "attributes": {}
+            },
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "PhDr. Martin Král",
+            "urn:perun:user:attribute-def:def:organization": "GARR Consortium",
+            "urn:perun:user:attribute-def:def:preferredMail": "martin.kral@garr.it",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "bauer"
+         }
+      },
+      "7b110f41-d360-4a78-998d-b8368db09fbe": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Kateřina Procházková",
+            "urn:perun:user:attribute-def:def:organization": "RENATER",
+            "urn:perun:user:attribute-def:def:preferredMail": "katerina.prochazkova@renater.fr",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "krist"
+         }
+      },
+      "8acb4ec2-5e74-41f1-bf02-b601e6194198": {
+         "allowed_resources": {
+            "8c0627a8-05d5-4d70-92ef-a66fe977f6ea": {
+               "attributes": {}
+            },
+            "029bb7b3-c210-4043-85ff-b1e394d472b2": {
+               "attributes": {}
+            },
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. David Veselý",
+            "urn:perun:user:attribute-def:def:organization": "SURF n.v.",
+            "urn:perun:user:attribute-def:def:preferredMail": "david.vesely@surf.nl",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "valisj"
+         }
+      },
+      "7b9616bf-14cd-457a-a6a8-74d2ca33ce32": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Anna Kučerová",
+            "urn:perun:user:attribute-def:def:organization": "DFN gGmbH",
+            "urn:perun:user:attribute-def:def:preferredMail": "anna.kucerova@dfn.de",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "danecmil"
+         }
+      },
+      "3eb5aad2-dd24-469a-8c53-bee09ae8e24a": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "PhDr. Jakub Jelínek",
+            "urn:perun:user:attribute-def:def:organization": "CESNET, z. s. p. o.",
+            "urn:perun:user:attribute-def:def:preferredMail": "jakub.jelinek@cesnet.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "tomash"
+         }
+      },
+      "77c79c9a-5dad-4572-9f06-d942993a9a09": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            },
+            "1a96126d-9e67-4d77-8440-35f9aa0f6f09": {
+               "attributes": {}
+            },
+            "a99295f6-c126-4f9b-9aae-686c08e03c93": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Monika Hrubá",
+            "urn:perun:user:attribute-def:def:organization": "Masarykova univerzita",
+            "urn:perun:user:attribute-def:def:preferredMail": "monika.hruba@muni.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "stojanovicdusan"
+         }
+      },
+      "cb69f969-8e08-4c6b-aae2-08454fc46350": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Radek Šimůnek",
+            "urn:perun:user:attribute-def:def:organization": "České vysoké učení technické",
+            "urn:perun:user:attribute-def:def:preferredMail": "radek.simunek@cvut.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "rep-drp-tst-s3b"
+         }
+      },
+      "abbaf058-1602-4bfb-9640-f3e340e7a2fe": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Barbora Zemanová",
+            "urn:perun:user:attribute-def:def:organization": "Univerzita Karlova",
+            "urn:perun:user:attribute-def:def:preferredMail": "barbora.zemanova@cuni.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "otliaguzov"
+         }
+      },
+      "225c0eb1-0c24-4bb1-a9f8-7a7ae2960fbf": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "PhDr. Filip Marek",
+            "urn:perun:user:attribute-def:def:organization": "Vysoké učení technické v Brně",
+            "urn:perun:user:attribute-def:def:preferredMail": "filip.marek@vutbr.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "miksik"
+         }
+      },
+      "65489a2c-c517-4e72-b43d-9696f618317c": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Nikola Horová",
+            "urn:perun:user:attribute-def:def:organization": "Akademie věd České republiky",
+            "urn:perun:user:attribute-def:def:preferredMail": "nikola.horova@avcr.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "vitpekarek"
+         }
+      },
+      "f521d077-2b54-4518-b625-451e0ad5112c": {
+         "allowed_resources": {
+            "7ca61a25-e979-4b74-949c-bcce9eb33bf3": {
+               "attributes": {}
+            },
+            "cc8f2689-6d93-44dd-8f34-67e8e83eff70": {
+               "attributes": {}
+            },
+            "d9235fba-ecee-4bb5-ad73-9b6b7420e83d": {
+               "attributes": {}
+            },
+            "7e7420d3-439c-4d10-9073-5cbc25f812d4": {
+               "attributes": {}
+            },
+            "5a312e47-8604-4220-910e-64cdee831774": {
+               "attributes": {}
+            },
+            "f4a2a65c-2e52-49c4-acd2-8b47c16b7d44": {
+               "attributes": {}
+            },
+            "8c3ca23c-f9e8-4cb3-b060-07ce8718aa2e": {
+               "attributes": {}
+            },
+            "b069538a-3b43-4d54-ad90-202040f2cf32": {
+               "attributes": {}
+            },
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            },
+            "44e2c39a-53d0-4db7-8bc0-cc46bab997a0": {
+               "attributes": {}
+            },
+            "5ae08ab9-8708-4280-a525-b8a863ee9a90": {
+               "attributes": {}
+            },
+            "4d014885-1e7b-40fa-8f28-ae9344fda8b2": {
+               "attributes": {}
+            },
+            "b03a0c59-0441-4dc9-8095-3c824e28633f": {
+               "attributes": {}
+            },
+            "4dfa3906-9eb0-4a3e-97b0-2927bf05a6cd": {
+               "attributes": {}
+            },
+            "2d99d531-e90d-4d42-a13b-360849b3b3d9": {
+               "attributes": {}
+            },
+            "a99295f6-c126-4f9b-9aae-686c08e03c93": {
+               "attributes": {}
+            },
+            "bef78468-d9f3-4085-a8cd-51737b891cbf": {
+               "attributes": {}
+            },
+            "8b11ccfe-33d3-4273-9550-9914140f3cf8": {
+               "attributes": {}
+            },
+            "97eeed63-2123-4b98-a6ae-560b994978e5": {
+               "attributes": {}
+            },
+            "efb8d76b-177d-492a-8e64-d2c205ebe20b": {
+               "attributes": {}
+            },
+            "5da27ab9-8ce1-4a20-bff8-e7636a670565": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Ondřej Pokorný",
+            "urn:perun:user:attribute-def:def:organization": "GARR Consortium",
+            "urn:perun:user:attribute-def:def:preferredMail": "ondrej.pokorny@garr.it",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": null
+         }
+      },
+      "22a22d04-0c0a-40e8-ae60-d4798a641f76": {
+         "allowed_resources": {
+            "7ca61a25-e979-4b74-949c-bcce9eb33bf3": {
+               "attributes": {}
+            },
+            "eb08fb20-2e9f-4e95-b845-c5a71c2e305b": {
+               "attributes": {}
+            },
+            "cc8f2689-6d93-44dd-8f34-67e8e83eff70": {
+               "attributes": {}
+            },
+            "3b2e53a9-ed49-4dc2-89ea-41414e3c0d30": {
+               "attributes": {}
+            },
+            "41d59f47-388d-4481-ae17-d8fb08bc0ba8": {
+               "attributes": {}
+            },
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            },
+            "44e2c39a-53d0-4db7-8bc0-cc46bab997a0": {
+               "attributes": {}
+            },
+            "5ae08ab9-8708-4280-a525-b8a863ee9a90": {
+               "attributes": {}
+            },
+            "b03a0c59-0441-4dc9-8095-3c824e28633f": {
+               "attributes": {}
+            },
+            "a99295f6-c126-4f9b-9aae-686c08e03c93": {
+               "attributes": {}
+            },
+            "efb8d76b-177d-492a-8e64-d2c205ebe20b": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Tereza Vlasáková",
+            "urn:perun:user:attribute-def:def:organization": "RENATER",
+            "urn:perun:user:attribute-def:def:preferredMail": "tereza.vlasakova@renater.fr",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "corovcak"
+         }
+      },
+      "4c998419-4360-48b9-9374-2f01add81fc8": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            },
+            "5ae08ab9-8708-4280-a525-b8a863ee9a90": {
+               "attributes": {}
+            },
+            "3845cacb-6684-4056-afeb-bf8c8b34de44": {
+               "attributes": {}
+            },
+            "4dfa3906-9eb0-4a3e-97b0-2927bf05a6cd": {
+               "attributes": {}
+            },
+            "a99295f6-c126-4f9b-9aae-686c08e03c93": {
+               "attributes": {}
+            },
+            "50368331-2d6f-4619-b89b-4eef4e80d991": {
+               "attributes": {}
+            },
+            "efb8d76b-177d-492a-8e64-d2c205ebe20b": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "PhDr. Lukáš Bureš",
+            "urn:perun:user:attribute-def:def:organization": "SURF n.v.",
+            "urn:perun:user:attribute-def:def:preferredMail": "lukas.bures@surf.nl",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7l8@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "ruml"
+         }
+      },
+      "bdb0389c-e3bf-4be5-911a-bc02fdc7eef0": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Simona Doležalová",
+            "urn:perun:user:attribute-def:def:organization": "DFN gGmbH",
+            "urn:perun:user:attribute-def:def:preferredMail": "simona.dolezalova@dfn.de",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7l8m9@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "dolsky"
+         }
+      },
+      "095a1849-40db-4c78-9472-2f48f786af48": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Jan Novák",
+            "urn:perun:user:attribute-def:def:organization": "CESNET, z. s. p. o.",
+            "urn:perun:user:attribute-def:def:preferredMail": "jan.novak@cesnet.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "pao"
+         }
+      },
+      "64fa35cc-3cdb-4ca2-ba16-0281d2340860": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Petra Svobodová",
+            "urn:perun:user:attribute-def:def:organization": "Masarykova univerzita",
+            "urn:perun:user:attribute-def:def:preferredMail": "petra.svobodova@muni.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "rep-drp-tst-s3d"
+         }
+      },
+      "e14784ea-d9b3-43d9-b2d7-c8444024e083": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "PhDr. Tomáš Dvořák",
+            "urn:perun:user:attribute-def:def:organization": "České vysoké učení technické",
+            "urn:perun:user:attribute-def:def:preferredMail": "tomas.dvorak@cvut.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "steiner"
+         }
+      },
+      "ca5dc6ac-4079-4290-95e7-3124efce34fc": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Eva Černá",
+            "urn:perun:user:attribute-def:def:organization": "Univerzita Karlova",
+            "urn:perun:user:attribute-def:def:preferredMail": "eva.cerna@cuni.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": null
+         }
+      },
+      "f1f94879-41bf-42d9-b0f8-4271fdac33ca": {
+         "allowed_resources": {
+            "8b6295f9-8115-40ad-97ff-e5d0c111c963": {
+               "attributes": {}
+            },
+            "f70487d8-3320-419d-860e-80eb69981d3b": {
+               "attributes": {}
+            },
+            "8c0627a8-05d5-4d70-92ef-a66fe977f6ea": {
+               "attributes": {}
+            },
+            "029bb7b3-c210-4043-85ff-b1e394d472b2": {
+               "attributes": {}
+            },
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Petr Malý",
+            "urn:perun:user:attribute-def:def:organization": "Vysoké učení technické v Brně",
+            "urn:perun:user:attribute-def:def:preferredMail": "petr.maly@vutbr.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "hornickova"
+         }
+      },
+      "0a9b3945-cabd-4f99-a863-6ef3809f4b48": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. Lucie Kovářová",
+            "urn:perun:user:attribute-def:def:organization": "Akademie věd České republiky",
+            "urn:perun:user:attribute-def:def:preferredMail": "lucie.kovarova@avcr.cz",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "repo_4168_admin"
+         }
+      },
+      "5e9d7aa0-7ee5-44ca-91b3-b0b654eb520a": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "PhDr. Martin Král",
+            "urn:perun:user:attribute-def:def:organization": "GARR Consortium",
+            "urn:perun:user:attribute-def:def:preferredMail": "martin.kral@garr.it",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "vaclavklem"
+         }
+      },
+      "5eafbf0a-e554-4864-b32a-41ddfbf0a86c": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Mgr. Kateřina Procházková",
+            "urn:perun:user:attribute-def:def:organization": "RENATER",
+            "urn:perun:user:attribute-def:def:preferredMail": "katerina.prochazkova@renater.fr",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "berosek"
+         }
+      },
+      "cd3e37bf-fc33-4362-86ab-b4eff75016db": {
+         "allowed_resources": {
+            "e0d5b51b-0fbf-48ce-96f0-1479f70837bb": {
+               "attributes": {}
+            }
+         },
+         "attributes": {
+            "urn:perun:user:attribute-def:core:displayName": "Ing. David Veselý",
+            "urn:perun:user:attribute-def:def:organization": "SURF n.v.",
+            "urn:perun:user:attribute-def:def:preferredMail": "david.vesely@surf.nl",
+            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8@einfra.cesnet.cz",
+            "urn:perun:user:attribute-def:virt:optional-login-namespace:einfra": "martincech"
+         }
+      }
+   }
+}

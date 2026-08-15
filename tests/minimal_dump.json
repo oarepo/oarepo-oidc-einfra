@@ -1,0 +1,107 @@
+{
+  "metadata": {
+    "facility": {
+      "attributes": {},
+      "destinations": [],
+      "facilityName": "Test Facility",
+      "facilityUuid": "00000000-0000-0000-0000-000000000000"
+    },
+    "version": "3.0.1"
+  },
+  "resources": {
+    "resource-for-test-community-member": {
+      "attributes": {
+        "urn:perun:resource:attribute-def:def:capabilities": [
+          "res:communities:test-community:role:member"
+        ]
+      }
+    },
+    "resource-for-another-community-curator": {
+      "attributes": {
+        "urn:perun:resource:attribute-def:def:capabilities": [
+          "res:communities:another-community:role:curator"
+        ]
+      }
+    },
+    "resource-for-admin-role": {
+      "attributes": {
+        "urn:perun:resource:attribute-def:def:capabilities": [
+          "res:roles:administration"
+        ]
+      }
+    },
+    "resource-with-invalid-community": {
+      "attributes": {
+        "urn:perun:resource:attribute-def:def:capabilities": [
+          "res:communities:nonexistent-community:role:member"
+        ]
+      }
+    }
+  },
+  "users": {
+    "user-with-community-and-role-entitlements": {
+      "allowed_resources": {
+        "resource-for-test-community-member": {
+          "attributes": {}
+        },
+        "resource-for-another-community-curator": {
+          "attributes": {}
+        },
+        "resource-for-admin-role": {
+          "attributes": {}
+        },
+        "resource-with-invalid-community": {
+          "attributes": {}
+        }
+      },
+      "attributes": {
+        "urn:perun:user:attribute-def:core:displayName": "Test User",
+        "urn:perun:user:attribute-def:def:organization": "Test Org",
+        "urn:perun:user:attribute-def:def:preferredMail": "test@example.com",
+        "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "test-user-id@einfra.cesnet.cz"
+      }
+    },
+    "user-with-only-community-entitlements": {
+      "allowed_resources": {
+        "resource-for-test-community-member": {
+          "attributes": {}
+        },
+        "resource-for-another-community-curator": {
+          "attributes": {}
+        }
+      },
+      "attributes": {
+        "urn:perun:user:attribute-def:core:displayName": "Community User",
+        "urn:perun:user:attribute-def:def:organization": "Test Org",
+        "urn:perun:user:attribute-def:def:preferredMail": "community@example.com",
+        "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "community-user-id@einfra.cesnet.cz"
+      }
+    },
+    "user-with-only-role-entitlements": {
+      "allowed_resources": {
+        "resource-for-admin-role": {
+          "attributes": {}
+        }
+      },
+      "attributes": {
+        "urn:perun:user:attribute-def:core:displayName": "Role User",
+        "urn:perun:user:attribute-def:def:organization": "Test Org",
+        "urn:perun:user:attribute-def:def:preferredMail": "role@example.com",
+        "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "role-user-id@einfra.cesnet.cz"
+      }
+    },
+    "user-with-no-valid-entitlements": {
+      "allowed_resources": {
+        "resource-with-invalid-community": {
+          "attributes": {}
+        }
+      },
+      "attributes": {
+        "urn:perun:user:attribute-def:core:displayName": "No Entitlements User",
+        "urn:perun:user:attribute-def:def:organization": "Test Org",
+        "urn:perun:user:attribute-def:def:preferredMail": "noentitlements@example.com",
+        "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent": "noentitlements-user-id@einfra.cesnet.cz"
+      }
+    }
+  }
+}

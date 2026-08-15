@@ -38,15 +38,7 @@ class EInfraOIDCApp:
             app.config["EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"] = app.config.get("EINFRA_RSA_KEY")
 
         if not app.config["EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"]:
-            raise RuntimeError("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY is not configured")
-
-    @cached_property
-    def community_roles_with_priorities(self) -> dict[str, int]:
-        """Returns a dictionary mapping community role names to their priority index.
-
-        The priority index is used to sort roles by their priority, with the highest priority first.
-        """
-        return {role["name"]: idx for idx, role in enumerate(self.app.config["COMMUNITIES_ROLES"])}
+            raise RuntimeError("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY is not configured")  # pragma: no cover
 
     @cached_property
     def dump_enabled(self) -> bool:
