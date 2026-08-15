@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Any
 
 import jwt
@@ -13,10 +12,10 @@ from flask import abort, current_app, request
 from invenio_accounts.models import UserIdentity
 from oarepo_runtime.ext import AuthProvider
 
-from ...remote import BACKEND_NAME
+from ..audit_log import audit_log
+from ..remote import BACKEND_NAME
 
 JWT_SEGMENT_SEPARATOR_COUNT = 2
-log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from invenio_accounts.models import User
@@ -70,7 +69,7 @@ class EInfraTokenExchangeProvider(AuthProvider):
                 options={"require": ["sub", "exp", "iat"]},
             )
         except jwt.PyJWTError:
-            log.exception("Rejected e-INFRA token: JWT validation failed")
+            audit_log.exception("Rejected e-INFRA token: JWT validation failed")
             abort(403)
 
     @staticmethod
@@ -82,7 +81,7 @@ class EInfraTokenExchangeProvider(AuthProvider):
         ).one_or_none()
 
         if identity is None or identity.user is None:
-            log.error("No local user is linked to e-INFRA subject %s", subject)
+            audit_log.error("No local user is linked to e-INFRA subject %s", subject)
             abort(403)
 
         return identity.user

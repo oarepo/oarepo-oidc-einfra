@@ -19,6 +19,7 @@ dependencies = [
 
     # invenio dependencies
     "invenio-communities>=28.0.0,<29.0.0",
+    "invenio-audit-logs",
 ]
 
 
@@ -50,17 +51,23 @@ oarepo_oidc_einfra = "oarepo_oidc_einfra.resources:create_api_blueprint"
 [project.entry-points."invenio_base.apps"]
 oarepo_oidc_einfra = "oarepo_oidc_einfra.ext:EInfraOIDCApp"
 
-[project.entry-points."invenio_base.blueprints"]
-oarepo_oidc_einfra = "oarepo_oidc_einfra.resources:create_ui_blueprint"
-
 [project.entry-points."oarepo.auth_providers"]
-einfra_token_exchange = "oarepo_oidc_einfra.services.providers.token_exchange:EInfraTokenExchangeProvider"
+einfra_token_exchange = "oarepo_oidc_einfra.providers.token_exchange:EInfraTokenExchangeProvider"
 
 [project.entry-points."invenio_i18n.translations"]
 oarepo_oidc_einfra = "oarepo_oidc_einfra"
 
-[project.entry-points."invenio_requests.types"]
-aai-community-invitation = "oarepo_oidc_einfra.services.requests.invitation:AAICommunityInvitation"
+[project.entry-points."invenio_db.models"]
+oarepo_oidc_einfra = "oarepo_oidc_einfra.models"
+
+[project.entry-points."invenio_db.alembic"]
+oarepo_oidc_einfra = "oarepo_oidc_einfra:alembic"
+
+[project.entry-points."invenio_audit_logs.actions"]
+"community.member_added" = "oarepo_oidc_einfra.audit_log:CommunityMemberAddedAuditLog"
+"community.member_removed" = "oarepo_oidc_einfra.audit_log:CommunityMemberRemovedAuditLog"
+"role.member_added" = "oarepo_oidc_einfra.audit_log:RoleMemberAddedAuditLog"
+"role.member_removed" = "oarepo_oidc_einfra.audit_log:RoleMemberRemovedAuditLog"
 
 [project.urls]
 Homepage = "https://github.com/oarepo/oarepo-oidc-einfra"
@@ -70,3 +77,6 @@ Source = "https://github.com/oarepo/oarepo-oidc-einfra"
 include = [
     "/oarepo_oidc_einfra",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
