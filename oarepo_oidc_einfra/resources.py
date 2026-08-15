@@ -13,7 +13,7 @@ from typing import ClassVar
 import boto3
 from flask import Blueprint, Flask, current_app, g, request
 from flask_login import login_required
-from flask_resources import Resource, ResourceConfig, route
+from flask_resources import HTTPJSONException, Resource, ResourceConfig, create_error_handler, route
 from invenio_access.factory import action_factory
 from invenio_access.permissions import Permission
 from invenio_cache.proxies import current_cache
@@ -41,6 +41,13 @@ class OIDCEInfraAPIResourceConfig(ResourceConfig):
         "notify-dump": "/dumps/notify",
     }
     """Routes for the resource."""
+
+    error_handlers: ClassVar[dict] = {
+        PermissionDeniedError: create_error_handler(
+            HTTPJSONException(code=403, description="Permission denied."),
+        ),
+    }
+    """Without this, a denied permission would result in an unhandled 500 error."""
 
 
 class OIDCEInfraAPIResource(Resource):

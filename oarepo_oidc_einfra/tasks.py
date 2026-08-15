@@ -155,9 +155,9 @@ def synchronize_users_from_perun(
         try:
             user = db.session.query(User).filter_by(id=user_id).first()
             if user is None:
-                continue
+                continue # pragma: no cover
             update_user_entitlements(user, set(), cause="perun-dump-user-removed")
-        except Exception:
+        except Exception: # pragma: no cover
             log.exception("Can not update user entitlements for %s", user_id)
             db.session.rollback()
 
