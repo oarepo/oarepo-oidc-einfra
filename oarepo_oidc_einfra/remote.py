@@ -23,7 +23,13 @@ from invenio_oauthclient.signals import account_info_received
 from invenio_users_resources.proxies import current_users_service
 from invenio_users_resources.services.users.tasks import reindex_users
 
-from oarepo_oidc_einfra.proxies import synchronization_disabled
+from oarepo_oidc_einfra.audit_log import audit_log
+from oarepo_oidc_einfra.perun.entitlements import (
+    BadEntitlementTypeError,
+    Entitlement,
+    EntitlementError,
+    update_user_entitlements,
+)
 
 if TYPE_CHECKING:
     from flask_oauthlib.client import OAuthRemoteApp
@@ -31,7 +37,6 @@ if TYPE_CHECKING:
 
 
 perun_log = logging.getLogger("oarepo_oidc_einfra.perun.remote")
-log = logging.getLogger("oarepo_oidc_einfra.remote")
 
 BACKEND_NAME = "e-infra"
 
@@ -329,7 +334,7 @@ def autocreate_user(
         if user_by_email is None:
             user_identity.user.email = email
         else:
-            log.error(
+            audit_log.error(
                 "User is logging in with user identity %s, user %s, current email %s. "
                 "The AAI returns email %s that corresponds to a different user %s!",
                 user_identity,
@@ -365,6 +370,35 @@ def commit_and_reindex_user(user: User) -> None:
     current_users_service.indexer.refresh()
 
 
+def get_entitlements_from_userinfo_token(userinfo_token: dict) -> set[Entitlement]:
+    """Extract community/role entitlements from the userinfo token.
+
+    The token's ``eduperson_entitlement`` claim contains a mix of URNs, only some of
+    which represent a community or a global role known to this instance (as recognized
+    by the ``EINFRA_ENTITLEMENT_NAMESPACES``/``EINFRA_ENTITLEMENT_PREFIX`` config and by
+    the communities/roles that currently exist) - everything else (other namespaces,
+    plain URLs, ...) is ignored.
+
+    :param userinfo_token: The userinfo token as returned by the ``/userinfo`` endpoint.
+    :returns: The set of recognized entitlements.
+    """
+    entitlements = set()
+    for entitlement_urn in userinfo_token.get("eduperson_entitlement", []):
+        try:
+            entitlements.add(Entitlement.from_string(entitlement_urn))
+        except BadEntitlementTypeError as e:
+            # not every entry is a URN8141 string representing a community/role we know
+            # about (e.g. plain URLs, entitlements for other namespaces/prefixes, group
+            # entitlements, ...) - this is expected and routine, so just log it at debug
+            perun_log.debug("Ignoring unrecognized entitlement %s: %s", entitlement_urn, e)
+        except EntitlementError as e:
+            # the entitlement looks like one we should understand (matching namespace,
+            # prefix and shape), but the community/role it refers to could not be
+            # resolved (e.g. it does not exist here) - worth an info-level note
+            perun_log.info("Ignoring unresolvable entitlement %s: %s", entitlement_urn, e)
+    return entitlements
+
+
 def account_info_link_perun_groups(
     remote: OAuthRemoteApp,
     *,
@@ -381,12 +415,6 @@ def account_info_link_perun_groups(
         return
 
     # make the import local to avoud circular imports
-    from oarepo_oidc_einfra.communities import CommunitySupport
-    from oarepo_oidc_einfra.global_roles import GlobalRolesSupport
-    from oarepo_oidc_einfra.perun import (
-        get_communities_from_userinfo_token,
-        get_global_roles_from_userinfo_token,
-    )
 
     tokens = token_getter(remote)
     if not tokens:
@@ -406,17 +434,9 @@ def account_info_link_perun_groups(
 
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
     perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
-    aai_community_roles = get_communities_from_userinfo_token(cast("dict", userinfo_token))
-    global_roles = get_global_roles_from_userinfo_token(cast("dict", userinfo_token))
+    userinfo_entitlements = get_entitlements_from_userinfo_token(cast("dict", userinfo_token))
 
-    # disabling synchronization as we already have the latest state from Perun
-    previously_disabled = synchronization_disabled.set(True)
-    try:
-        # setting the user community membership based on the Perun groups
-        CommunitySupport.set_user_community_membership(user, aai_community_roles)
-        GlobalRolesSupport.set_global_roles_membership(user, global_roles)
-    finally:
-        synchronization_disabled.reset(previously_disabled)
+    update_user_entitlements(user, userinfo_entitlements, cause="login")
 
 
 account_info_received.connect(account_info_link_perun_groups)

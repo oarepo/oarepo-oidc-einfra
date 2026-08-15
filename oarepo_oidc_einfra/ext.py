@@ -1,40 +1,13 @@
 # SPDX-FileCopyrightText: 2024 CESNET z.s.p.o
 # SPDX-License-Identifier: MIT
 
-"""A flask extension for E-INFRA OIDC authentication."""
+"""A Flask extension for E-INFRA OIDC authentication."""
 
 from __future__ import annotations
 
-import threading
 from functools import cached_property
-from typing import TYPE_CHECKING, cast
 
-import boto3
 from flask import Flask, current_app
-from invenio_base.utils import obj_or_import_string
-from invenio_communities.communities.services.components import (
-    DefaultCommunityComponents,
-)
-from invenio_communities.members.services.config import (
-    CommunityMemberCachingComponent,
-)
-from invenio_records_resources.services.records.components import MetadataComponent
-
-from oarepo_oidc_einfra.perun import PerunLowLevelAPI
-from oarepo_oidc_einfra.services.components.aai_communities import CommunityAAIComponent
-from oarepo_oidc_einfra.services.components.aai_invitations import (
-    AAIInvitationComponent,
-)
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    import botocore.client
-
-
-from .cli import einfra as einfra_cmd
-
-boto3_client_lock = threading.Lock()
 
 
 class EInfraOIDCApp:
@@ -47,172 +20,43 @@ class EInfraOIDCApp:
 
     def init_app(self, app: Flask) -> None:
         """Add the extension to the app and loads initial configuration."""
+        self.app = app
+
         app.extensions["einfra-oidc"] = self
         self.init_config(app)
-        app.cli.add_command(einfra_cmd)
 
     def init_config(self, app: Flask) -> None:
         """Load the default configuration."""
-        self.register_sync_component_to_community_service(app)
-
         # sets the default configuration values
         from . import config
-
-        app.config.setdefault("EINFRA_TOKEN_EXCHANGE_ISSUER", "https://login.e-infra.cz/oidc/")
 
         for k in dir(config):
             if k.startswith("EINFRA_"):
                 app.config.setdefault(k, getattr(config, k))
 
-        if app.config.get("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY") is None:
+        if not app.config.get("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"):
             app.config["EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"] = app.config.get("EINFRA_RSA_KEY")
+
         if not app.config["EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"]:
             raise RuntimeError("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY is not configured")
 
-    def register_sync_component_to_community_service(self, app: Flask) -> None:
-        """Register components to the community service."""
-        # Community -> AAI synchronization service component
-        communities_components = app.config.get("COMMUNITIES_SERVICE_COMPONENTS", None)
-        if isinstance(communities_components, list):
-            communities_components.append(CommunityAAIComponent)
-        elif not communities_components:
-            app.config["COMMUNITIES_SERVICE_COMPONENTS"] = [
-                CommunityAAIComponent,
-                *DefaultCommunityComponents,
-            ]
+    @cached_property
+    def community_roles_with_priorities(self) -> dict[str, int]:
+        """Returns a dictionary mapping community role names to their priority index.
 
-        # Invitation service component
-        communities_members_components = app.config.get("COMMUNITIES_MEMBERS_SERVICE_COMPONENTS", None)
-        if isinstance(communities_members_components, list):
-            communities_members_components.append(AAIInvitationComponent)
-        elif not communities_members_components:
-            app.config["COMMUNITIES_MEMBERS_SERVICE_COMPONENTS"] = [
-                AAIInvitationComponent,
-                MetadataComponent,
-                CommunityMemberCachingComponent,
-            ]
+        The priority index is used to sort roles by their priority, with the highest priority first.
+        """
+        return {role["name"]: idx for idx, role in enumerate(self.app.config["COMMUNITIES_ROLES"])}
 
-    def perun_api(self) -> PerunLowLevelAPI:
-        """Create a new Perun API instance."""
-        return PerunLowLevelAPI(
-            base_url=current_app.config["EINFRA_API_URL"],
-            service_username=current_app.config["EINFRA_SERVICE_USERNAME"],
-            service_password=current_app.config["EINFRA_SERVICE_PASSWORD"],
+    @cached_property
+    def dump_enabled(self) -> bool:
+        """Check if the S3 dump configuration is properly set up.
+
+        Returns True if all required S3 configuration values are set and non-empty.
+        """
+        return bool(
+            current_app.config.get("EINFRA_USER_DUMP_S3_ACCESS_KEY")
+            and current_app.config.get("EINFRA_USER_DUMP_S3_SECRET_KEY")
+            and current_app.config.get("EINFRA_USER_DUMP_S3_ENDPOINT")
+            and current_app.config.get("EINFRA_USER_DUMP_S3_BUCKET"),
         )
-
-    @property
-    def repository_vo_id(self) -> int:
-        """Get the repository VO ID."""
-        return int(current_app.config["EINFRA_REPOSITORY_VO_ID"])
-
-    @property
-    def repository_facility_id(self) -> int:
-        """Get the repository facility ID."""
-        return int(current_app.config["EINFRA_REPOSITORY_FACILITY_ID"])
-
-    @property
-    def communities_group_id(self) -> int:
-        """Get the communities group ID."""
-        return int(current_app.config["EINFRA_COMMUNITIES_GROUP_ID"])
-
-    @cached_property
-    def capabilities_attribute_id(self) -> int:
-        """Get the capabilities attribute ID."""
-        return cast(
-            "int",
-            self.perun_api().get_attribute_by_name(current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"])["id"],
-        )
-
-    @property
-    def capabilities_attribute_name(self) -> str:
-        """Get the capabilities attribute name."""
-        return cast("str", current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"])
-
-    @cached_property
-    def sync_service_id(self) -> int:
-        """Get the synchronization service ID."""
-        return cast(
-            "int",
-            self.perun_api().get_service_by_name(current_app.config["EINFRA_SYNC_SERVICE_NAME"])["id"],
-        )
-
-    @property
-    def default_language(self) -> str:
-        """Get the default language."""
-        return cast("str", current_app.config["EINFRA_DEFAULT_INVITATION_LANGUAGE"])
-
-    @property
-    def einfra_user_id_search_attribute(self) -> str:
-        """Get the user EInfra ID attribute."""
-        return cast("str", current_app.config["EINFRA_USER_ID_SEARCH_ATTRIBUTE"])
-
-    @property
-    def einfra_user_id_dump_attribute(self) -> str:
-        """Get the user persistent EInfra ID attribute."""
-        return cast("str", current_app.config["EINFRA_USER_ID_DUMP_ATTRIBUTE"])
-
-    @property
-    def user_display_name_attribute(self) -> str:
-        """Get the user display name attribute."""
-        return cast("str", current_app.config["EINFRA_USER_DISPLAY_NAME_ATTRIBUTE"])
-
-    @property
-    def user_organization_attribute(self) -> str:
-        """Get the user organization attribute."""
-        return cast("str", current_app.config["EINFRA_USER_ORGANIZATION_ATTRIBUTE"])
-
-    @property
-    def user_preferred_mail_attribute(self) -> str:
-        """Get the user preferred mail attribute."""
-        return cast("str", current_app.config["EINFRA_USER_PREFERRED_MAIL_ATTRIBUTE"])
-
-    @property
-    def dump_s3_bucket(self) -> str:
-        """Get the dump S3 bucket name."""
-        return cast("str", current_app.config["EINFRA_USER_DUMP_S3_BUCKET"])
-
-    @property
-    def entitlement_namespaces(self) -> list[str]:
-        """Get the entitlement namespaces."""
-        return cast("list[str]", current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"])
-
-    @property
-    def entitlement_prefix(self) -> str:
-        """Get the entitlement prefix."""
-        return cast("str", current_app.config["EINFRA_ENTITLEMENT_PREFIX"])
-
-    @property
-    def synchronization_enabled(self) -> bool:
-        """Is the synchronization enabled."""
-        return cast("bool", current_app.config["EINFRA_COMMUNITY_SYNCHRONIZATION"])
-
-    @property
-    def invitation_synchronization_enabled(self) -> bool:
-        """Is the invitation synchronization enabled."""
-        return current_app.config["EINFRA_COMMUNITY_INVITATION_SYNCHRONIZATION"] and self.synchronization_enabled
-
-    @property
-    def members_synchronization_enabled(self) -> bool:
-        """Is the members synchronization enabled."""
-        return current_app.config["EINFRA_COMMUNITY_MEMBER_SYNCHRONIZATION"] and self.synchronization_enabled
-
-    @cached_property
-    def dump_boto3_client(self) -> botocore.client.BaseClient:
-        """Create a new boto3 client for the dump."""
-        with boto3_client_lock:
-            # see https://stackoverflow.com/questions/52820971/is-boto3-client-thread-safe
-            # why this lock is here
-            return boto3.client(
-                "s3",
-                aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
-                aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
-                endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
-            )
-
-    @cached_property
-    def role_transformer(self) -> Callable | None:
-        """Get the role transformer function."""
-        role_transformer = current_app.config.get("EINFRA_COMMUNITIES_ROLES_TRANSFORMER", None)
-        if role_transformer:
-            return cast("Callable", obj_or_import_string(role_transformer))
-        return None

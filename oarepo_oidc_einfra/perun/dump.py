@@ -9,19 +9,16 @@ import dataclasses
 import logging
 from collections import defaultdict
 from functools import cached_property
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
-from invenio_accounts.models import Role
+from flask import current_app
+from invenio_accounts.models import User, UserIdentity
 from invenio_db import db
 
-from oarepo_oidc_einfra.communities import CommunityRole
-from oarepo_oidc_einfra.proxies import current_einfra_oidc
-
-from .mapping import parse_community_capability, parse_global_role_capability
+from oarepo_oidc_einfra.perun.entitlements import Entitlement
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from uuid import UUID
 
 log = logging.getLogger("perun.dump_data")
 
@@ -30,12 +27,12 @@ log = logging.getLogger("perun.dump_data")
 class AAIUser:
     """A user with their roles as received from the Perun AAI."""
 
+    user: User
     einfra_id: str
     email: str
     full_name: str
     organization: str
-    community_roles: set[CommunityRole]
-    global_roles: set[Role]
+    entitlements: set[Entitlement]
 
 
 class PerunDumpData:
@@ -44,44 +41,42 @@ class PerunDumpData:
     def __init__(
         self,
         dump_data: dict,
-        community_slug_to_id: dict[str, UUID],
-        community_role_names: set[str],
     ):
         """Create an instance of the data.
 
         :param dump_data:               The data from the PERUN dump (json)
-        :param community_slug_to_id:    Mapping of community slugs to their ids (str of uuid)
-        :param community_role_names:         a set of known community role names
         """
         self.dump_data = dump_data
-        self.slug_to_id = community_slug_to_id
-        self.community_role_names = community_role_names
+
+    def users(self) -> Iterable[AAIUser]:
+        """Return an iterable of all users from the dump."""
+        for u in self.dump_data["users"].values():
+            einfra_id = u["attributes"].get(
+                current_app.config["EINFRA_USER_ID_DUMP_ATTRIBUTE"],
+            )
+            user = (
+                db.session.query(User)
+                .join(UserIdentity, UserIdentity.id_user == User.id)
+                .filter(UserIdentity.id == einfra_id, UserIdentity.method == "e-infra")
+            ).one_or_none()
+            if user is None:
+                continue
+
+            full_name = u["attributes"].get(current_app.config["EINFRA_USER_DISPLAY_NAME_ATTRIBUTE"])
+            organization = u["attributes"].get(current_app.config["EINFRA_USER_ORGANIZATION_ATTRIBUTE"])
+            email = u["attributes"].get(current_app.config["EINFRA_USER_PREFERRED_MAIL_ATTRIBUTE"])
+            yield AAIUser(
+                user=user,
+                einfra_id=einfra_id,
+                email=email,
+                full_name=full_name,
+                organization=organization,
+                entitlements=self.entitlements_for_resources(u.get("allowed_resources", {})),
+            )
 
     @cached_property
-    def aai_community_roles(self) -> set[CommunityRole]:
-        """Return all community roles from the dump.
-
-        :return: set of community roles known to perun
-        """
-        aai_community_roles = set()
-        for resource_community_roles in self.resource_to_community_roles.values():
-            aai_community_roles.update(resource_community_roles)
-        return aai_community_roles
-
-    @cached_property
-    def aai_global_roles(self) -> set[Role]:
-        """Return all global roles (invenio_accounts.models.Role) from the dump.
-
-        :return: set of global roles known to perun
-        """
-        aai_global_roles = set()
-        for resource_global_roles in self.resource_to_global_roles.values():
-            aai_global_roles.update(resource_global_roles)
-        return aai_global_roles
-
-    @cached_property
-    def resource_to_community_roles(self) -> dict[str, list[CommunityRole]]:
-        """Returns a mapping of resource id to community roles.
+    def resource_entitlements(self) -> dict[str, list[Entitlement]]:
+        """Returns a mapping of resource id to entitlements.
 
         :return:    for each Perun resource, mapping to associated community roles
         """
@@ -92,93 +87,26 @@ class PerunDumpData:
             #   attributes" : {
             #       "urn:perun:resource:attribute-def:def:capabilities" : [
             #           res:communities:abc:role:members"
-            capabilities = r.get("attributes", {}).get(current_einfra_oidc.capabilities_attribute_name, [])
+            capabilities = r.get("attributes", {}).get(current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"], [])
             for capability in capabilities:
-                slug_role = parse_community_capability(capability)
-                if slug_role is None:
-                    continue
-                community_slug, role = slug_role.slug, slug_role.role
-                if community_slug not in self.slug_to_id:
-                    log.error(
-                        "Community from PERUN %s not found in the repository",
-                        community_slug,
+                try:
+                    # Get the first (and typically only) namespace from the set
+                    namespace = next(iter(current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]))
+                    resources[r_id].append(
+                        Entitlement.from_string(
+                            # we need to add missing namespace & prefix to the entitlement
+                            # so that we can match it later on when user logs in
+                            f"urn:{namespace}:{current_app.config['EINFRA_ENTITLEMENT_PREFIX']}:{capability}"
+                        )
                     )
+                except ValueError:
                     continue
-                if role not in self.community_role_names:
-                    log.error("Role from PERUN %s not found in the repository", role)
-                    continue
-                community_role = CommunityRole(self.slug_to_id[community_slug], role)
-                resources[r_id].append(community_role)
 
         return resources
 
-    @cached_property
-    def resource_to_global_roles(self) -> dict[str, list[Role]]:
-        """Returns a mapping of resource id to global roles.
-
-        :return:    for each Perun resource, mapping to associated global roles
-        """
-        resources = defaultdict(list)
-        for r_id, r in self.dump_data["resources"].items():
-            # data look like
-            # "0003a30a-5512-4ff1-ae1c-b13372041459" : {
-            #   attributes" : {
-            #       "urn:perun:resource:attribute-def:def:capabilities" : [
-            #           res:roles:abc"
-            capabilities = r.get("attributes", {}).get(current_einfra_oidc.capabilities_attribute_name, [])
-            for capability in capabilities:
-                role_name = parse_global_role_capability(capability)
-                if role_name is None:
-                    continue
-                role = db.session.query(Role).filter_by(name=role_name).first()
-                if role is None:
-                    log.error(
-                        "Role from PERUN %s not found in the repository",
-                        role_name,
-                    )
-                    continue
-                resources[r_id].append(role)
-        return resources
-
-    def users(self) -> Iterable[AAIUser]:
-        """Return all users from the dump.
-
-        :return: iterable of AAIUser
-        """
-        for u in self.dump_data["users"].values():
-            einfra_id = u["attributes"].get(
-                current_einfra_oidc.einfra_user_id_dump_attribute,
-            )
-            full_name = u["attributes"].get(current_einfra_oidc.user_display_name_attribute)
-            organization = u["attributes"].get(current_einfra_oidc.user_organization_attribute)
-            email = u["attributes"].get(current_einfra_oidc.user_preferred_mail_attribute)
-            yield AAIUser(
-                einfra_id=einfra_id,
-                email=email,
-                full_name=full_name,
-                organization=organization,
-                community_roles=self._get_community_roles_for_resource(u.get("allowed_resources", {})),
-                global_roles=self._get_global_roles_for_resources(u.get("allowed_resources", {})),
-            )
-
-    def _get_community_roles_for_resource(self, allowed_resources: dict[str, Any]) -> set[CommunityRole]:
-        """Return community roles for an iterable of allowed resources.
-
-        :param allowed_resources:       iterable of resource ids
-        :return:                        a set of associated community roles
-        """
-        aai_communities = set()
-        for resource in allowed_resources:
-            aai_communities.update(self.resource_to_community_roles.get(resource, []))
-        return aai_communities
-
-    def _get_global_roles_for_resources(self, allowed_resources: dict[str, Any]) -> set[Role]:
-        """Return global roles (invenio_accounts.models.Role) for an iterable of allowed resources.
-
-        :param allowed_resources:       iterable of resource ids
-        :return:                        a set of associated community roles
-        """
-        aai_roles = set()
-        for resource in allowed_resources:
-            aai_roles.update(self.resource_to_global_roles.get(resource, []))
-        return aai_roles
+    def entitlements_for_resources(self, resource_ids: Iterable[str]) -> set[Entitlement]:
+        """Return a mapping of resource id to entitlements."""
+        entitlements = set()
+        for r_id in resource_ids:
+            entitlements.update(self.resource_entitlements.get(r_id, []))
+        return entitlements
