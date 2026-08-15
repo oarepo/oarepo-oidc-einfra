@@ -134,30 +134,32 @@ def synchronize_users_from_perun(
 
     for aai_user in dump.users():
         known_user_ids.discard(aai_user.user.id)
-        with db.session.begin_nested():
-            try:
-                update_user_metadata(
-                    aai_user.user,
-                    aai_user.full_name,
-                    aai_user.email,
-                    aai_user.organization,
-                )
-                update_user_entitlements(aai_user.user, aai_user.entitlements, cause="perun-dump-sync")
-            except Exception:
-                log.exception("Can not update user %s", repr(aai_user))
-                db.session.rollback()
+        # note: update_user_entitlements commits its own unit of work (which itself
+        # commits the database transaction), so we must not wrap this in an outer
+        # db.session.begin_nested() - a commit() always commits to the root transaction,
+        # which would leave such an outer savepoint in a closed/invalid state
+        try:
+            update_user_metadata(
+                aai_user.user,
+                aai_user.full_name,
+                aai_user.email,
+                aai_user.organization,
+            )
+            update_user_entitlements(aai_user.user, aai_user.entitlements, cause="perun-dump-sync")
+        except Exception:
+            log.exception("Can not update user %s", repr(aai_user))
+            db.session.rollback()
 
     for user_id in known_user_ids:
         # we need to remove the entitlements of the user that are no longer in the dump
-        with db.session.begin_nested():
-            try:
-                user = db.session.query(User).filter_by(id=user_id).first()
-                if user is None:
-                    continue
-                update_user_entitlements(user, set(), cause="perun-dump-user-removed")
-            except Exception:
-                log.exception("Can not update user entitlements for %s", user_id)
-                db.session.rollback()
+        try:
+            user = db.session.query(User).filter_by(id=user_id).first()
+            if user is None:
+                continue
+            update_user_entitlements(user, set(), cause="perun-dump-user-removed")
+        except Exception:
+            log.exception("Can not update user entitlements for %s", user_id)
+            db.session.rollback()
 
 
 def update_user_metadata(user: User, full_name: str, email: str, organization: str) -> None:
