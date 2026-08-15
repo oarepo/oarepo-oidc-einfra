@@ -175,7 +175,9 @@ class CommunityEntitlement(Entitlement):
                 db_member.role = self.role
                 uow.register(ModelCommitOp(db_member))
                 index_required = True
-                audit_data = CommunityMemberAddedAuditLog.build(user, community.slug, role=self.role, cause=cause)
+                audit_data = CommunityMemberAddedAuditLog.build(
+                    user, community.slug, community_slug=community.slug, role=self.role, cause=cause
+                )
                 if audit_data is not None:
                     uow.register(AuditLogOp(audit_data))
         else:
@@ -189,7 +191,9 @@ class CommunityEntitlement(Entitlement):
             )
             uow.register(ModelCommitOp(db_member))
             index_required = True
-            audit_data = CommunityMemberAddedAuditLog.build(user, community.slug, role=self.role, cause=cause)
+            audit_data = CommunityMemberAddedAuditLog.build(
+                user, community.slug, community_slug=community.slug, role=self.role, cause=cause
+            )
             if audit_data is not None:
                 uow.register(AuditLogOp(audit_data))
 
@@ -213,7 +217,9 @@ class CommunityEntitlement(Entitlement):
             model = Member({}, model=db_member)  # ty: ignore[invalid-argument-type]
             uow.register(ModelDeleteOp(db_member))
             uow.register(RecordIndexDeleteOp(model, indexer=current_communities.service.members.indexer))
-            audit_data = CommunityMemberRemovedAuditLog.build(user, community.slug, cause=cause)
+            audit_data = CommunityMemberRemovedAuditLog.build(
+                user, community.slug, community_slug=community.slug, cause=cause
+            )
             if audit_data is not None:
                 uow.register(AuditLogOp(audit_data))
 

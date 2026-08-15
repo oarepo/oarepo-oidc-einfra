@@ -20,6 +20,7 @@ from invenio_db import db
 from oarepo_oidc_einfra.models import EInfraUserEntitlements
 from oarepo_oidc_einfra.perun.dump import PerunDumpData
 from oarepo_oidc_einfra.perun.entitlements import update_user_entitlements
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -83,6 +84,9 @@ def update_from_perun_dump(
     :param dump_path:        url with the dump
     :param checksum:         sha-256 checksum of the dump
     """
+    if not current_einfra_oidc.dump_enabled:
+        return
+
     log.info(
         "Updating from perun dump %s with checksum %s",
         dump_path,
@@ -134,9 +138,9 @@ def synchronize_users_from_perun(
             try:
                 update_user_metadata(
                     aai_user.user,
-                    aai_user.user.full_name,
-                    aai_user.user.email,
-                    aai_user.user.organization,
+                    aai_user.full_name,
+                    aai_user.email,
+                    aai_user.organization,
                 )
                 update_user_entitlements(aai_user.user, aai_user.entitlements, cause="perun-dump-sync")
             except Exception:

@@ -52,7 +52,7 @@ def test_apply_new_community_membership_creates_audit_log(app, communities, user
     assert len(logs) == 1
     assert logs[0].resource_type == "community"
     assert logs[0].json["resource"] == {"type": "community", "id": "test-community"}
-    assert logs[0].json["metadata"] == {"cause": "test-cause", "role": "member"}
+    assert logs[0].json["metadata"] == {"cause": "test-cause", "role": "member", "community_slug": "test-community"}
     assert logs[0].json["user"]["id"] == str(user.id)
 
 
@@ -82,6 +82,9 @@ def test_apply_role_change_creates_audit_log(app, communities, user, search_clea
     assert causes == {"grant-member", "promote-to-curator"}
     roles = {log.json["metadata"]["role"] for log in logs}
     assert roles == {"member", "curator"}
+    # All logs should have the same community_slug
+    slugs = {log.json["metadata"]["community_slug"] for log in logs}
+    assert slugs == {"test-community"}
 
 
 def test_apply_idempotent_membership_does_not_create_audit_log(app, communities, user, search_clear):
@@ -102,6 +105,7 @@ def test_apply_idempotent_membership_does_not_create_audit_log(app, communities,
     logs = _audit_logs(user.id, action="community.member_added")
     assert len(logs) == 1
     assert logs[0].json["metadata"]["cause"] == "first-apply"
+    assert logs[0].json["metadata"]["community_slug"] == "test-community"
 
 
 def test_remove_community_membership_creates_audit_log(app, communities, user, search_clear):
@@ -122,7 +126,7 @@ def test_remove_community_membership_creates_audit_log(app, communities, user, s
     logs = _audit_logs(user.id, action="community.member_removed")
     assert len(logs) == 1
     assert logs[0].json["resource"] == {"type": "community", "id": "test-community"}
-    assert logs[0].json["metadata"]["cause"] == "revoke"
+    assert logs[0].json["metadata"] == {"cause": "revoke", "community_slug": "test-community"}
 
 
 def test_remove_without_existing_membership_does_not_create_audit_log(app, communities, user, search_clear):
