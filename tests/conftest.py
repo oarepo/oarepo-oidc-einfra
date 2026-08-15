@@ -96,6 +96,94 @@ def roles(app, database):
 
 
 @pytest.fixture(scope="module")
+def minimal_dump_json(app):
+    """Load the minimal dump JSON file content."""
+    import json
+    from pathlib import Path
+
+    dump_path = Path(__file__).parent / "minimal_dump.json"
+    with dump_path.open("rb") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def users_with_identities(app, database):
+    """Create users with matching e-infra identities for testing.
+
+    Creates four users corresponding to the users in minimal_dump.json:
+    - test-user-id@einfra.cesnet.cz (has community + role entitlements)
+    - community-user-id@einfra.cesnet.cz (has only community entitlements)
+    - role-user-id@einfra.cesnet.cz (has only role entitlements)
+    - noentitlements-user-id@einfra.cesnet.cz (has no valid entitlements)
+    """
+    from invenio_accounts.models import UserIdentity
+    from invenio_accounts.proxies import current_datastore
+    from invenio_db import db
+
+    user_ids = [
+        "test-user-id@einfra.cesnet.cz",
+        "community-user-id@einfra.cesnet.cz",
+        "role-user-id@einfra.cesnet.cz",
+        "noentitlements-user-id@einfra.cesnet.cz",
+    ]
+
+    users = []
+    for einfra_id in user_ids:
+        user = current_datastore.create_user(
+            email=f"user-{einfra_id.split('@')[0]}@example.com",
+            password="not-used",  # noqa S106
+            active=True,
+        )
+        # Commit to get the user ID before creating identity
+        current_datastore.commit()
+
+        identity = UserIdentity(
+            id=einfra_id,
+            id_user=user.id,
+            method="e-infra",
+        )
+        db.session.add(identity)
+        users.append((user, einfra_id))
+
+    database.session.commit()
+
+    return {einfra_id: user for user, einfra_id in users}
+
+
+@pytest.fixture
+def unique_s3_bucket(app, monkeypatch):
+    """Create a throw-away S3 bucket for a single test and point the app config at it.
+
+    Using a fresh bucket per test (rather than the shared EINFRA_USER_DUMP_S3_BUCKET) keeps
+    these tests independent of whatever other objects may already exist in the shared bucket.
+    """
+    import uuid
+
+    import boto3
+    from flask import current_app
+
+    bucket_name = f"test-dump-{uuid.uuid4().hex}"
+    client = boto3.client(
+        "s3",
+        aws_access_key_id=current_app.config["EINFRA_USER_DUMP_S3_ACCESS_KEY"],
+        aws_secret_access_key=current_app.config["EINFRA_USER_DUMP_S3_SECRET_KEY"],
+        endpoint_url=current_app.config["EINFRA_USER_DUMP_S3_ENDPOINT"],
+    )
+    client.create_bucket(Bucket=bucket_name)
+    monkeypatch.setitem(current_app.config, "EINFRA_USER_DUMP_S3_BUCKET", bucket_name)
+
+    yield client, bucket_name
+
+    objects = client.list_objects_v2(Bucket=bucket_name).get("Contents", [])
+    if objects:
+        client.delete_objects(
+            Bucket=bucket_name,
+            Delete={"Objects": [{"Key": obj["Key"]} for obj in objects]},
+        )
+    client.delete_bucket(Bucket=bucket_name)
+
+
+@pytest.fixture(scope="module")
 def e_infra_dump(app, database):
     """Create S3 bucket and upload the e-infra dump file for testing.
 
