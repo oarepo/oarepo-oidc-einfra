@@ -141,9 +141,7 @@ def test_notify_dump_requires_permission(client, user_without_permission):
     assert response.status_code == 403
 
 
-def test_notify_dump_triggers_sync_with_configured_last_dump_path(
-    client, user_with_permission, mocked_dump_task, app
-):
+def test_notify_dump_triggers_sync_with_configured_last_dump_path(client, user_with_permission, mocked_dump_task, app):
     """Test that notify schedules the sync task for EINFRA_LAST_DUMP_PATH, without a checksum."""
     login_user_via_session(client, user=user_with_permission)
 

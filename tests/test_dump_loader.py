@@ -44,9 +44,7 @@ def test_dump_contains_expected_resources(dump_data):
     # Check resource structure
     resource = resources["dacf529e-2d71-44f6-ad28-e53c38239b8e"]
     assert "attributes" in resource
-    capabilities = resource["attributes"].get(
-        current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"], []
-    )
+    capabilities = resource["attributes"].get(current_app.config["EINFRA_CAPABILITIES_ATTRIBUTE_NAME"], [])
     assert "res:communities:llm-settings-community:role:submitter" in capabilities
 
 
@@ -63,22 +61,11 @@ def test_dump_contains_expected_users(dump_data):
     assert "allowed_resources" in user
 
     # Check user attributes
+    assert user["attributes"]["urn:perun:user:attribute-def:core:displayName"] == "Ing. Jan Novák"
+    assert user["attributes"]["urn:perun:user:attribute-def:def:organization"] == "CESNET, z. s. p. o."
+    assert user["attributes"]["urn:perun:user:attribute-def:def:preferredMail"] == "jan.novak@cesnet.cz"
     assert (
-        user["attributes"]["urn:perun:user:attribute-def:core:displayName"]
-        == "Ing. Jan Novák"
-    )
-    assert (
-        user["attributes"]["urn:perun:user:attribute-def:def:organization"]
-        == "CESNET, z. s. p. o."
-    )
-    assert (
-        user["attributes"]["urn:perun:user:attribute-def:def:preferredMail"]
-        == "jan.novak@cesnet.cz"
-    )
-    assert (
-        user["attributes"][
-            "urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"
-        ]
+        user["attributes"]["urn:perun:user:attribute-def:virt:login-namespace:einfraid-persistent"]
         == "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0@einfra.cesnet.cz"
     )
 
@@ -111,9 +98,7 @@ def test_entitlements_for_resources(perun_dump_data_with_test_communities):
     # Resource "7ca61a25-e979-4b74-949c-bcce9eb33bf3" has "res:communities:comb:role:submitter"
     # This won't parse because comb community doesn't exist, so let's test with empty result
     resource_ids_with_entitlement = ["7ca61a25-e979-4b74-949c-bcce9eb33bf3"]
-    entitlements = perun_dump_data_with_test_communities.entitlements_for_resources(
-        resource_ids_with_entitlement
-    )
+    entitlements = perun_dump_data_with_test_communities.entitlements_for_resources(resource_ids_with_entitlement)
     # comb community doesn't exist, so no entitlements should be returned
     assert entitlements == set()
 
@@ -129,9 +114,7 @@ def test_users_iterator_returns_aai_user_objects(
 
     aai_user = users[0]
     assert isinstance(aai_user, AAIUser)
-    assert (
-        aai_user.einfra_id == "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0@einfra.cesnet.cz"
-    )
+    assert aai_user.einfra_id == "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0@einfra.cesnet.cz"
     assert aai_user.full_name == "Ing. Jan Novák"
     assert aai_user.organization == "CESNET, z. s. p. o."
     assert aai_user.email == "jan.novak@cesnet.cz"
@@ -146,18 +129,12 @@ def test_users_entitlements_computed_from_allowed_resources(
 
     aai_user = users[0]
 
-    # The user's allowed_resources include resources with various capabilities
-    # Check that entitlements are correctly derived (even if empty due to missing communities)
-    entitlements = aai_user.entitlements
-
     # User should have some attributes populated
     assert aai_user.einfra_id is not None
     assert aai_user.full_name is not None
 
 
-def test_users_without_matching_identity_are_skipped(
-    perun_dump_data_with_test_communities, app, database
-):
+def test_users_without_matching_identity_are_skipped(perun_dump_data_with_test_communities, app, database):
     """Test that users without a matching UserIdentity are skipped.
 
     This test verifies that the users() method filters out users from the dump
@@ -181,9 +158,7 @@ def test_resource_without_capabilities_has_no_entitlements(
     """Test that resources without capabilities attribute have no entitlements."""
     # Resource "f4a2a65c-2e52-49c4-acd2-8b47c16b7d44" has empty attributes
     resource_id = "f4a2a65c-2e52-49c4-acd2-8b47c16b7d44"
-    entitlements = perun_dump_data_with_test_communities.resource_entitlements.get(
-        resource_id, []
-    )
+    entitlements = perun_dump_data_with_test_communities.resource_entitlements.get(resource_id, [])
     assert entitlements == []
 
 

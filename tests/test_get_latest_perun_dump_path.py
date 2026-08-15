@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+from datetime import UTC
+
 import pytest
 
 from oarepo_oidc_einfra.tasks import get_latest_perun_dump_path
@@ -55,16 +57,16 @@ def test_paginates_through_all_objects(app, monkeypatch):
     Uses a mocked S3 client rather than real MinIO pages, since producing enough real
     objects to trigger pagination (the default page size is 1000) would be impractical.
     """
-    from datetime import datetime, timezone
+    from datetime import datetime
     from unittest.mock import MagicMock
 
     mock_client = MagicMock()
     first_page = {
-        "Contents": [{"Key": "page1.json", "LastModified": datetime(2024, 1, 1, tzinfo=timezone.utc)}],
+        "Contents": [{"Key": "page1.json", "LastModified": datetime(2024, 1, 1, tzinfo=UTC)}],
         "NextContinuationToken": "token-1",
     }
     second_page = {
-        "Contents": [{"Key": "page2.json", "LastModified": datetime(2024, 6, 1, tzinfo=timezone.utc)}],
+        "Contents": [{"Key": "page2.json", "LastModified": datetime(2024, 6, 1, tzinfo=UTC)}],
     }
     mock_client.list_objects_v2.side_effect = [first_page, second_page]
     monkeypatch.setattr("boto3.client", lambda *args, **kwargs: mock_client)

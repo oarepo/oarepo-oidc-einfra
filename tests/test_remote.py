@@ -34,8 +34,8 @@ from invenio_oauthclient.views.client import serializer as state_serializer
 from oarepo_oidc_einfra.perun.entitlements import CommunityEntitlement, GlobalRoleEntitlement
 from oarepo_oidc_einfra.remote import (
     BACKEND_NAME,
-    EInfraOAuthSettingsHelper,
     EINFRA_LOGIN_APP,
+    EInfraOAuthSettingsHelper,
     account_info,
     account_info_link_perun_groups,
     account_info_serializer,
@@ -326,7 +326,7 @@ def test_account_info_serializer_rejects_wrong_audience(app, rsa_keypair):
 def test_account_info_delegates_to_registered_info_serializer(app, rsa_keypair):
     # relies on OAUTHCLIENT_REMOTE_APPS (set in the module app_config fixture above) having
     # registered account_info_serializer as the "e-infra" info_serializer handler
-    private_pem, public_pem = rsa_keypair
+    private_pem, _ = rsa_keypair
     remote = current_oauthclient.oauth.remote_apps[BACKEND_NAME]
     id_token = _make_id_token(private_pem, sub="delegate-test@einfra.cesnet.cz")
 
@@ -344,7 +344,7 @@ def _make_token(email):
     user = User(email=email, active=True)
     db.session.add(user)
     db.session.commit()
-    token = RemoteToken.create(user.id, "test-consumer-key", "access-token", "secret")  # noqa S106
+    token = RemoteToken.create(user.id, "test-consumer-key", "access-token", "secret")
     return user, token
 
 
@@ -386,7 +386,7 @@ def test_account_setup_creates_identity_and_confirms_user(app, database, rsa_key
 
 def test_account_setup_does_not_duplicate_existing_identity(app, database, rsa_keypair):
     private_pem, public_pem = rsa_keypair
-    user, token = _make_token("setup-existing@example.org")
+    _, token = _make_token("setup-existing@example.org")
     remote = _fake_remote(public_pem)
     id_token = _make_id_token(private_pem, sub="existingsub@einfra.cesnet.cz")
 
@@ -748,7 +748,7 @@ def test_full_signup_flow_creates_confirmed_user(app, database, search_clear, rs
         email="e2e@example.org",
     )
     oauth_token_response = {
-        "access_token": "e2e-access-token",  # noqa S106
+        "access_token": "e2e-access-token",
         "token_type": "bearer",
         "expires_in": 3600,
         "id_token": id_token,

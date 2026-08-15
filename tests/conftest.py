@@ -190,9 +190,7 @@ def e_infra_dump(app, database):
     Creates the bucket specified in EINFRA_USER_DUMP_S3_BUCKET if it doesn't exist,
     and uploads the dump.json file from the tests directory if one doesn't already exist.
     """
-    import json
     from pathlib import Path
-    import json
 
     import boto3
     from flask import current_app

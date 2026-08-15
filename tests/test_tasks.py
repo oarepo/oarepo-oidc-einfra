@@ -172,8 +172,8 @@ def test_removes_entitlements_for_users_not_in_dump(
 ):
     """Test that entitlements are removed for users no longer in the dump."""
     # Create a new user that's NOT in the dump but has entitlements
-    from invenio_accounts.proxies import current_datastore
     from invenio_accounts.models import UserIdentity
+    from invenio_accounts.proxies import current_datastore
 
     extra_user = current_datastore.create_user(
         email="extra-user@example.com",

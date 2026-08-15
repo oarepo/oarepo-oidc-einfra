@@ -112,9 +112,7 @@ class TestCommunityEntitlements:
         assert "resource-with-invalid-community" in resource_entitlements
         assert resource_entitlements["resource-with-invalid-community"] == []
 
-    def test_user_with_multiple_community_entitlements(
-        self, perun_dump_data, users_with_identities, communities
-    ):
+    def test_user_with_multiple_community_entitlements(self, perun_dump_data, users_with_identities, communities):
         """Test that a user with multiple community entitlements gets all of them."""
         users = list(perun_dump_data.users())
 
@@ -138,9 +136,7 @@ class TestCommunityEntitlements:
         }
         assert entitlement_strings == expected
 
-    def test_user_entitlements_match_allowed_resources(
-        self, perun_dump_data, users_with_identities, communities
-    ):
+    def test_user_entitlements_match_allowed_resources(self, perun_dump_data, users_with_identities, communities):
         """Test that user entitlements correctly reflect their allowed_resources."""
         users = list(perun_dump_data.users())
 
@@ -159,7 +155,9 @@ class TestCommunityEntitlements:
 
         entitlement_strings = {str(e) for e in entitlements}
         assert "urn:geant:cesnet.cz:res:communities:test-community:role:member#perun.cesnet.cz" in entitlement_strings
-        assert "urn:geant:cesnet.cz:res:communities:another-community:role:curator#perun.cesnet.cz" in entitlement_strings
+        assert (
+            "urn:geant:cesnet.cz:res:communities:another-community:role:curator#perun.cesnet.cz" in entitlement_strings
+        )
         assert "urn:geant:cesnet.cz:res:roles:administration#perun.cesnet.cz" in entitlement_strings
 
 
@@ -178,9 +176,7 @@ class TestRoleEntitlements:
         assert isinstance(ent, GlobalRoleEntitlement)
         assert ent.role_name == "administration"
 
-    def test_user_with_only_role_entitlements(
-        self, perun_dump_data, users_with_identities, roles
-    ):
+    def test_user_with_only_role_entitlements(self, perun_dump_data, users_with_identities, roles):
         """Test that a user with only role entitlements gets them correctly."""
         users = list(perun_dump_data.users())
 
@@ -197,13 +193,11 @@ class TestRoleEntitlements:
         entitlements = role_user.entitlements
         assert len(entitlements) == 1
 
-        ent = list(entitlements)[0]
+        ent = next(iter(entitlements))
         assert isinstance(ent, GlobalRoleEntitlement)
         assert ent.role_name == "administration"
 
-    def test_user_with_no_valid_entitlements_has_empty_set(
-        self, perun_dump_data, users_with_identities
-    ):
+    def test_user_with_no_valid_entitlements_has_empty_set(self, perun_dump_data, users_with_identities):
         """Test that a user with only invalid resources has no entitlements."""
         users = list(perun_dump_data.users())
 
@@ -224,22 +218,16 @@ class TestRoleEntitlements:
 class TestEntitlementsForResources:
     """Tests for the entitlements_for_resources method."""
 
-    def test_returns_correct_entitlements_for_single_resource(
-        self, perun_dump_data, communities, roles
-    ):
+    def test_returns_correct_entitlements_for_single_resource(self, perun_dump_data, communities, roles):
         """Test getting entitlements for a single resource ID."""
-        entitlements = perun_dump_data.entitlements_for_resources(
-            ["resource-for-test-community-member"]
-        )
+        entitlements = perun_dump_data.entitlements_for_resources(["resource-for-test-community-member"])
         assert len(entitlements) == 1
-        ent = list(entitlements)[0]
+        ent = next(iter(entitlements))
         assert isinstance(ent, CommunityEntitlement)
         assert ent.community_slug == "test-community"
         assert ent.role == "member"
 
-    def test_returns_combined_entitlements_for_multiple_resources(
-        self, perun_dump_data, communities, roles
-    ):
+    def test_returns_combined_entitlements_for_multiple_resources(self, perun_dump_data, communities, roles):
         """Test getting entitlements for multiple resource IDs."""
         resource_ids = [
             "resource-for-test-community-member",
@@ -251,14 +239,14 @@ class TestEntitlementsForResources:
 
         entitlement_strings = {str(e) for e in entitlements}
         assert "urn:geant:cesnet.cz:res:communities:test-community:role:member#perun.cesnet.cz" in entitlement_strings
-        assert "urn:geant:cesnet.cz:res:communities:another-community:role:curator#perun.cesnet.cz" in entitlement_strings
+        assert (
+            "urn:geant:cesnet.cz:res:communities:another-community:role:curator#perun.cesnet.cz" in entitlement_strings
+        )
         assert "urn:geant:cesnet.cz:res:roles:administration#perun.cesnet.cz" in entitlement_strings
 
     def test_returns_empty_set_for_nonexistent_resources(self, perun_dump_data):
         """Test getting entitlements for non-existent resource IDs."""
-        entitlements = perun_dump_data.entitlements_for_resources(
-            ["nonexistent-resource-1", "nonexistent-resource-2"]
-        )
+        entitlements = perun_dump_data.entitlements_for_resources(["nonexistent-resource-1", "nonexistent-resource-2"])
         assert entitlements == set()
 
     def test_handles_mixed_valid_invalid_resources(self, perun_dump_data, communities, roles):
@@ -271,4 +259,5 @@ class TestEntitlementsForResources:
         entitlements = perun_dump_data.entitlements_for_resources(resource_ids)
         # Only the valid resource should contribute entitlements
         assert len(entitlements) == 1
-        assert str(list(entitlements)[0]) == "urn:geant:cesnet.cz:res:communities:test-community:role:member#perun.cesnet.cz"
+        expected = "urn:geant:cesnet.cz:res:communities:test-community:role:member#perun.cesnet.cz"
+        assert str(next(iter(entitlements))) == expected
