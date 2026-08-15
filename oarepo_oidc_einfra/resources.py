@@ -42,7 +42,10 @@ class OIDCEInfraAPIResourceConfig(ResourceConfig):
     }
     """Routes for the resource."""
 
-    error_handlers: ClassVar[dict] = {
+    # matches the (unannotated) type of ResourceConfig.error_handlers - annotating this
+    # with ClassVar, as RUF012 would otherwise suggest, conflicts with that base class
+    # attribute's inferred type
+    error_handlers = {  # noqa: RUF012
         PermissionDeniedError: create_error_handler(
             HTTPJSONException(code=403, description="Permission denied."),
         ),

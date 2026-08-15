@@ -2,3 +2,5 @@
 # SPDX-License-Identifier: MIT
 
 """Tests for parsing community and role entitlements from PERUN dump."""
+
+from __future__ import annotations
