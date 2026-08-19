@@ -4,6 +4,7 @@
 """E-Infra OIDC Remote Auth backend for NRP."""
 
 from __future__ import annotations
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 import datetime
 import logging
@@ -435,6 +436,8 @@ def account_info_link_perun_groups(
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
     perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
     userinfo_entitlements = get_entitlements_from_userinfo_token(cast("dict", userinfo_token))
+    if current_einfra_oidc.entitlements_parser:
+        userinfo_entitlements.update(current_einfra_oidc.entitlements_parser(cast("dict", userinfo_token)))
 
     update_user_entitlements(user, userinfo_entitlements, cause="login")
 

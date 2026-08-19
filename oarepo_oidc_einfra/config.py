@@ -5,6 +5,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from oarepo_oidc_einfra.perun.entitlements import EntitlementParser
+
 EINFRA_ENTITLEMENT_NAMESPACES = {"geant"}
 """URN prefix for capabilities that can represent community roles."""
 
@@ -61,3 +66,6 @@ EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY = None
 
 If not set, EINFRA_RSA_KEY is used instead.
 """
+
+EINFRA_ENTITLEMENT_PARSER: EntitlementParser | None = None
+"""Parser for entitlements from user info token."""
