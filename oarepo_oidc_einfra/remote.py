@@ -4,7 +4,6 @@
 """E-Infra OIDC Remote Auth backend for NRP."""
 
 from __future__ import annotations
-from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 import datetime
 import logging
@@ -29,8 +28,10 @@ from oarepo_oidc_einfra.perun.entitlements import (
     BadEntitlementTypeError,
     Entitlement,
     EntitlementError,
+    EntitlementsParser,
     update_user_entitlements,
 )
+from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 if TYPE_CHECKING:
     from flask_oauthlib.client import OAuthRemoteApp
@@ -436,6 +437,8 @@ def account_info_link_perun_groups(
     userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
     perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
     userinfo_entitlements = get_entitlements_from_userinfo_token(cast("dict", userinfo_token))
+
+    # TODO: the parser should be called on dump as well - but we do not have the e-infra eligible flag in the dump
     if current_einfra_oidc.entitlements_parser:
         userinfo_entitlements.update(current_einfra_oidc.entitlements_parser(cast("dict", userinfo_token)))
 
@@ -443,3 +446,46 @@ def account_info_link_perun_groups(
 
 
 account_info_received.connect(account_info_link_perun_groups)
+
+
+def einfra_eligible_parser_factory(
+    *,
+    global_roles: list[str] | tuple[str] | None = ("submitter",),
+    community_roles: list[tuple[str, str]] | None = None,
+) -> EntitlementsParser:
+    """Add global and community roles to the user's entitlements if the user is eligible for EINFRA."""
+
+    def einfra_eligible_parser_inner(user_info: dict) -> list[Entitlement]:
+        """Add global and community roles to the user's entitlements if the user is eligible for EINFRA."""
+        namespace = next(iter(current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]))
+        entitlement_prefix = current_app.config["EINFRA_ENTITLEMENT_PREFIX"]
+
+        entitlements = []
+        for ent in user_info.get("eduperson_entitlement", []):
+            if ent.startswith("https://www.e-infra.cz/ns/user-eligible-"):
+                for gr in global_roles or []:
+                    try:
+                        entitlements.append(
+                            Entitlement.from_string(
+                                entitlement=f"urn:{namespace}:{entitlement_prefix}:res:roles:{gr}#perun.cesnet.cz"
+                            )
+                        )
+                    except EntitlementError:
+                        perun_log.exception("Failed to create submitter entitlement %s for e-infra eligible user", gr)
+                for community, role in community_roles or []:
+                    try:
+                        entitlements.append(
+                            Entitlement.from_string(
+                                entitlement=(
+                                    f"urn:{namespace}:{entitlement_prefix}:res:communities:"
+                                    f"{community}:role:{role}#perun.cesnet.cz"
+                                )
+                            )
+                        )
+                    except EntitlementError:
+                        perun_log.exception(
+                            "Failed to create community entitlement %s/%s for e-infra eligible user", community, role
+                        )
+        return entitlements
+
+    return einfra_eligible_parser_inner
