@@ -4,11 +4,14 @@
 """A Flask extension for E-INFRA OIDC authentication."""
 
 from __future__ import annotations
-from oarepo_oidc_einfra.perun.entitlements import EntitlementParser
 
 from functools import cached_property
+from typing import TYPE_CHECKING, cast
 
 from flask import Flask, current_app
+
+if TYPE_CHECKING:
+    from oarepo_oidc_einfra.perun.entitlements import EntitlementsParser
 
 
 class EInfraOIDCApp:
@@ -55,6 +58,6 @@ class EInfraOIDCApp:
         )
 
     @cached_property
-    def entitlements_parser(self) -> EntitlementParser:
+    def entitlements_parser(self) -> EntitlementsParser:
         """Return the entitlements parser function."""
-        return current_app.config.get("EINFRA_ENTITLEMENTS_PARSER")
+        return cast("EntitlementsParser", current_app.config.get("EINFRA_ENTITLEMENTS_PARSER"))

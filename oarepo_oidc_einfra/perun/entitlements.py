@@ -8,7 +8,7 @@ from __future__ import annotations
 import dataclasses
 import logging
 from collections import defaultdict
-from typing import TYPE_CHECKING, override, Protocol
+from typing import TYPE_CHECKING, Protocol, override
 
 from flask import current_app
 from invenio_accounts.proxies import current_datastore
@@ -49,7 +49,8 @@ class EntitlementError(ValueError):
 class BadEntitlementTypeError(EntitlementError):
     """Raised when the type in an entitlement string can not be resolved."""
 
-class EntitlementParser(Protocol):
+
+class EntitlementsParser(Protocol):
     """Parser for entitlements from user info token."""
 
     def __call__(self, user_info: dict) -> list[Entitlement]:
