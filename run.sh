@@ -18,6 +18,9 @@
 
 set -euo pipefail
 
+export AWS_REQUEST_CHECKSUM_CALCULATION=when_required
+export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required
+
 # OARepo packages and the CESNET-patched invenio-cli build (which oarepo-cli
 # requires) live in the CESNET GitLab PyPI registry, not on public PyPI. uv
 # gives an extra index higher priority than the default index, so invenio-cli
