@@ -13,7 +13,7 @@ through the real ``invenio_oauthclient`` login/authorized views.
 
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 import logging
 from types import SimpleNamespace
 from unittest.mock import MagicMock
@@ -205,7 +205,7 @@ def rsa_keypair():
 
 def _make_id_token(private_pem, **overrides):
     """Build a signed RS256 id_token, as e-infra AAI would return it."""
-    now = datetime.datetime.now(datetime.UTC)
+    now = dt.datetime.now(dt.UTC)
     claims = {
         "sub": "abcdef1234@einfra.cesnet.cz",
         "name": "Jane Doe",
@@ -214,7 +214,7 @@ def _make_id_token(private_pem, **overrides):
         "zoneinfo": "Europe/Prague",
         "aud": "test-consumer-key",
         "iat": now,
-        "exp": now + datetime.timedelta(minutes=5),
+        "exp": now + dt.timedelta(minutes=5),
     }
     claims.update(overrides)
     return jwt.encode(claims, private_pem, algorithm="RS256")
@@ -399,7 +399,7 @@ def test_account_setup_does_not_duplicate_existing_identity(app, database, rsa_k
 def test_account_setup_does_not_reset_confirmed_at(app, database, rsa_keypair):
     private_pem, public_pem = rsa_keypair
     user, token = _make_token("already-confirmed@example.org")
-    confirmed_at = datetime.datetime(2020, 1, 1, tzinfo=datetime.UTC)
+    confirmed_at = dt.datetime(2020, 1, 1, tzinfo=dt.UTC)
     user.confirmed_at = confirmed_at
     db.session.add(user)
     db.session.commit()

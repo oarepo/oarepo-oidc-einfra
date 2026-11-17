@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 import logging
 from typing import TYPE_CHECKING, cast
 
@@ -229,7 +229,7 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
     )
 
     with db.session.begin_nested():
-        token.remote_account.extra_data = {  # ty: ignore[unresolved-attribute]
+        token.remote_account.extra_data = {  # ty: ignore[missing-attribute]
             "full_name": decoded_token["name"],
             "locale": find_locale(decoded_token.get("locale")),
             "timezone": decoded_token.get("zoneinfo"),
@@ -246,7 +246,7 @@ def account_setup(remote: OAuthRemoteApp, token: RemoteToken, resp: dict) -> Non
 
         if user.confirmed_at is None:
             # Set the user as confirmed
-            user.confirmed_at = datetime.datetime.now(datetime.UTC)
+            user.confirmed_at = dt.datetime.now(dt.UTC)
             with db.session.begin_nested():
                 db.session.add(user)
                 db.session.commit()
@@ -318,7 +318,7 @@ def autocreate_user(
             the config variable SECURITY_CONFIRMABLE is set to True.
             Without setting 'confirmed_at' to some value, it is impossible to log in.
             """
-            user.confirmed_at = datetime.datetime.now(datetime.UTC)
+            user.confirmed_at = dt.datetime.now(dt.UTC)
 
             commit_and_reindex_user(user)
 
