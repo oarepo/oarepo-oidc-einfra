@@ -15,7 +15,7 @@ exchanged and resolves it to a local user.
 
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -63,13 +63,13 @@ def app_config(app_config, rsa_keypair):
 
 def _make_token(private_pem, **overrides):
     """Build a signed RS256 exchanged access token, as e-INFRA AAI would issue it."""
-    now = datetime.datetime.now(datetime.UTC)
+    now = dt.datetime.now(dt.UTC)
     claims = {
         "sub": "exchangedsub@einfra.cesnet.cz",
         "aud": AUDIENCE,
         "iss": ISSUER,
         "iat": now,
-        "exp": now + datetime.timedelta(minutes=5),
+        "exp": now + dt.timedelta(minutes=5),
     }
     claims.update(overrides)
     return jwt.encode(claims, private_pem, algorithm="RS256")
@@ -162,8 +162,8 @@ def test_validate_token_rejects_wrong_issuer(app, rsa_keypair):
 
 def test_validate_token_rejects_expired_token(app, rsa_keypair):
     private_pem, _ = rsa_keypair
-    now = datetime.datetime.now(datetime.UTC)
-    token = _make_token(private_pem, iat=now - datetime.timedelta(hours=1), exp=now - datetime.timedelta(minutes=1))
+    now = dt.datetime.now(dt.UTC)
+    token = _make_token(private_pem, iat=now - dt.timedelta(hours=1), exp=now - dt.timedelta(minutes=1))
 
     with pytest.raises(Forbidden):
         EInfraTokenExchangeProvider._validate_token(token)
@@ -185,13 +185,13 @@ def test_validate_token_rejects_token_signed_with_wrong_key(app):
 @pytest.mark.parametrize("missing_claim", ["sub", "exp", "iat"])
 def test_validate_token_rejects_missing_required_claims(app, rsa_keypair, missing_claim):
     private_pem, _ = rsa_keypair
-    now = datetime.datetime.now(datetime.UTC)
+    now = dt.datetime.now(dt.UTC)
     claims = {
         "sub": "sub@einfra.cesnet.cz",
         "aud": AUDIENCE,
         "iss": ISSUER,
         "iat": now,
-        "exp": now + datetime.timedelta(minutes=5),
+        "exp": now + dt.timedelta(minutes=5),
     }
     del claims[missing_claim]
     token = jwt.encode(claims, private_pem, algorithm="RS256")
