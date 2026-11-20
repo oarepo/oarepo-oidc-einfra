@@ -377,9 +377,9 @@ def get_entitlements_from_userinfo_token(userinfo_token: dict) -> set[Entitlemen
 
     The token's ``eduperson_entitlement`` claim contains a mix of URNs, only some of
     which represent a community or a global role known to this instance (as recognized
-    by the ``EINFRA_ENTITLEMENT_NAMESPACES``/``EINFRA_ENTITLEMENT_PREFIX`` config and by
-    the communities/roles that currently exist) - everything else (other namespaces,
-    plain URLs, ...) is ignored.
+    by the ``EINFRA_ENTITLEMENT_NAMESPACES``/``EINFRA_ENTITLEMENT_PREFIX``/
+    ``EINFRA_ENTITLEMENT_SUFFIX`` config and by the communities/roles that currently
+    exist) - everything else (other namespaces, plain URLs, ...) is ignored.
 
     :param userinfo_token: The userinfo token as returned by the ``/userinfo`` endpoint.
     :returns: The set of recognized entitlements.
@@ -459,6 +459,7 @@ def einfra_eligible_parser_factory(
         """Add global and community roles to the user's entitlements if the user is eligible for EINFRA."""
         namespace = next(iter(current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]))
         entitlement_prefix = current_app.config["EINFRA_ENTITLEMENT_PREFIX"]
+        entitlement_suffix = current_app.config["EINFRA_ENTITLEMENT_SUFFIX"]
 
         entitlements = []
         for ent in user_info.get("eduperson_entitlement", []):
@@ -467,7 +468,9 @@ def einfra_eligible_parser_factory(
                     try:
                         entitlements.append(
                             Entitlement.from_string(
-                                entitlement=f"urn:{namespace}:{entitlement_prefix}:res:roles:{gr}#perun.cesnet.cz"
+                                entitlement=(
+                                    f"urn:{namespace}:{entitlement_prefix}:res:roles:{gr}#{entitlement_suffix}"
+                                )
                             )
                         )
                     except EntitlementError:
@@ -478,7 +481,7 @@ def einfra_eligible_parser_factory(
                             Entitlement.from_string(
                                 entitlement=(
                                     f"urn:{namespace}:{entitlement_prefix}:res:communities:"
-                                    f"{community}:role:{role}#perun.cesnet.cz"
+                                    f"{community}:role:{role}#{entitlement_suffix}"
                                 )
                             )
                         )
