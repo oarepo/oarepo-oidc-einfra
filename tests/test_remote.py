@@ -34,13 +34,16 @@ from invenio_oauthclient.views.client import serializer as state_serializer
 from oarepo_oidc_einfra.perun.entitlements import CommunityEntitlement, GlobalRoleEntitlement
 from oarepo_oidc_einfra.remote import (
     BACKEND_NAME,
+    CESID_LOGIN_APP,
     EINFRA_LOGIN_APP,
+    CESiDOAuthSettingsHelper,
     EInfraOAuthSettingsHelper,
     account_info,
     account_info_link_perun_groups,
     account_info_serializer,
     account_setup,
     autocreate_user,
+    einfra_eligible_parser_factory,
     find_locale,
     get_entitlements_from_userinfo_token,
 )
@@ -173,16 +176,17 @@ def test_get_entitlements_from_userinfo_token_logs_by_exception_type(app, known_
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture(scope="module")
-def app_config(app_config, rsa_keypair):
-    """Register the e-infra remote app and its test RSA keypair."""
+@pytest.fixture(scope="module", params=[EINFRA_LOGIN_APP, CESID_LOGIN_APP], ids=["einfra", "cesid"])
+def app_config(request, app_config, rsa_keypair):
+    """Register the e-infra or CESiD remote app (both under BACKEND_NAME) and its test RSA keypair."""
     _, public_pem = rsa_keypair
-    app_config["OAUTHCLIENT_REMOTE_APPS"] = {"e-infra": EINFRA_LOGIN_APP}
+    app_config["OAUTHCLIENT_REMOTE_APPS"] = {BACKEND_NAME: request.param}
     # flask_oauthlib resolves consumer_key/consumer_secret/rsa_key for a remote app with
     # app_key="EINFRA" from flat EINFRA_<PROPERTY> config keys (see OAuthRemoteApp._get_property)
     app_config["EINFRA_CONSUMER_KEY"] = "test-consumer-key"
     app_config["EINFRA_CONSUMER_SECRET"] = "test-consumer-secret"  # noqa S105
     app_config["EINFRA_RSA_KEY"] = public_pem
+    app_config["CESID_RSA_KEY"] = public_pem
     app_config["I18N_LANGUAGES"] = [("cs", "Czech"), ("en_GB", "British English")]
     return app_config
 
@@ -257,6 +261,53 @@ def test_get_rest_handlers_returns_rest_handlers():
 
     assert handlers["signup_handler"]["info"] == "oarepo_oidc_einfra.remote:account_info"
     assert handlers["signup_handler"]["setup"] == "oarepo_oidc_einfra.remote:account_setup"
+
+
+def test_cesid_helper_rebrands_einfra_helper():
+    cesid = CESiDOAuthSettingsHelper()
+    einfra = EInfraOAuthSettingsHelper()
+
+    assert str(cesid.remote_app["title"]) == "CESiD"
+    assert cesid.base_app["params"]["base_url"] == "https://login.cesid.cesnet.cz/cas/oidc/"
+    # endpoints as published in https://login.cesid.cesnet.cz/cas/oidc/.well-known/openid-configuration
+    assert cesid.base_app["params"]["authorize_url"] == "https://login.cesid.cesnet.cz/cas/oidc/oidcAuthorize"
+    assert cesid.base_app["params"]["access_token_url"] == "https://login.cesid.cesnet.cz/cas/oidc/oidcAccessToken"  # noqa: S105
+    assert cesid.base_app["params"]["userinfo_url"] == "https://login.cesid.cesnet.cz/cas/oidc/oidcProfile"
+    # internals are shared with e-infra: same config key and handlers
+    assert cesid.base_app["params"]["app_key"] == einfra.base_app["params"]["app_key"] == "EINFRA"
+    assert cesid.get_handlers() == einfra.get_handlers()
+    assert cesid.get_rest_handlers() == einfra.get_rest_handlers()
+
+
+def test_einfra_helper_uses_standard_endpoints():
+    params = EInfraOAuthSettingsHelper().base_app["params"]
+
+    assert params["authorize_url"] == "https://login.e-infra.cz/oidc/authorize"
+    assert params["access_token_url"] == "https://login.e-infra.cz/oidc/token"  # noqa: S105
+    assert params["userinfo_url"] == "https://login.e-infra.cz/oidc/userinfo"
+
+
+def test_registered_remote_app_knows_userinfo_url(app):
+    from invenio_oauthclient import current_oauthclient
+
+    remote = current_oauthclient.oauth.remote_apps[BACKEND_NAME]
+    expected = app.config["OAUTHCLIENT_REMOTE_APPS"][BACKEND_NAME]["params"]
+
+    assert remote.userinfo_url == expected["userinfo_url"]
+    assert remote.access_token_url == expected["access_token_url"]
+
+
+def test_registered_remote_app_uses_provider_rsa_key(app, monkeypatch):
+    from invenio_oauthclient import current_oauthclient
+
+    monkeypatch.setitem(app.config, "EINFRA_RSA_KEY", b"einfra-key")
+    monkeypatch.setitem(app.config, "CESID_RSA_KEY", b"cesid-key")
+    remote = current_oauthclient.oauth.remote_apps[BACKEND_NAME]
+    remote.__dict__.pop("rsa_key", None)  # drop the cached value
+
+    is_cesid = app.config["OAUTHCLIENT_REMOTE_APPS"][BACKEND_NAME]["params"].get("rsa_key_config") == "CESID_RSA_KEY"
+    assert remote.rsa_key == (b"cesid-key" if is_cesid else b"einfra-key")
+    remote.__dict__.pop("rsa_key", None)
 
 
 # ---------------------------------------------------------------------------
@@ -639,6 +690,7 @@ def test_account_info_link_perun_groups_applies_entitlements(app, database, monk
         name=BACKEND_NAME,
         consumer_key="test-consumer-key",
         base_url="https://login.e-infra.cz/oidc/",
+        userinfo_url="https://login.e-infra.cz/oidc/userinfo",
         get=fake_get,
     )
 
@@ -696,6 +748,7 @@ def test_account_info_link_perun_groups_resolves_known_entitlements(
         name=BACKEND_NAME,
         consumer_key="test-consumer-key",
         base_url="https://login.e-infra.cz/oidc/",
+        userinfo_url="https://login.e-infra.cz/oidc/userinfo",
         get=lambda url: userinfo_response,
     )
 
@@ -720,6 +773,21 @@ def test_account_info_link_perun_groups_resolves_known_entitlements(
             entitlement="urn:geant:cesnet.cz:res:roles:administration" + CESNET_SUFFIX,
             role="administration",
         ),
+    }
+
+
+def test_einfra_eligible_parser_uses_configured_suffix(app, communities, roles, monkeypatch):
+    monkeypatch.setitem(app.config, "EINFRA_ENTITLEMENT_ISSUER", "example.org")
+
+    parser = einfra_eligible_parser_factory(
+        global_roles=("administration",),
+        community_roles=[("test-community", "member")],
+    )
+    entitlements = parser({"eduperson_entitlement": ["https://www.e-infra.cz/ns/user-eligible-v1"]})
+
+    assert {str(e) for e in entitlements} == {
+        "urn:geant:cesnet.cz:res:roles:administration#example.org",
+        "urn:geant:cesnet.cz:res:communities:test-community:role:member#example.org",
     }
 
 
@@ -794,3 +862,15 @@ def test_full_authorized_reject_redirects_home(app):
         )
         assert resp.status_code in (301, 302)
         assert resp.location == "/"
+
+
+def test_cesid_rsa_key_default_is_loaded_into_app_config():
+    from flask import Flask
+
+    from oarepo_oidc_einfra.config import CESID_RSA_KEY
+    from oarepo_oidc_einfra.ext import EInfraOIDCApp
+
+    app = Flask("cesid-config-test")
+    EInfraOIDCApp().init_config(app)
+
+    assert app.config["CESID_RSA_KEY"] == CESID_RSA_KEY
