@@ -7,7 +7,8 @@ from __future__ import annotations
 
 import datetime as dt
 import logging
-from typing import TYPE_CHECKING, cast
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, cast
 
 import jwt
 from flask import current_app
@@ -34,7 +35,6 @@ from oarepo_oidc_einfra.perun.entitlements import (
 from oarepo_oidc_einfra.proxies import current_einfra_oidc
 
 if TYPE_CHECKING:
-    from flask_oauthlib.client import OAuthRemoteApp
     from invenio_oauthclient.models import RemoteToken
 
 
@@ -59,6 +59,28 @@ def find_locale(locale: str | None) -> str:
     return cast("str", current_app.config["BABEL_DEFAULT_LOCALE"])
 
 
+class EInfraOAuthRemoteApp(OAuthRemoteApp):
+    """OAuth remote app that also knows the provider's OIDC userinfo endpoint and signing key config."""
+
+    def __init__(self, *args: Any, userinfo_url: str, rsa_key_config: str | None = None, **kwargs: Any):
+        """Initialize the remote app.
+
+        :param userinfo_url: URL of the provider's OIDC userinfo endpoint.
+        :param rsa_key_config: Name of the config key holding the provider's public signing key.
+            If not set, the standard ``<app_key>_RSA_KEY`` config key is used.
+        """
+        super().__init__(*args, **kwargs)
+        self.userinfo_url = userinfo_url
+        self.rsa_key_config = rsa_key_config
+
+    @cached_property
+    def rsa_key(self) -> Any:  # type: ignore[override]
+        """Return the provider's public key used to verify the id token signature."""
+        if self.rsa_key_config:
+            return (self.oauth.app or current_app).config[self.rsa_key_config]
+        return self._get_property("rsa_key")
+
+
 class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
     """E-Infra OIDC Remote Auth backend for NRP."""
 
@@ -72,6 +94,7 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
         icon: str | None = None,
         access_token_url: str | None = None,
         authorize_url: str | None = None,
+        userinfo_url: str | None = None,
         access_token_method: str = "POST",  # noqa S107 not a password
         request_token_params: dict | None = None,
         request_token_url: str | None = None,
@@ -87,6 +110,7 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
 
         access_token_url = access_token_url or f"{base_url}token"
         authorize_url = authorize_url or f"{base_url}authorize"
+        userinfo_url = userinfo_url or f"{base_url}userinfo"
         content_type = "application/json"
 
         super().__init__(
@@ -104,8 +128,10 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
             signup_options=signup_options,
             logout_url=logout_url,
             content_type=content_type,
+            userinfo_url=userinfo_url,
             **kwargs,  # type: ignore[reportArgumentType]
         )
+        self.base_app["remote_app"] = "oarepo_oidc_einfra.remote:EInfraOAuthRemoteApp"
 
         self._handlers = {
             "authorized_handler": "invenio_oauthclient.handlers:authorized_signup_handler",
@@ -140,12 +166,37 @@ class EInfraOAuthSettingsHelper(OAuthSettingsHelper):
         return self._rest_handlers
 
 
+class CESiDOAuthSettingsHelper(EInfraOAuthSettingsHelper):
+    """CESiD OIDC Remote Auth backend for NRP."""
+
+    def __init__(
+        self,
+        *,
+        title: str = _("CESiD"),  # ty: ignore[invalid-parameter-default]
+        description: str = _("CESiD authentication and authorization service."),  # ty: ignore[invalid-parameter-default]
+        base_url: str = "https://login.cesid.cesnet.cz/cas/oidc/",
+        **kwargs: Any,
+    ):
+        """Initialize the CESiD backend - same internals (remote name, ``EINFRA`` config) as e-INFRA.
+
+        CESiD (Apereo CAS) does not use the standard endpoint names, see
+        https://login.cesid.cesnet.cz/cas/oidc/.well-known/openid-configuration
+        """
+        kwargs.setdefault("authorize_url", f"{base_url}oidcAuthorize")
+        kwargs.setdefault("access_token_url", f"{base_url}oidcAccessToken")
+        kwargs.setdefault("userinfo_url", f"{base_url}oidcProfile")
+        kwargs.setdefault("rsa_key_config", "CESID_RSA_KEY")
+        super().__init__(title=title, description=description, base_url=base_url, **kwargs)
+
+
 _cesnet_app = EInfraOAuthSettingsHelper()
+_cesid_app = CESiDOAuthSettingsHelper()
 
 """
-CESNET OpenID remote app.
+CESNET OpenID remote apps. Register exactly one of them, always under the ``BACKEND_NAME`` key.
 """
 EINFRA_LOGIN_APP = _cesnet_app.remote_app
+CESID_LOGIN_APP = _cesid_app.remote_app
 
 
 def account_info_serializer(remote: OAuthRemoteApp, resp: dict) -> dict:
@@ -377,9 +428,9 @@ def get_entitlements_from_userinfo_token(userinfo_token: dict) -> set[Entitlemen
 
     The token's ``eduperson_entitlement`` claim contains a mix of URNs, only some of
     which represent a community or a global role known to this instance (as recognized
-    by the ``EINFRA_ENTITLEMENT_NAMESPACES``/``EINFRA_ENTITLEMENT_PREFIX`` config and by
-    the communities/roles that currently exist) - everything else (other namespaces,
-    plain URLs, ...) is ignored.
+    by the ``EINFRA_ENTITLEMENT_NAMESPACES``/``EINFRA_ENTITLEMENT_PREFIX``/
+    ``EINFRA_ENTITLEMENT_ISSUER`` config and by the communities/roles that currently
+    exist) - everything else (other namespaces, plain URLs, ...) is ignored.
 
     :param userinfo_token: The userinfo token as returned by the ``/userinfo`` endpoint.
     :returns: The set of recognized entitlements.
@@ -434,7 +485,7 @@ def account_info_link_perun_groups(
     if user is None:
         return
 
-    userinfo_token = remote.get(cast("str", remote.base_url) + "userinfo").data
+    userinfo_token = remote.get(cast("EInfraOAuthRemoteApp", remote).userinfo_url).data
     perun_log.info("Received userinfo token for user %s: %s", user, userinfo_token)
     userinfo_entitlements = get_entitlements_from_userinfo_token(cast("dict", userinfo_token))
 
@@ -459,6 +510,7 @@ def einfra_eligible_parser_factory(
         """Add global and community roles to the user's entitlements if the user is eligible for EINFRA."""
         namespace = next(iter(current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]))
         entitlement_prefix = current_app.config["EINFRA_ENTITLEMENT_PREFIX"]
+        entitlement_issuer = current_app.config["EINFRA_ENTITLEMENT_ISSUER"]
 
         entitlements = []
         for ent in user_info.get("eduperson_entitlement", []):
@@ -467,7 +519,9 @@ def einfra_eligible_parser_factory(
                     try:
                         entitlements.append(
                             Entitlement.from_string(
-                                entitlement=f"urn:{namespace}:{entitlement_prefix}:res:roles:{gr}#perun.cesnet.cz"
+                                entitlement=(
+                                    f"urn:{namespace}:{entitlement_prefix}:res:roles:{gr}#{entitlement_issuer}"
+                                )
                             )
                         )
                     except EntitlementError:
@@ -478,7 +532,7 @@ def einfra_eligible_parser_factory(
                             Entitlement.from_string(
                                 entitlement=(
                                     f"urn:{namespace}:{entitlement_prefix}:res:communities:"
-                                    f"{community}:role:{role}#perun.cesnet.cz"
+                                    f"{community}:role:{role}#{entitlement_issuer}"
                                 )
                             )
                         )

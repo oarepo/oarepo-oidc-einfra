@@ -10,6 +10,8 @@ from typing import TYPE_CHECKING, cast
 
 from flask import Flask, current_app
 
+from .cli import oarepo  # noqa - used to register the client
+
 if TYPE_CHECKING:
     from oarepo_oidc_einfra.perun.entitlements import EntitlementsParser
 
@@ -35,7 +37,7 @@ class EInfraOIDCApp:
         from . import config
 
         for k in dir(config):
-            if k.startswith("EINFRA_"):
+            if k.startswith(("EINFRA_", "CESID_")):
                 app.config.setdefault(k, getattr(config, k))
 
         if not app.config.get("EINFRA_TOKEN_EXCHANGE_PUBLIC_KEY"):
