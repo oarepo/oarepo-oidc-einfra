@@ -7,11 +7,11 @@ from __future__ import annotations
 
 from importlib.metadata import PackageNotFoundError, version
 
-from .remote import EINFRA_LOGIN_APP
+from .remote import CESID_LOGIN_APP, EINFRA_LOGIN_APP
 
 try:
     __version__ = version("oarepo-oidc-einfra")
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "0.0.0dev0+unknown"
 
-__all__ = ("EINFRA_LOGIN_APP", "__version__")
+__all__ = ("CESID_LOGIN_APP", "EINFRA_LOGIN_APP", "__version__")

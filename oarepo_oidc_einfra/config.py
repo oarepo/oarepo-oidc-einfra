@@ -16,6 +16,12 @@ EINFRA_ENTITLEMENT_NAMESPACES = {"geant"}
 EINFRA_ENTITLEMENT_PREFIX = "cesnet.cz"
 """Parts of the entitlement URN name that represent communities."""
 
+EINFRA_ENTITLEMENT_ISSUER = "perun.cesnet.cz"
+"""Fragment (after the ``#``) appended to and expected on entitlements.
+
+Used both when generating entitlements and when validating incoming ones.
+"""
+
 EINFRA_RSA_KEY = (
     b"-----BEGIN PUBLIC KEY-----\n"
     b"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3"
@@ -27,6 +33,22 @@ EINFRA_RSA_KEY = (
     b"\nnwIDAQAB\n-----END PUBLIC KEY-----\n"
 )
 """Public RSA key for verifying the OIDC token signature."""
+
+CESID_RSA_KEY = (
+    b"-----BEGIN PUBLIC KEY-----\n"
+    b"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqYftrqNBoc8m2dl+6zFY\n"
+    b"c3VdrsryUPFXFI4P3PV43Ph5FW4fxfIPgruGXLp/FjKXwtlAdCc0hc/l6gU0kVJz\n"
+    b"fr71PNoVLAk/E3fi7c2t1SAtofraqtpLpVA/rkTtyGcPAttKUpqTBFFpKnK54sQ3\n"
+    b"vZyNOhKB2P8a5i2YKHq/YR36eGn3o4IamYT4hD+RcOu8J0MyKIpr3SQi/z2Gz5v1\n"
+    b"hKZSFnbXRLfyjqJMTvzE5RYxfs1TgCeYdWE5PW4db3fIo5ts7OIVyCyqLWSe6doL\n"
+    b"BedmWWsbHhYWeEyw0qK7XWFAL9honTIKEB4kGVPkpQQPxJmuUPFsdHePFwWGXjYu\n"
+    b"8QIDAQAB\n"
+    b"-----END PUBLIC KEY-----\n"
+)
+"""Public RSA key for verifying the CESiD OIDC token signature.
+
+The ``cas-signing-key`` from https://login.cesid.cesnet.cz/cas/oidc/jwks
+"""
 
 EINFRA_USER_DUMP_S3_ACCESS_KEY = ""
 """Access key for the S3 bucket where the user dump from PERUN is stored."""
