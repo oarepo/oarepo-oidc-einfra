@@ -197,6 +197,15 @@ class TestRoleEntitlements:
         assert isinstance(ent, GlobalRoleEntitlement)
         assert ent.role_name == "administration"
 
+    def test_resource_entitlements_use_configured_suffix(self, app, monkeypatch, minimal_dump_data, communities, roles):
+        """Test that the entitlement suffix is taken from the configuration."""
+        monkeypatch.setitem(app.config, "EINFRA_ENTITLEMENT_ISSUER", "example.org")
+
+        dump = PerunDumpData(minimal_dump_data)
+        entitlements = dump.resource_entitlements["resource-for-admin-role"]
+
+        assert [str(e) for e in entitlements] == ["urn:geant:cesnet.cz:res:roles:administration#example.org"]
+
     def test_user_with_no_valid_entitlements_has_empty_set(self, perun_dump_data, users_with_identities):
         """Test that a user with only invalid resources has no entitlements."""
         users = list(perun_dump_data.users())
