@@ -63,6 +63,16 @@ def test_successful_parsing(app, communities, roles, urn, expected_class, expect
             "Unknown entitlement type",
         ),
         (
+            "urn:geant:cesnet.cz:res:roles:administration#example.org",
+            EntitlementError,
+            "Unknown entitlement suffix",
+        ),
+        (
+            "urn:geant:cesnet.cz:res:roles:administration",
+            EntitlementError,
+            "Unknown entitlement suffix",
+        ),
+        (
             "urn:geant:cesnet.cz:#perun.cesnet.cz",
             EntitlementError,
             "Unknown entitlement type",

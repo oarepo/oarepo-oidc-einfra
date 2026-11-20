@@ -41,6 +41,7 @@ from oarepo_oidc_einfra.remote import (
     account_info_serializer,
     account_setup,
     autocreate_user,
+    einfra_eligible_parser_factory,
     find_locale,
     get_entitlements_from_userinfo_token,
 )
@@ -720,6 +721,21 @@ def test_account_info_link_perun_groups_resolves_known_entitlements(
             entitlement="urn:geant:cesnet.cz:res:roles:administration" + CESNET_SUFFIX,
             role="administration",
         ),
+    }
+
+
+def test_einfra_eligible_parser_uses_configured_suffix(app, communities, roles, monkeypatch):
+    monkeypatch.setitem(app.config, "EINFRA_ENTITLEMENT_SUFFIX", "example.org")
+
+    parser = einfra_eligible_parser_factory(
+        global_roles=("administration",),
+        community_roles=[("test-community", "member")],
+    )
+    entitlements = parser({"eduperson_entitlement": ["https://www.e-infra.cz/ns/user-eligible-v1"]})
+
+    assert {str(e) for e in entitlements} == {
+        "urn:geant:cesnet.cz:res:roles:administration#example.org",
+        "urn:geant:cesnet.cz:res:communities:test-community:role:member#example.org",
     }
 
 

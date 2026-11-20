@@ -16,6 +16,12 @@ EINFRA_ENTITLEMENT_NAMESPACES = {"geant"}
 EINFRA_ENTITLEMENT_PREFIX = "cesnet.cz"
 """Parts of the entitlement URN name that represent communities."""
 
+EINFRA_ENTITLEMENT_SUFFIX = "perun.cesnet.cz"
+"""Fragment (after the ``#``) appended to and expected on entitlements.
+
+Used both when generating entitlements and when validating incoming ones.
+"""
+
 EINFRA_RSA_KEY = (
     b"-----BEGIN PUBLIC KEY-----\n"
     b"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmho5h/lz6USUUazQaVT3"

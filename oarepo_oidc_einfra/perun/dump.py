@@ -92,9 +92,10 @@ class PerunDumpData:
                 try:
                     # Get the first (and typically only) namespace from the set
                     namespace = next(iter(current_app.config["EINFRA_ENTITLEMENT_NAMESPACES"]))
-                    # Construct the full URN with the NSS suffix
+                    # Construct the full URN with the configured fragment
                     entitlement_prefix = current_app.config["EINFRA_ENTITLEMENT_PREFIX"]
-                    entitlement_urn = f"urn:{namespace}:{entitlement_prefix}:{capability}#perun.cesnet.cz"
+                    entitlement_suffix = current_app.config["EINFRA_ENTITLEMENT_SUFFIX"]
+                    entitlement_urn = f"urn:{namespace}:{entitlement_prefix}:{capability}#{entitlement_suffix}"
                     resources[r_id].append(Entitlement.from_string(entitlement_urn))
                 except ValueError:
                     continue
