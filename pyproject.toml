@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oarepo-oidc-einfra"
-version = "9.0.0"
+version = "10.0.0a1"
 description = "E-infra OIDC Auth backend for OARepo"
 readme = "README.md"
 license = "MIT"
