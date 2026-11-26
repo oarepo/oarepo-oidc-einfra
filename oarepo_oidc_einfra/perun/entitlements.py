@@ -42,7 +42,7 @@ class EntitlementError(ValueError):
 
     This is the only exception type raised from entitlement parsing (:py:meth:`Entitlement.from_string`
     and the ``from_slug``/``from_role_name`` constructors), regardless of the underlying cause
-    (malformed URN, unknown namespace/prefix/suffix/type, or an unknown/deleted community or role).
+    (malformed URN, unknown namespace/prefix/issuer/type, or an unknown/deleted community or role).
     """
 
 
@@ -83,7 +83,7 @@ class Entitlement:
             raise EntitlementError(f"Unknown entitlement prefix: {parts[0] if parts else '<empty>'}")
 
         if urn.rqf_component.fragment != current_app.config["EINFRA_ENTITLEMENT_ISSUER"]:
-            raise EntitlementError(f"Unknown entitlement suffix: {urn.rqf_component.fragment}")
+            raise EntitlementError(f"Unknown entitlement issuer: {urn.rqf_component.fragment}")
 
         match parts[1:]:
             case "res", "communities", community_slug, "role", role:
